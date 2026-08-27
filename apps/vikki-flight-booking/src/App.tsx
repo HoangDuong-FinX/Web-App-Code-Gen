@@ -9,24 +9,17 @@ import { ServicesScreen } from './screens/ServicesScreen';
 import { ReviewScreen } from './screens/ReviewScreen';
 import { CheckoutScreen } from './screens/CheckoutScreen';
 import { PaymentPendingScreen } from './screens/PaymentPendingScreen';
+import { PaymentSuccessScreen } from './screens/PaymentSuccessScreen';
+import { PaymentFailedScreen } from './screens/PaymentFailedScreen';
+import { PaymentPartialScreen } from './screens/PaymentPartialScreen';
 import { HoldExpiredScreen } from './screens/HoldExpiredScreen';
 import type { ScreenId, MiniAppProps } from './types';
-
-// Placeholder screens for batch 3 — will be replaced
-function PlaceholderScreen({ id, onNavigate }: { id: ScreenId; onNavigate: (s: ScreenId) => void }) {
-  return (
-    <div className="screen screen--placeholder">
-      <p>Screen &quot;{id}&quot; — implementation pending (batch 3)</p>
-      <button onClick={() => onNavigate('search')} type="button">Back to Search</button>
-    </div>
-  );
-}
 
 function AppShell({ hostRuntime }: { hostRuntime?: MiniAppProps['hostRuntime'] }) {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('search');
   const { state } = useBooking();
 
-  // Deep-link guard: if no session and not on search, redirect
+  // Deep-link guard: if no session and not on search, redirect (AC-08)
   const effectiveScreen = useMemo(() => {
     if (currentScreen !== 'search' && !state.outboundSession) {
       return 'search';
@@ -55,13 +48,14 @@ function AppShell({ hostRuntime }: { hostRuntime?: MiniAppProps['hostRuntime'] }
       return <CheckoutScreen onNavigate={navigate} hostRuntime={hostRuntime} />;
     case 'payment-pending':
       return <PaymentPendingScreen onNavigate={navigate} hostRuntime={hostRuntime} />;
+    case 'payment-success':
+      return <PaymentSuccessScreen onNavigate={navigate} />;
+    case 'payment-failed':
+      return <PaymentFailedScreen onNavigate={navigate} />;
+    case 'payment-partial':
+      return <PaymentPartialScreen onNavigate={navigate} />;
     case 'hold-expired':
       return <HoldExpiredScreen onNavigate={navigate} />;
-    // Batch 3 screens
-    case 'payment-success':
-    case 'payment-failed':
-    case 'payment-partial':
-      return <PlaceholderScreen id={effectiveScreen} onNavigate={navigate} />;
     default:
       return <SearchScreen onNavigate={navigate} />;
   }
