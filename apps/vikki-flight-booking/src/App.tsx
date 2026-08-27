@@ -5,20 +5,24 @@ import { SearchScreen } from './screens/SearchScreen';
 import { ResultsScreen } from './screens/ResultsScreen';
 import { ResultsReturnScreen } from './screens/ResultsReturnScreen';
 import { PassengersScreen } from './screens/PassengersScreen';
+import { ServicesScreen } from './screens/ServicesScreen';
+import { ReviewScreen } from './screens/ReviewScreen';
+import { CheckoutScreen } from './screens/CheckoutScreen';
+import { PaymentPendingScreen } from './screens/PaymentPendingScreen';
 import { HoldExpiredScreen } from './screens/HoldExpiredScreen';
 import type { ScreenId, MiniAppProps } from './types';
 
-// Placeholder screens for batches 2 & 3 — will be replaced
+// Placeholder screens for batch 3 — will be replaced
 function PlaceholderScreen({ id, onNavigate }: { id: ScreenId; onNavigate: (s: ScreenId) => void }) {
   return (
     <div className="screen screen--placeholder">
-      <p>Screen "{id}" — implementation pending (batch 2/3)</p>
+      <p>Screen &quot;{id}&quot; — implementation pending (batch 3)</p>
       <button onClick={() => onNavigate('search')} type="button">Back to Search</button>
     </div>
   );
 }
 
-function AppShell() {
+function AppShell({ hostRuntime }: { hostRuntime?: MiniAppProps['hostRuntime'] }) {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('search');
   const { state } = useBooking();
 
@@ -36,27 +40,30 @@ function AppShell() {
 
   switch (effectiveScreen) {
     case 'search':
-      return <SearchScreen onNavigate={(s) => navigate(s)} />;
+      return <SearchScreen onNavigate={navigate} />;
     case 'results':
-      return <ResultsScreen onNavigate={(s) => navigate(s)} />;
+      return <ResultsScreen onNavigate={navigate} />;
     case 'results-return':
-      return <ResultsReturnScreen onNavigate={(s) => navigate(s)} />;
+      return <ResultsReturnScreen onNavigate={navigate} />;
     case 'passengers':
-      return <PassengersScreen onNavigate={(s) => navigate(s)} />;
-    case 'hold-expired':
-      return <HoldExpiredScreen onNavigate={(s) => navigate(s)} />;
-    // Batch 2 screens
+      return <PassengersScreen onNavigate={navigate} />;
     case 'services':
+      return <ServicesScreen onNavigate={navigate} />;
     case 'review':
+      return <ReviewScreen onNavigate={navigate} />;
     case 'checkout':
+      return <CheckoutScreen onNavigate={navigate} hostRuntime={hostRuntime} />;
     case 'payment-pending':
+      return <PaymentPendingScreen onNavigate={navigate} hostRuntime={hostRuntime} />;
+    case 'hold-expired':
+      return <HoldExpiredScreen onNavigate={navigate} />;
     // Batch 3 screens
     case 'payment-success':
     case 'payment-failed':
     case 'payment-partial':
       return <PlaceholderScreen id={effectiveScreen} onNavigate={navigate} />;
     default:
-      return <SearchScreen onNavigate={(s) => navigate(s)} />;
+      return <SearchScreen onNavigate={navigate} />;
   }
 }
 
@@ -68,7 +75,7 @@ export default function App({ hostRuntime }: MiniAppProps) {
     <div className="gg-brand-vikki app-root" data-theme="light">
       <I18nContext.Provider value={i18n}>
         <BookingProvider>
-          <AppShell />
+          <AppShell hostRuntime={hostRuntime} />
         </BookingProvider>
       </I18nContext.Provider>
     </div>
