@@ -1,171 +1,138 @@
-import React, { useState, useEffect } from 'react';
-import { ScreenId } from '../App';
-import { useStore } from '../store/useStore';
+import React, { useEffect, useState } from 'react';
+import type { ScreenProps, SeatOption, SeatSelection } from '../types';
 import { t } from '../i18n';
-import { loadSeatOptions } from '../sdk/http';
-import { SeatOption } from '../types';
-import { SeatCell } from '../components/SeatCell';
-import { LegendItem } from '../components/LegendItem';
-import { formatCurrency } from '../utils/format';
+import { httpGet, httpPost, unwrap } from '../sdk/http';
+import Text from '../components/Text';
+import Button from '../components/Button';
+import IconButton from '../components/IconButton';
+import AlertNote from '../components/AlertNote';
 
-interface Props {
-  navigate: (screen: ScreenId) => void;
-}
-
-export const SeatMap: React.FC<Props> = ({ navigate }) => {
-  const store = useStore();
-  const [seatRows, setSeatRows] = useState<SeatOption[][]>([]);
+export default function SeatMap(props: ScreenProps) {
+  const { booking, setBooking, navigate } = props;
+  const [seats, setSeats] = useState<SeatOption[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isEmpty, setIsEmpty] = useState(false);
-  const [selectedSeatId, setSelectedSeatId] = useState<string | null>(
-    store.seatSelections.length > 0 ? store.seatSelections[0].seatId : null
-  );
+  const [error, setError] = useState(false);
+  const [selectedSeats, setSelectedSeats] = useState<SeatSelection[]>(booking.seatSelections);
+  const [activeLeg, setActiveLeg] = useState<'outbound' | 'return'>('outbound');
+  const [submitting, setSubmitting] = useState(false);
 
-  const fetchSeats = async () => {
+  const sessionId = activeLeg === 'outbound' ? booking.outboundSession?.sessionId : booking.returnSession?.sessionId;
+  const offerId = activeLeg === 'outbound' ? booking.selectedOutboundOffer?.offerId : booking.selectedReturnOffer?.offerId;
+
+  const loadSeats = async () => {
+    if (!sessionId || !offerId) return;
     setLoading(true);
-    setError(null);
-    setIsEmpty(false);
+    setError(false);
     try {
-      const data = await loadSeatOptions(store.sessionId!, store.selectedOfferId!);
-      if (data.rows.length === 0) {
-        setIsEmpty(true);
-      } else {
-        setSeatRows(data.rows);
-      }
-    } catch (e: unknown) {
-      const err = e as { status?: number };
-      if (err.status === 404) {
-        setIsEmpty(true);
-      } else {
-        setError(t('seatMap.error.load'));
-      }
-    } finally {
+      const res = await httpGet<SeatOption[]>(`/sessions/${sessionId}/seat-options?offer_id=${offerId}`, 'booking');
+      setSeats(unwrap(res));
+      setLoading(false);
+    } catch {
+      setError(true);
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchSeats();
-  }, []);
+  useEffect(() => { loadSeats(); }, [activeLeg]);
+
+  const totalPassengers = (booking.searchParams?.passengers.adults ?? 1) + (booking.searchParams?.passengers.children ?? 0);
 
   const handleSeatClick = (seat: SeatOption) => {
-    if (seat.state === 'unavailable' || seat.priceAmount === null) return;
-    setSelectedSeatId(seat.seatId === selectedSeatId ? null : seat.seatId);
+    if (!seat.available || seat.priceAmount === null) return;
+    setSelectedSeats(prev => {
+      const existing = prev.find(s => s.seatCode === seat.seatCode);
+      if (existing) return prev.filter(s => s.seatCode !== seat.seatCode);
+      if (prev.length >= totalPassengers) return prev;
+      return [...prev, { passengerIndex: prev.length + 1, seatCode: seat.seatCode }];
+    });
   };
 
-  const handleConfirm = () => {
-    if (!selectedSeatId) return;
-    const selectedSeat = seatRows.flat().find((s) => s.seatId === selectedSeatId);
-    if (selectedSeat) {
-      store.update({
-        seatSelections: [{
-          passengerIndex: 1,
-          seatId: selectedSeat.seatId,
-          seatLabel: selectedSeat.seatId,
-          price: selectedSeat.priceAmount ?? 0,
-        }],
-      });
+  const handleConfirm = async () => {
+    if (!sessionId) return;
+    setSubmitting(true);
+    try {
+      await httpPost(`/sessions/${sessionId}/seat-selections`, { selections: selectedSeats }, 'booking');
+      setBooking(prev => activeLeg === 'outbound' ? { ...prev, seatSelections: selectedSeats } : { ...prev, returnSeatSelections: selectedSeats });
+      navigate('services-hub');
+    } catch {
+      setError(true);
     }
-    navigate('services-grid');
+    setSubmitting(false);
   };
+
+  const maxRow = seats.length > 0 ? Math.max(...seats.map(s => s.row)) : 0;
+  const maxCol = seats.length > 0 ? Math.max(...seats.map(s => s.col)) : 6;
 
   return (
-    <div style={{ padding: 16, maxWidth: 480, margin: '0 auto' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-        <button type="button" onClick={() => navigate('services-grid')} aria-label={t('common.back.ariaLabel')} style={{ border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontSize: 20 }}>
-          ←
-        </button>
-        <h1 style={{ fontSize: 18, fontWeight: 'bold', margin: 0 }}>{t('seatMap.title')}</h1>
+    <div className="screen">
+      <div className="header-row">
+        <IconButton icon="back" onClick={() => navigate('services-hub')} ariaLabel={t('common.back.aria')} />
+        <Text variant="title-2" as="h1">{t('seat.title')}</Text>
+        <div style={{ width: 40 }} />
       </div>
 
-      {/* Legend */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 16 }}>
-        <LegendItem color="selected" label={t('seatMap.legend.selected')} ariaLabel={t('seatMap.legend.selected')} />
-        <LegendItem color="emergency" label={t('seatMap.legend.emergency')} ariaLabel={t('seatMap.legend.emergency')} />
-        <LegendItem color="reserved" label={t('seatMap.legend.reserved')} ariaLabel={t('seatMap.legend.reserved')} />
+      {booking.tripType === 'round' && (
+        <div style={{ display: 'flex', gap: 'var(--gap-008)' }} aria-label={t('seat.tab.aria')}>
+          <button type="button" onClick={() => setActiveLeg('outbound')} style={{ flex: 1, padding: '8px', borderRadius: 'var(--radius-008)', background: activeLeg === 'outbound' ? 'var(--main-primary)' : 'var(--fill-normal)', color: activeLeg === 'outbound' ? 'var(--common-100)' : 'var(--label-normal)', fontSize: 13, fontWeight: 600 }}>{t('bookingSummary.outbound')}</button>
+          <button type="button" onClick={() => setActiveLeg('return')} style={{ flex: 1, padding: '8px', borderRadius: 'var(--radius-008)', background: activeLeg === 'return' ? 'var(--main-primary)' : 'var(--fill-normal)', color: activeLeg === 'return' ? 'var(--common-100)' : 'var(--label-normal)', fontSize: 13, fontWeight: 600 }}>{t('bookingSummary.return')}</button>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: 'var(--gap-012)', fontSize: 11 }} aria-label={t('seat.legend.aria')}>
+        <span>\u25A0 {t('seat.available')}</span>
+        <span style={{ color: 'var(--main-primary)' }}>\u25A0 {t('seat.selected')}</span>
+        <span style={{ color: 'var(--label-disable)' }}>\u25A0 {t('seat.occupied')}</span>
       </div>
 
-      {/* Content */}
-      {loading && <div style={{ textAlign: 'center', padding: 32, color: '#666' }}>...</div>}
+      {loading && <Text>{t('common.loading')}</Text>}
 
-      {isEmpty && !loading && (
-        <div style={{ textAlign: 'center', padding: 32 }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>💺</div>
-          <h2 style={{ fontSize: 16, marginBottom: 8 }}>{t('seatMap.empty.title')}</h2>
-          <p style={{ fontSize: 14, color: '#666' }}>{t('seatMap.empty.description')}</p>
+      {!loading && seats.length === 0 && !error && (
+        <Text ariaLabel={t('seat.empty')}>{t('seat.empty')}</Text>
+      )}
+
+      {!loading && seats.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${maxCol}, 1fr)`, gap: 4 }} aria-label={t('seat.map.aria')}>
+          {Array.from({ length: maxRow }, (_, r) =>
+            Array.from({ length: maxCol }, (_, c) => {
+              const seat = seats.find(s => s.row === r + 1 && s.col === c + 1);
+              if (!seat) return <div key={`${r}-${c}`} />;
+              const isSelected = selectedSeats.some(s => s.seatCode === seat.seatCode);
+              return (
+                <button
+                  key={seat.seatCode}
+                  type="button"
+                  disabled={!seat.available || seat.priceAmount === null}
+                  onClick={() => handleSeatClick(seat)}
+                  aria-label={`${seat.seatCode} ${seat.available ? (seat.priceAmount ? seat.priceAmount.toLocaleString('vi-VN') + ' VND' : '') : t('seat.unavailable')}`}
+                  style={{
+                    width: '100%', aspectRatio: '1', borderRadius: 'var(--radius-008)', fontSize: 10, fontWeight: 600,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: isSelected ? 'var(--main-primary)' : !seat.available ? 'var(--interaction-disable)' : 'var(--fill-normal)',
+                    color: isSelected ? 'var(--common-100)' : !seat.available ? 'var(--label-disable)' : 'var(--label-normal)',
+                    cursor: seat.available && seat.priceAmount !== null ? 'pointer' : 'not-allowed',
+                  }}
+                >
+                  {seat.seatCode}
+                </button>
+              );
+            })
+          )}
         </div>
       )}
 
-      {error && !loading && (
-        <div style={{ textAlign: 'center', padding: 32 }}>
-          <div role="alert" style={{ padding: 12, backgroundColor: '#ffebee', borderRadius: 8, color: '#c62828', fontSize: 13, marginBottom: 12 }}>
-            {error}
-          </div>
-          <button
-            type="button"
-            onClick={fetchSeats}
-            aria-label={t('seatMap.error.retry.ariaLabel')}
-            style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #e0e0e0', backgroundColor: '#fff', cursor: 'pointer', fontSize: 14 }}
-          >
-            {t('seatMap.error.retry')}
-          </button>
-        </div>
+      {selectedSeats.length > 0 && (
+        <Text variant="body-semibold" ariaLabel={t('seat.selected.aria')}>
+          {selectedSeats.map(s => s.seatCode).join(', ')}
+        </Text>
       )}
 
-      {!loading && !isEmpty && !error && (
-        <div style={{ overflowY: 'auto', maxHeight: 400 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-            {seatRows.map((row, rowIdx) => (
-              <div key={rowIdx} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                {row.slice(0, 2).map((seat) => (
-                  <SeatCell
-                    key={seat.seatId}
-                    seatId={seat.seatId}
-                    state={seat.seatId === selectedSeatId ? 'selected' : seat.state}
-                    price={seat.priceAmount}
-                    isEmergency={seat.isEmergency}
-                    ariaLabel={`Seat ${seat.seatId} - ${seat.state === 'unavailable' ? 'unavailable' : seat.priceAmount ? formatCurrency(seat.priceAmount) : 'not selectable'}`}
-                    onClick={() => handleSeatClick(seat)}
-                  />
-                ))}
-                <div style={{ width: 20 }} aria-hidden="true" />
-                {row.slice(2, 4).map((seat) => (
-                  <SeatCell
-                    key={seat.seatId}
-                    seatId={seat.seatId}
-                    state={seat.seatId === selectedSeatId ? 'selected' : seat.state}
-                    price={seat.priceAmount}
-                    isEmergency={seat.isEmergency}
-                    ariaLabel={`Seat ${seat.seatId} - ${seat.state === 'unavailable' ? 'unavailable' : seat.priceAmount ? formatCurrency(seat.priceAmount) : 'not selectable'}`}
-                    onClick={() => handleSeatClick(seat)}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <AlertNote visible={error} variant="error" actionLabel={t('seat.error.retry')} onAction={loadSeats}>
+        {t('common.error.generic')}
+      </AlertNote>
 
-      {/* Footer */}
-      {!isEmpty && !error && (
-        <div style={{ marginTop: 16 }}>
-          <button
-            type="button"
-            onClick={handleConfirm}
-            disabled={!selectedSeatId}
-            aria-label={t('seatMap.confirm.ariaLabel')}
-            style={{
-              width: '100%', padding: 14, borderRadius: 8, border: 'none',
-              backgroundColor: selectedSeatId ? '#E31837' : '#e0e0e0',
-              color: '#fff', fontWeight: 'bold', fontSize: 16, cursor: selectedSeatId ? 'pointer' : 'not-allowed',
-            }}
-          >
-            {t('seatMap.confirm')}
-          </button>
-        </div>
-      )}
+      <Button variant="gradient" onClick={handleConfirm} disabled={submitting} ariaLabel={t('seat.confirm.aria')}>
+        {submitting ? t('common.loading') : t('seat.confirm')}
+      </Button>
     </div>
   );
-};
+}
