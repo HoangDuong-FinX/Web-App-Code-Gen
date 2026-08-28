@@ -1,18 +1,17 @@
-import { vi } from './vi';
+import vi, { type TranslationKey } from './vi';
 
-const translations: Record<string, Record<string, string>> = { vi };
-const currentLocale = 'vi';
+const translations: Record<string, Record<TranslationKey, string>> = { vi };
 
-export function t(key: string, params?: Record<string, string | number>): string {
-  const dict = translations[currentLocale] ?? translations['vi'];
-  let value = dict[key];
-  if (!value) {
-    return key;
+let currentLocale = 'vi';
+
+export function setLocale(locale: string): void {
+  if (translations[locale]) {
+    currentLocale = locale;
   }
-  if (params) {
-    Object.entries(params).forEach(([k, v]) => {
-      value = value.replace(`{${k}}`, String(v));
-    });
-  }
-  return value;
 }
+
+export function t(key: TranslationKey): string {
+  return translations[currentLocale]?.[key] ?? key;
+}
+
+export type { TranslationKey };
