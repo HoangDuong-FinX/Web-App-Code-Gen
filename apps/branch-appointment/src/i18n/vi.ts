@@ -1,0 +1,111 @@
+// Vietnamese translation table
+
+const vi: Record<string, string> = {
+  // branch-list
+  'branchList.title': 'Danh s\u00e1ch chi nh\u00e1nh',
+  'branchList.filterLabel': 'T\u1ec9nh / Th\u00e0nh ph\u1ed1',
+  'branchList.filterPlaceholder': 'Ch\u1ecdn t\u1ec9nh / th\u00e0nh ph\u1ed1',
+  'branchList.searchLabel': 'T\u00ecm ki\u1ebfm',
+  'branchList.searchPlaceholder': 'Nh\u1eadp t\u00ean chi nh\u00e1nh...',
+  'branchList.emptyTitle': 'Kh\u00f4ng t\u00ecm th\u1ea5y chi nh\u00e1nh',
+  'branchList.emptyDescription': 'Kh\u00f4ng c\u00f3 chi nh\u00e1nh n\u00e0o ph\u00f9 h\u1ee3p v\u1edbi b\u1ed9 l\u1ecdc c\u1ee7a b\u1ea1n.',
+  'branchList.errorTitle': 'Kh\u00f4ng th\u1ec3 t\u1ea3i danh s\u00e1ch',
+  'branchList.errorDescription': '\u0110\u00e3 x\u1ea3y ra l\u1ed7i khi t\u1ea3i danh s\u00e1ch chi nh\u00e1nh.',
+  'branchList.retry': 'Th\u1eed l\u1ea1i',
+  'branchList.viewMyAppointments': 'Xem l\u1ecbch h\u1eb9n c\u1ee7a t\u00f4i',
+  'branchList.filterAll': 'T\u1ea5t c\u1ea3',
+
+  // slot-picker
+  'slotPicker.title': 'Ch\u1ecdn ng\u00e0y & khung gi\u1edd',
+  'slotPicker.dateLabel': 'Ng\u00e0y h\u1eb9n',
+  'slotPicker.slotsHeading': 'Khung gi\u1edd',
+  'slotPicker.noSlots': 'Kh\u00f4ng c\u00f2n khung gi\u1edd tr\u1ed1ng cho ng\u00e0y n\u00e0y.',
+  'slotPicker.slotRemaining': 'C\u00f2n {{remaining}}/4',
+  'slotPicker.continue': 'Ti\u1ebfp t\u1ee5c',
+  'slotPicker.back': 'Quay l\u1ea1i',
+  'slotPicker.errorTitle': 'Kh\u00f4ng th\u1ec3 t\u1ea3i khung gi\u1edd',
+  'slotPicker.errorDescription': '\u0110\u00e3 x\u1ea3y ra l\u1ed7i khi t\u1ea3i khung gi\u1edd.',
+  'slotPicker.retry': 'Th\u1eed l\u1ea1i',
+
+  // transaction-type
+  'transactionType.title': 'Ch\u1ecdn lo\u1ea1i giao d\u1ecbch',
+  'transactionType.label': 'Lo\u1ea1i giao d\u1ecbch',
+  'transactionType.openCard': 'M\u1edf th\u1ebb',
+  'transactionType.closeAccount': 'T\u1ea5t to\u00e1n',
+  'transactionType.loanConsultation': 'T\u01b0 v\u1ea5n kho\u1ea3n vay',
+  'transactionType.continue': 'Ti\u1ebfp t\u1ee5c',
+  'transactionType.back': 'Quay l\u1ea1i',
+
+  // confirm-booking
+  'confirmBooking.title': 'X\u00e1c nh\u1eadn l\u1ecbch h\u1eb9n',
+  'confirmBooking.branchLabel': 'Chi nh\u00e1nh',
+  'confirmBooking.addressLabel': '\u0110\u1ecba ch\u1ec9',
+  'confirmBooking.dateLabel': 'Ng\u00e0y',
+  'confirmBooking.slotLabel': 'Khung gi\u1edd',
+  'confirmBooking.transactionLabel': 'Lo\u1ea1i giao d\u1ecbch',
+  'confirmBooking.submit': 'X\u00e1c nh\u1eadn \u0111\u1eb7t l\u1ecbch',
+  'confirmBooking.back': 'Quay l\u1ea1i',
+  'confirmBooking.slotTakenTitle': 'Khung gi\u1edd \u0111\u00e3 \u0111\u01b0\u1ee3c \u0111\u1eb7t',
+  'confirmBooking.slotTakenDescription': 'Khung gi\u1edd b\u1ea1n ch\u1ecdn v\u1eeba \u0111\u01b0\u1ee3c ng\u01b0\u1eddi kh\u00e1c \u0111\u1eb7t. Vui l\u00f2ng ch\u1ecdn khung gi\u1edd kh\u00e1c.',
+  'confirmBooking.slotTakenAction': 'Ch\u1ecdn l\u1ea1i',
+  'confirmBooking.maxTitle': '\u0110\u00e3 \u0111\u1ea1t gi\u1edbi h\u1ea1n',
+  'confirmBooking.maxDescription': 'B\u1ea1n \u0111\u00e3 c\u00f3 2 l\u1ecbch h\u1eb9n \u0111ang hi\u1ec7u l\u1ef1c. Vui l\u00f2ng hu\u1ef7 m\u1ed9t l\u1ecbch h\u1eb9n tr\u01b0\u1edbc khi \u0111\u1eb7t th\u00eam.',
+  'confirmBooking.maxViewAppointments': 'Xem l\u1ecbch h\u1eb9n',
+  'confirmBooking.close': '\u0110\u00f3ng',
+  'confirmBooking.errorTitle': 'Kh\u00f4ng th\u1ec3 \u0111\u1eb7t l\u1ecbch',
+  'confirmBooking.errorDescription': '\u0110\u00e3 x\u1ea3y ra l\u1ed7i. Vui l\u00f2ng th\u1eed l\u1ea1i.',
+  'confirmBooking.errorRetry': 'Th\u1eed l\u1ea1i',
+
+  // booking-success
+  'bookingSuccess.title': '\u0110\u1eb7t l\u1ecbch th\u00e0nh c\u00f4ng',
+  'bookingSuccess.codeLabel': 'M\u00e3 h\u1eb9n',
+  'bookingSuccess.branchLabel': 'Chi nh\u00e1nh',
+  'bookingSuccess.dateLabel': 'Ng\u00e0y',
+  'bookingSuccess.slotLabel': 'Khung gi\u1edd',
+  'bookingSuccess.transactionLabel': 'Lo\u1ea1i giao d\u1ecbch',
+  'bookingSuccess.viewAppointments': 'Xem l\u1ecbch h\u1eb9n c\u1ee7a t\u00f4i',
+  'bookingSuccess.bookAnother': '\u0110\u1eb7t l\u1ecbch kh\u00e1c',
+
+  // my-appointments
+  'myAppointments.title': 'L\u1ecbch h\u1eb9n c\u1ee7a t\u00f4i',
+  'myAppointments.emptyTitle': 'Ch\u01b0a c\u00f3 l\u1ecbch h\u1eb9n',
+  'myAppointments.emptyDescription': 'B\u1ea1n ch\u01b0a c\u00f3 l\u1ecbch h\u1eb9n n\u00e0o s\u1eafp t\u1edbi.',
+  'myAppointments.errorTitle': 'Kh\u00f4ng th\u1ec3 t\u1ea3i l\u1ecbch h\u1eb9n',
+  'myAppointments.errorDescription': '\u0110\u00e3 x\u1ea3y ra l\u1ed7i khi t\u1ea3i danh s\u00e1ch l\u1ecbch h\u1eb9n.',
+  'myAppointments.retry': 'Th\u1eed l\u1ea1i',
+  'myAppointments.bookNew': '\u0110\u1eb7t l\u1ecbch h\u1eb9n m\u1edbi',
+  'myAppointments.cancelButton': 'Hu\u1ef7 l\u1ecbch h\u1eb9n',
+  'myAppointments.cancelConfirmTitle': 'Hu\u1ef7 l\u1ecbch h\u1eb9n?',
+  'myAppointments.cancelConfirmDescription': 'B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n hu\u1ef7 l\u1ecbch h\u1eb9n {{code}} t\u1ea1i {{branch}} v\u00e0o {{date}} l\u00fac {{time}}?',
+  'myAppointments.cancelConfirm': 'X\u00e1c nh\u1eadn hu\u1ef7',
+  'myAppointments.cancelKeep': 'Kh\u00f4ng, gi\u1eef l\u1ea1i',
+  'myAppointments.cancelSuccessTitle': '\u0110\u00e3 hu\u1ef7 l\u1ecbch h\u1eb9n',
+  'myAppointments.cancelSuccessDescription': 'L\u1ecbch h\u1eb9n \u0111\u00e3 \u0111\u01b0\u1ee3c hu\u1ef7 th\u00e0nh c\u00f4ng.',
+  'myAppointments.cancelSuccessClose': '\u0110\u00f3ng',
+  'myAppointments.cancelTooLateTitle': 'Kh\u00f4ng th\u1ec3 hu\u1ef7',
+  'myAppointments.cancelTooLateDescription': 'L\u1ecbch h\u1eb9n ch\u1ec9 c\u00f3 th\u1ec3 hu\u1ef7 tr\u01b0\u1edbc gi\u1edd h\u1eb9n \u00edt nh\u1ea5t 2 gi\u1edd.',
+  'myAppointments.cancelTooLateClose': '\u0110\u00f3ng',
+  'myAppointments.cancelErrorTitle': 'Kh\u00f4ng th\u1ec3 hu\u1ef7 l\u1ecbch',
+  'myAppointments.cancelErrorDescription': '\u0110\u00e3 x\u1ea3y ra l\u1ed7i. Vui l\u00f2ng th\u1eed l\u1ea1i.',
+  'myAppointments.cancelErrorRetry': 'Th\u1eed l\u1ea1i',
+  'myAppointments.cancelErrorClose': '\u0110\u00f3ng',
+
+  // branch-day-view
+  'branchDayView.title': 'L\u1ecbch h\u1eb9n chi nh\u00e1nh h\u00f4m nay',
+  'branchDayView.refresh': 'L\u00e0m m\u1edbi',
+  'branchDayView.emptyTitle': 'Kh\u00f4ng c\u00f3 l\u1ecbch h\u1eb9n',
+  'branchDayView.emptyDescription': 'H\u00f4m nay kh\u00f4ng c\u00f3 l\u1ecbch h\u1eb9n n\u00e0o t\u1ea1i chi nh\u00e1nh.',
+  'branchDayView.errorTitle': 'Kh\u00f4ng th\u1ec3 t\u1ea3i danh s\u00e1ch',
+  'branchDayView.errorDescription': '\u0110\u00e3 x\u1ea3y ra l\u1ed7i khi t\u1ea3i danh s\u00e1ch l\u1ecbch h\u1eb9n.',
+  'branchDayView.retry': 'Th\u1eed l\u1ea1i',
+  'branchDayView.markArrived': '\u0110\u00e1nh d\u1ea5u \u0111\u00e3 \u0111\u1ebfn',
+  'branchDayView.arrivedStatus': '\u0110\u00e3 \u0111\u1ebfn',
+  'branchDayView.waitingStatus': 'Ch\u01b0a \u0111\u1ebfn',
+  'branchDayView.codePrefix': 'M\u00e3:',
+
+  // common
+  'common.loading': '\u0110ang t\u1ea3i...',
+  'common.identityError': 'Kh\u00f4ng th\u1ec3 x\u00e1c \u0111\u1ecbnh danh t\u00ednh. Vui l\u00f2ng \u0111\u0103ng nh\u1eadp l\u1ea1i t\u1eeb \u1ee9ng d\u1ee5ng ch\u00ednh.',
+};
+
+export default vi;
