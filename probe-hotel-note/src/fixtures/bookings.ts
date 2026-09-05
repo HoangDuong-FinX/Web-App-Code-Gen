@@ -1,4 +1,4 @@
-import { Booking } from '../types';
+import type { Booking } from '../types';
 
 // Fixture: Load bookings list
 // Waiting on: Backend API endpoint for listing user's hotel bookings

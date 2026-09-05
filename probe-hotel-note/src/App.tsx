@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Booking } from './types';
+import type { Booking } from './types';
 import BookingsList from './screens/BookingsList';
 import BookingDetail from './screens/BookingDetail';
 import SaveFailed from './screens/SaveFailed';
@@ -50,7 +50,7 @@ const App: React.FC = () => {
           noteText={state.noteText}
           onNoteChange={updateNoteText}
           onBack={() => navigate('bookings-list')}
-          onSaveFailed={(preservedNote) => navigate('save-failed', state.selectedBooking, preservedNote)}
+          onSaveFailed={(preservedNote) => navigate('save-failed', state.selectedBooking || undefined, preservedNote)}
           onSaveSuccess={() => {
             setState((prev) => ({ ...prev, noteText: '' }));
           }}
@@ -62,8 +62,8 @@ const App: React.FC = () => {
         <SaveFailed
           booking={state.selectedBooking}
           noteText={state.noteText}
-          onRetry={() => navigate('booking-detail', state.selectedBooking, state.noteText)}
-          onClose={() => navigate('booking-detail', state.selectedBooking)}
+          onRetry={() => navigate('booking-detail', state.selectedBooking || undefined, state.noteText)}
+          onClose={() => navigate('booking-detail', state.selectedBooking || undefined)}
           isSaving={state.isSaving}
           setSaving={setSaving}
         />

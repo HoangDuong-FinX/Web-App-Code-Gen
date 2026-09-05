@@ -1,5 +1,5 @@
 import React from 'react';
-import { Booking } from '../types';
+import type { Booking } from '../types';
 import Text from './Text';
 import Badge from './Badge';
 import './BookingRow.css';

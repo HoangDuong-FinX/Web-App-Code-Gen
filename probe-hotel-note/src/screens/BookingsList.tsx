@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Booking } from '../types';
+import type { Booking } from '../types';
 import { loadBookingsFixture } from '../fixtures/bookings';
 import Text from '../components/Text';
 import BookingRow from '../components/BookingRow';
