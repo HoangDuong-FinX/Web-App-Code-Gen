@@ -1,8 +1,9 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, it, expect, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import { BookingDetailSaveFailed } from './BookingDetailSaveFailed';
 import * as saveNoteFixture from '../fixtures/saveNote';
-import { Booking } from '../types';
+import type { Booking } from '../types';
 
 afterEach(() => {
   cleanup();
@@ -37,8 +38,8 @@ describe('BookingDetailSaveFailed Flow', () => {
       />
     );
 
-    expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Retry Save/i })).toBeInTheDocument();
+    expect(screen.getByText('Failed to save note. Please try again.')).toBeDefined();
+    expect(screen.getByRole('button', { name: /Retry Save/i })).toBeDefined();
   });
 
   it('retains note text from failed attempt', () => {
@@ -59,7 +60,7 @@ describe('BookingDetailSaveFailed Flow', () => {
     );
 
     const textarea = screen.getByDisplayValue('My failed note');
-    expect(textarea).toBeInTheDocument();
+    expect(textarea).toBeDefined();
   });
 
   it('navigates to bookings list on successful retry', async () => {

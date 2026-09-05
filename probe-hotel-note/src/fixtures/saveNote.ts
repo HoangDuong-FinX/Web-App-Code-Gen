@@ -6,8 +6,8 @@ interface SaveNoteResult {
 let saveNoteOutcome: 'success' | 'failure' = 'success';
 
 export async function saveNote(
-  bookingId: string,
-  noteText: string
+  _bookingId: string,
+  _noteText: string,
 ): Promise<SaveNoteResult> {
   return new Promise((resolve) => {
     setTimeout(() => {

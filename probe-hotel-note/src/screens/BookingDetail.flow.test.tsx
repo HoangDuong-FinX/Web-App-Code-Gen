@@ -1,8 +1,9 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, it, expect, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import { BookingDetail } from './BookingDetail';
 import * as saveNoteFixture from '../fixtures/saveNote';
-import { Booking } from '../types';
+import type { Booking } from '../types';
 
 afterEach(() => {
   cleanup();
@@ -37,8 +38,8 @@ describe('BookingDetail Flow', () => {
       />
     );
 
-    expect(screen.getByText('Grand Hotel Hanoi')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('High floor preferred')).toBeInTheDocument();
+    expect(screen.getByText('Grand Hotel Hanoi')).toBeDefined();
+    expect(screen.getByDisplayValue('High floor preferred')).toBeDefined();
   });
 
   it('navigates to bookings list on successful save', async () => {

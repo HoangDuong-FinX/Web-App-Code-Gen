@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, it, expect, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import { BookingsList } from './BookingsList';
 import * as bookingsFixture from '../fixtures/bookings';
 
@@ -14,14 +15,14 @@ describe('BookingsList Flow', () => {
     const onSelectBooking = vi.fn();
     render(<BookingsList onSelectBooking={onSelectBooking} />);
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getByText('Loading...')).toBeDefined();
 
     await vi.waitFor(() => {
-      expect(screen.getByText('Grand Hotel Hanoi')).toBeInTheDocument();
+      expect(screen.getByText('Grand Hotel Hanoi')).toBeDefined();
     });
 
-    expect(screen.getByText('Beachfront Resort')).toBeInTheDocument();
-    expect(screen.getByText('City Center Inn')).toBeInTheDocument();
+    expect(screen.getByText('Beachfront Resort')).toBeDefined();
+    expect(screen.getByText('City Center Inn')).toBeDefined();
   });
 
   it('navigates to booking detail when a booking is selected', async () => {
@@ -29,7 +30,7 @@ describe('BookingsList Flow', () => {
     render(<BookingsList onSelectBooking={onSelectBooking} />);
 
     await vi.waitFor(() => {
-      expect(screen.getByText('Grand Hotel Hanoi')).toBeInTheDocument();
+      expect(screen.getByText('Grand Hotel Hanoi')).toBeDefined();
     });
 
     const bookingButton = screen.getAllByRole('button')[0];
@@ -44,9 +45,10 @@ describe('BookingsList Flow', () => {
     render(<BookingsList onSelectBooking={onSelectBooking} />);
 
     await vi.waitFor(() => {
-      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+      const loading = screen.queryByText('Loading...');
+      expect(!loading).toBe(true);
     });
 
-    expect(screen.getByText('No bookings yet')).toBeInTheDocument();
+    expect(screen.getByText('No bookings yet')).toBeDefined();
   });
 });
