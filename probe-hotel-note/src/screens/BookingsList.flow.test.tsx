@@ -1,6 +1,5 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, it, expect, vi } from 'vitest';
-import '@testing-library/jest-dom';
 import { BookingsList } from './BookingsList';
 import * as bookingsFixture from '../fixtures/bookings';
 
