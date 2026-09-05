@@ -1,0 +1,41 @@
+.bookings-list-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  max-width: 100%;
+}
+
+.bookings-list-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.bookings-list-loading,
+.bookings-list-error,
+.bookings-list-empty {
+  padding: var(--spacing-lg);
+  text-align: center;
+  font-size: var(--font-size-base);
+  color: var(--color-text-light);
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+}
+
+.bookings-list-error {
+  background-color: #ffebee;
+  color: var(--color-error);
+}
+
+.bookings-list-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 390px) {
+  .bookings-list-screen {
+    padding: var(--spacing-md);
+  }
+}

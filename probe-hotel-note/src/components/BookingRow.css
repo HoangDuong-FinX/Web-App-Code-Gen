@@ -1,0 +1,46 @@
+.booking-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.booking-row:hover {
+  background-color: #efefef;
+  border-color: var(--color-primary);
+}
+
+.booking-row:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.booking-row-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  flex: 1;
+}
+
+.booking-row .badge {
+  flex-shrink: 0;
+}
+
+@media (max-width: 390px) {
+  .booking-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .booking-row-content {
+    width: 100%;
+  }
+}
