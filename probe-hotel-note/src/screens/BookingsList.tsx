@@ -2,7 +2,7 @@ import React from 'react';
 import { Text } from '../components/Text';
 import { Card } from '../components/Card';
 import { t } from '../i18n';
-import { Booking } from '../fixtures/bookings';
+import type { Booking } from '../fixtures/bookings';
 
 interface BookingsListProps {
   bookings: Booking[];

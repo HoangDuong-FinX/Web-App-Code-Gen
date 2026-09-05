@@ -4,7 +4,7 @@ import { TextInput } from '../components/TextInput';
 import { Button } from '../components/Button';
 import { Alert } from '../components/Alert';
 import { t } from '../i18n';
-import { Booking } from '../fixtures/bookings';
+import type { Booking } from '../fixtures/bookings';
 
 interface BookingDetailSaveFailedProps {
   booking: Booking;

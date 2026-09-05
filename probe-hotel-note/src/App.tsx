@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { BookingsList } from './screens/BookingsList';
 import { BookingDetail } from './screens/BookingDetail';
 import { BookingDetailSaveFailed } from './screens/BookingDetailSaveFailed';
-import { bookingsFixture, Booking } from './fixtures/bookings';
+import { bookingsFixture } from './fixtures/bookings';
 
 type ScreenId = 'bookings-list' | 'booking-detail' | 'booking-detail-save-failed';
 
@@ -33,26 +33,10 @@ function App() {
     }));
   }, []);
 
-  const navigateToList = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      currentScreen: 'bookings-list',
-      selectedBookingId: null,
-      noteText: '',
-    }));
-  }, []);
-
   const navigateToSaveFailed = useCallback(() => {
     setState((prev) => ({
       ...prev,
       currentScreen: 'booking-detail-save-failed',
-    }));
-  }, []);
-
-  const navigateBackToDetail = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      currentScreen: 'booking-detail',
     }));
   }, []);
 

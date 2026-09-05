@@ -3,7 +3,7 @@ import { Text } from '../components/Text';
 import { TextInput } from '../components/TextInput';
 import { Button } from '../components/Button';
 import { t } from '../i18n';
-import { Booking } from '../fixtures/bookings';
+import type { Booking } from '../fixtures/bookings';
 
 interface BookingDetailProps {
   booking: Booking;
