@@ -18,7 +18,7 @@ const translations = {
 export type TranslationKey = keyof typeof translations;
 
 export function t(key: TranslationKey, vars?: Record<string, string | number>): string {
-  let result = translations[key];
+  let result: string = translations[key];
   if (vars) {
     Object.entries(vars).forEach(([k, v]) => {
       result = result.replace(`{{ ${k} }}`, String(v));

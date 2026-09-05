@@ -28,9 +28,9 @@ describe('BookingsList Flow', () => {
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
-    const textarea = screen.getByRole('textbox', { name: /Note input/ });
+    const textarea = screen.getByRole('textbox', { name: /Note input/ }) as HTMLTextAreaElement;
     fireEvent.change(textarea, { target: { value: 'Great stay!' } });
-    expect(textarea).toHaveValue('Great stay!');
+    expect(textarea.value).toBe('Great stay!');
   });
 
   it('saves note successfully and returns to detail screen', async () => {
@@ -39,7 +39,7 @@ describe('BookingsList Flow', () => {
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
-    const textarea = screen.getByRole('textbox', { name: /Note input/ });
+    const textarea = screen.getByRole('textbox', { name: /Note input/ }) as HTMLTextAreaElement;
     fireEvent.change(textarea, { target: { value: 'Great stay!' } });
     
     const saveButton = screen.getByRole('button', { name: /Save Note/ });
@@ -58,7 +58,7 @@ describe('BookingsList Flow', () => {
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
-    const textarea = screen.getByRole('textbox', { name: /Note input/ });
+    const textarea = screen.getByRole('textbox', { name: /Note input/ }) as HTMLTextAreaElement;
     fireEvent.change(textarea, { target: { value: 'Great stay!' } });
     
     const saveButton = screen.getByRole('button', { name: /Save Note/ });
@@ -77,7 +77,7 @@ describe('BookingsList Flow', () => {
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
-    const textarea = screen.getByRole('textbox', { name: /Note input/ });
+    const textarea = screen.getByRole('textbox', { name: /Note input/ }) as HTMLTextAreaElement;
     fireEvent.change(textarea, { target: { value: 'Great stay!' } });
     
     const saveButton = screen.getByRole('button', { name: /Save Note/ });

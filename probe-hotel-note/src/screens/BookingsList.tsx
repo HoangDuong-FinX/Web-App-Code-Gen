@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Booking, loadBookings } from '../fixtures/bookings';
+import type { Booking } from '../fixtures/bookings';
+import { loadBookings } from '../fixtures/bookings';
 import { Text } from '../components/Text';
 import { ListItem } from '../components/ListItem';
 import { t } from '../i18n';

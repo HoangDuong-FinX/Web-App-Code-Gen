@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BookingsList } from './screens/BookingsList';
 import { BookingDetail } from './screens/BookingDetail';
 import { BookingDetailSaveFailed } from './screens/BookingDetailSaveFailed';

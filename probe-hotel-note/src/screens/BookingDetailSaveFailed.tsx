@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Booking, bookingsFixture } from '../fixtures/bookings';
+import type { Booking } from '../fixtures/bookings';
+import { bookingsFixture } from '../fixtures/bookings';
 import { saveNote } from '../fixtures/saveNote';
 import { Text } from '../components/Text';
 import { Button } from '../components/Button';
