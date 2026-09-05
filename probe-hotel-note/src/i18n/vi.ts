@@ -43,7 +43,7 @@ const translations: Record<TranslationKey, string> = {
 
 function interpolate(template: string, params?: TranslationParams): string {
   if (!params) return template;
-  return template.replace(/\{(\w+)\}/g, (_, key) => String(params[key] ?? `{${key}}`);
+  return template.replace(/{(\w+)}/g, (_, key) => String(params[key] ?? '{' + key + '}'));
 }
 
 export function t(key: TranslationKey, params?: TranslationParams): string {
