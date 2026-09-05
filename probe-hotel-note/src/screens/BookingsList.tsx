@@ -1,4 +1,3 @@
-import React from 'react';
 import { loadBookings } from '../fixtures/bookings';
 import Text from '../components/Text';
 import Card from '../components/Card';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import BookingsList from './screens/BookingsList';
 import BookingDetail from './screens/BookingDetail';
 import BookingDetailSaveFailed from './screens/BookingDetailSaveFailed';
@@ -41,7 +41,7 @@ export default function App() {
     }));
   };
 
-  const handleSaveNote = (bookingId: string, noteText: string) => {
+  const handleSaveNote = () => {
     // Trigger save via fixture; on success stay on detail, on failure go to save-failed
     setState(prev => ({
       ...prev,
@@ -50,7 +50,7 @@ export default function App() {
     }));
   };
 
-  const handleRetryNote = (bookingId: string, noteText: string) => {
+  const handleRetryNote = () => {
     // Retry save via fixture; on success go to detail, on failure stay on save-failed
     setState(prev => ({
       ...prev,

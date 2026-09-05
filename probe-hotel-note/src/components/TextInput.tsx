@@ -1,4 +1,4 @@
-import React from 'react';
+import { useRef } from 'react';
 
 interface TextInputProps {
   ariaLabel: string;
@@ -17,9 +17,13 @@ export default function TextInput({
   value,
   onChange,
 }: TextInputProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   if (multiline) {
     return (
       <textarea
+        ref={textareaRef}
         aria-label={ariaLabel}
         placeholder={placeholder}
         maxLength={maxLength}
@@ -40,6 +44,7 @@ export default function TextInput({
 
   return (
     <input
+      ref={inputRef}
       type="text"
       aria-label={ariaLabel}
       placeholder={placeholder}

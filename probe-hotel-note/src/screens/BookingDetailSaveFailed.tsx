@@ -1,4 +1,3 @@
-import React from 'react';
 import { loadBookingDetail } from '../fixtures/bookings';
 import Text from '../components/Text';
 import TextInput from '../components/TextInput';
@@ -10,7 +9,7 @@ interface BookingDetailSaveFailedProps {
   bookingId: string;
   noteText: string;
   onUpdateNoteText: (text: string) => void;
-  onRetryNote: (bookingId: string, noteText: string) => void;
+  onRetryNote: () => void;
   errorMessage?: string | null;
 }
 
@@ -60,7 +59,7 @@ export default function BookingDetailSaveFailed({
       <Button
         variant="primary"
         ariaLabel={i18n['screen.booking_detail_save_failed.retry_button_aria']}
-        onClick={() => onRetryNote(bookingId, noteText)}
+        onClick={onRetryNote}
       >
         {i18n['screen.booking_detail_save_failed.retry_button']}
       </Button>

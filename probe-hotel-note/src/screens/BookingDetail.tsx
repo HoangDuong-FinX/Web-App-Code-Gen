@@ -1,4 +1,3 @@
-import React from 'react';
 import { loadBookingDetail } from '../fixtures/bookings';
 import Text from '../components/Text';
 import TextInput from '../components/TextInput';
@@ -9,7 +8,7 @@ interface BookingDetailProps {
   bookingId: string;
   noteText: string;
   onUpdateNoteText: (text: string) => void;
-  onSaveNote: (bookingId: string, noteText: string) => void;
+  onSaveNote: () => void;
 }
 
 export default function BookingDetail({
@@ -53,7 +52,7 @@ export default function BookingDetail({
       <Button
         variant="primary"
         ariaLabel={i18n['screen.booking_detail.save_button_aria']}
-        onClick={() => onSaveNote(bookingId, noteText)}
+        onClick={onSaveNote}
       >
         {i18n['screen.booking_detail.save_button']}
       </Button>
