@@ -10,10 +10,10 @@ afterEach(() => {
 describe('Hotel Note App - Navigation Flow', () => {
   it('renders bookings list on app load', () => {
     render(<App />);
-    expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
-    expect(screen.getByText('Grand Plaza Hotel')).toBeInTheDocument();
-    expect(screen.getByText('Seaside Resort')).toBeInTheDocument();
-    expect(screen.getByText('Mountain Lodge')).toBeInTheDocument();
+    expect(screen.getByText('My Hotel Bookings')).toBeTruthy();
+    expect(screen.getByText('Grand Plaza Hotel')).toBeTruthy();
+    expect(screen.getByText('Seaside Resort')).toBeTruthy();
+    expect(screen.getByText('Mountain Lodge')).toBeTruthy();
   });
 
   it('navigates to booking detail when a booking card is clicked', () => {
@@ -22,9 +22,9 @@ describe('Hotel Note App - Navigation Flow', () => {
     if (grandPlazaCard) {
       fireEvent.click(grandPlazaCard);
     }
-    expect(screen.getByText('Booking Details')).toBeInTheDocument();
-    expect(screen.getByText('Grand Plaza Hotel')).toBeInTheDocument();
-    expect(screen.getByText('Suite 2501 (2 beds, 1 bath)')).toBeInTheDocument();
+    expect(screen.getByText('Booking Details')).toBeTruthy();
+    expect(screen.getByText('Grand Plaza Hotel')).toBeTruthy();
+    expect(screen.getByText('Suite 2501 (2 beds, 1 bath)')).toBeTruthy();
   });
 
   it('allows entering note text with 200 character limit', () => {
@@ -37,7 +37,7 @@ describe('Hotel Note App - Navigation Flow', () => {
     const noteInput = screen.getByRole('textbox', { name: /Add or edit booking note/i }) as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'This is a test note' } });
     expect(noteInput.value).toBe('This is a test note');
-    expect(screen.getByText('19 / 200')).toBeInTheDocument();
+    expect(screen.getByText('19 / 200')).toBeTruthy();
   });
 
   it('enforces 200 character limit on note input', () => {
@@ -66,8 +66,8 @@ describe('Hotel Note App - Navigation Flow', () => {
     const saveButton = screen.getByRole('button', { name: /Save note for this booking/i });
     fireEvent.click(saveButton);
     
-    expect(screen.getByRole('alert', { name: /Save failed/i })).toBeInTheDocument();
-    expect(screen.getByText(/Failed to save note/)).toBeInTheDocument();
+    expect(screen.getByRole('alert', { name: /Save failed/i })).toBeTruthy();
+    expect(screen.getByText(/Failed to save note/)).toBeTruthy();
   });
 
   it('shows retry button on save-failed screen', () => {
@@ -81,7 +81,7 @@ describe('Hotel Note App - Navigation Flow', () => {
     fireEvent.click(saveButton);
     
     const retryButton = screen.getByRole('button', { name: /Retry saving the note/i });
-    expect(retryButton).toBeInTheDocument();
+    expect(retryButton).toBeTruthy();
   });
 
   it('navigates back to booking detail when retry button is clicked', () => {
@@ -97,8 +97,8 @@ describe('Hotel Note App - Navigation Flow', () => {
     const retryButton = screen.getByRole('button', { name: /Retry saving the note/i });
     fireEvent.click(retryButton);
     
-    expect(screen.getByRole('button', { name: /Save note for this booking/i })).toBeInTheDocument();
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Save note for this booking/i })).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeFalsy();
   });
 
   it('retains note text when navigating to save-failed screen', () => {
@@ -143,11 +143,11 @@ describe('Hotel Note App - Navigation Flow', () => {
       fireEvent.click(bookingCard);
     }
     
-    expect(screen.getByText('Seaside Resort')).toBeInTheDocument();
-    expect(screen.getByText('2025-04-10 – 2025-04-14')).toBeInTheDocument();
-    expect(screen.getByText('Miami Beach, FL')).toBeInTheDocument();
-    expect(screen.getByText('Ocean View Room (1 bed, 1 bath)')).toBeInTheDocument();
-    expect(screen.getByText(/SSR-2025-54321/)).toBeInTheDocument();
+    expect(screen.getByText('Seaside Resort')).toBeTruthy();
+    expect(screen.getByText('2025-04-10 – 2025-04-14')).toBeTruthy();
+    expect(screen.getByText('Miami Beach, FL')).toBeTruthy();
+    expect(screen.getByText('Ocean View Room (1 bed, 1 bath)')).toBeTruthy();
+    expect(screen.getByText(/SSR-2025-54321/)).toBeTruthy();
   });
 
   it('keyboard navigates to save button', () => {
