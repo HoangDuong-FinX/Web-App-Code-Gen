@@ -41,7 +41,7 @@ export const loadBookingsFixture = async (): Promise<Booking[]> => {
 
 // Fixture: Save booking note
 // Waiting on: Backend API endpoint for saving a booking note
-export const saveNoteFixture = async (bookingId: string, noteText: string): Promise<{ success: boolean; noteId: string; timestamp: string }> => {
+export const saveNoteFixture = async (bookingId: string, _noteText: string): Promise<{ success: boolean; noteId: string; timestamp: string }> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       // Simulate 80% success rate for demo purposes
