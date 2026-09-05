@@ -1,22 +1,30 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { describe, it, expect, afterEach, vi, beforeEach } from 'vitest';
+import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import App from './App';
 import { setSaveNoteOutcome } from './fixtures/saveNote';
 
 describe('BookingsList Flow', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
   afterEach(() => {
     cleanup();
+    vi.clearAllTimers();
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
-  it('renders bookings list on entry', () => {
+  it('renders bookings list on entry', async () => {
     render(<App />);
+    vi.runAllTimers();
     expect(screen.getByText('My Bookings')).toBeDefined();
     expect(screen.getByText('Grand Hotel Vienna')).toBeDefined();
   });
 
   it('navigates to booking detail when booking is tapped', async () => {
     render(<App />);
+    vi.runAllTimers();
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     // After navigation, detail screen should show
@@ -25,6 +33,7 @@ describe('BookingsList Flow', () => {
 
   it('allows user to type a note on booking detail', async () => {
     render(<App />);
+    vi.runAllTimers();
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
@@ -36,6 +45,7 @@ describe('BookingsList Flow', () => {
   it('saves note successfully and returns to detail screen', async () => {
     setSaveNoteOutcome('success');
     render(<App />);
+    vi.runAllTimers();
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
@@ -45,8 +55,8 @@ describe('BookingsList Flow', () => {
     const saveButton = screen.getByRole('button', { name: /Save Note/ });
     fireEvent.click(saveButton);
     
-    // Wait for async save to complete
-    await new Promise(resolve => setTimeout(resolve, 600));
+    // Advance timers to complete async save
+    vi.runAllTimers();
     
     // Should remain on detail screen
     expect(screen.getByText('Add a note')).toBeDefined();
@@ -55,6 +65,7 @@ describe('BookingsList Flow', () => {
   it('shows error screen when save fails', async () => {
     setSaveNoteOutcome('fail');
     render(<App />);
+    vi.runAllTimers();
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
@@ -64,8 +75,8 @@ describe('BookingsList Flow', () => {
     const saveButton = screen.getByRole('button', { name: /Save Note/ });
     fireEvent.click(saveButton);
     
-    // Wait for async save to complete
-    await new Promise(resolve => setTimeout(resolve, 600));
+    // Advance timers to complete async save
+    vi.runAllTimers();
     
     // Should show error message
     expect(screen.getByText('Failed to save note')).toBeDefined();
@@ -74,6 +85,7 @@ describe('BookingsList Flow', () => {
   it('retries save from failed screen', async () => {
     setSaveNoteOutcome('fail');
     render(<App />);
+    vi.runAllTimers();
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
@@ -83,8 +95,8 @@ describe('BookingsList Flow', () => {
     const saveButton = screen.getByRole('button', { name: /Save Note/ });
     fireEvent.click(saveButton);
     
-    // Wait for async save to fail
-    await new Promise(resolve => setTimeout(resolve, 600));
+    // Advance timers to complete async save
+    vi.runAllTimers();
     
     // Change outcome to success
     setSaveNoteOutcome('success');
@@ -93,8 +105,8 @@ describe('BookingsList Flow', () => {
     const retryButton = screen.getByRole('button', { name: /Retry/ });
     fireEvent.click(retryButton);
     
-    // Wait for async retry to complete
-    await new Promise(resolve => setTimeout(resolve, 600));
+    // Advance timers to complete async retry
+    vi.runAllTimers();
     
     // Should return to detail screen
     expect(screen.getByText('Add a note')).toBeDefined();
@@ -102,6 +114,7 @@ describe('BookingsList Flow', () => {
 
   it('navigates back to bookings list from detail', async () => {
     render(<App />);
+    vi.runAllTimers();
     const bookingItem = screen.getByRole('button', { name: /Grand Hotel Vienna/i });
     fireEvent.click(bookingItem);
     
