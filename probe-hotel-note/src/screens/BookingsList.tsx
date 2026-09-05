@@ -29,7 +29,11 @@ export const BookingsList: React.FC<BookingsListProps> = ({ onSelectBooking }) =
       <Text variant="title">{t('my-bookings')}</Text>
       <div className="flex flex-col gap-3 overflow-y-auto max-h-96">
         {bookings.map((booking) => (
-          <ListItem key={booking.id} onTap={() => onSelectBooking(booking.id)}>
+          <ListItem
+            key={booking.id}
+            onTap={() => onSelectBooking(booking.id)}
+            ariaLabel={booking.hotelName}
+          >
             <Text variant="subtitle">{booking.hotelName}</Text>
             <Text variant="body">
               {booking.checkInDate} – {booking.checkOutDate}
