@@ -12,9 +12,9 @@ describe('BookingsList Flow', () => {
   it('renders bookings list on entry', async () => {
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByText('My Bookings')).toBeDefined();
+      expect(screen.getByText('Grand Hotel Vienna')).toBeDefined();
     });
-    expect(screen.getByText('Grand Hotel Vienna')).toBeDefined();
+    expect(screen.getByText('My Bookings')).toBeDefined();
   });
 
   it('navigates to booking detail when booking is tapped', async () => {
