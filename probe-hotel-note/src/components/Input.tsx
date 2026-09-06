@@ -1,12 +1,13 @@
 import React from 'react';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps {
   type: 'text' | 'textarea';
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
   maxLength?: number;
   className?: string;
+  'aria-label'?: string;
 }
 
 const Input: React.FC<InputProps> = ({
