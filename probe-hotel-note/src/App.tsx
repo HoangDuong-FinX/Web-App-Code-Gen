@@ -2,7 +2,6 @@ import { useState } from 'react';
 import BookingsList from './screens/BookingsList';
 import BookingDetail from './screens/BookingDetail';
 import BookingDetailSaveFailed from './screens/BookingDetailSaveFailed';
-import { Booking } from './types';
 import './App.css';
 
 type ScreenId = 'bookings-list' | 'booking-detail' | 'booking-detail-save-failed';

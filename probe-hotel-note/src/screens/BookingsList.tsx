@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { loadBookings } from '../fixtures/bookings';
-import { Booking } from '../types';
+import type { Booking } from '../types';
 import { t } from '../i18n/vi';
 
 interface BookingsListProps {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { loadBookingDetail, saveNote, SaveNoteResult } from '../fixtures/bookings';
-import { Booking } from '../types';
+import { loadBookingDetail, saveNote } from '../fixtures/bookings';
+import type { Booking, SaveNoteResult } from '../types';
 import { t } from '../i18n/vi';
 
 interface BookingDetailSaveFailedProps {
