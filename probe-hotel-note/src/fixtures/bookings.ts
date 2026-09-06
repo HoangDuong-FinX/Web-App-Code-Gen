@@ -45,7 +45,7 @@ export async function loadBookingDetail(bookingId: string) {
   return booking;
 }
 
-export async function saveNote(bookingId: string, noteText: string) {
+export async function saveNote(_bookingId: string, _noteText: string) {
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   if (saveNoteOutcomeOverride === 'fail') {
