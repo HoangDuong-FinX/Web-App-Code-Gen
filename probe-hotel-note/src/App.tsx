@@ -54,31 +54,6 @@ function App() {
     }));
   };
 
-  const handleRetrySuccess = () => {
-    setState((prev) => ({
-      ...prev,
-      currentScreen: 'booking-detail',
-      failedNoteText: '',
-    }));
-  };
-
-  const handleRetryFailed = (noteText: string) => {
-    setState((prev) => ({
-      ...prev,
-      failedNoteText: noteText,
-    }));
-  };
-
-  const handleDiscardChanges = () => {
-    setState((prev) => ({
-      ...prev,
-      currentScreen: 'bookings-list',
-      selectedBookingId: null,
-      selectedBookingData: null,
-      failedNoteText: '',
-    }));
-  };
-
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {state.currentScreen === 'bookings-list' && (
