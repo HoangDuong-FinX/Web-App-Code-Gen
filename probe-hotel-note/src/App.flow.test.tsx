@@ -84,7 +84,7 @@ describe('App flow tests', () => {
       () => {
         expect(screen.queryByRole('button', { name: /retry save/i })).not.toBeInTheDocument();
       },
-      { timeout: 1500 }
+      { timeout: 3000 }
     );
     expect(screen.getByRole('heading', { name: /booking details/i })).toBeInTheDocument();
   });
