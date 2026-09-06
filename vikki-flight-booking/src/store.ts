@@ -25,7 +25,9 @@ interface StoreContextType {
 
 const StoreContext = React.createContext<StoreContextType | null>(null);
 
-export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [currentScreen, setCurrentScreen] = useState('search');
   const [booking, setBooking] = useState<BookingState>(initialBookingState);
 
@@ -51,9 +53,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   return (
-    <StoreContext.Provider value={value}>
-      {children}
-    </StoreContext.Provider>
+    <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
   );
 };
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from './store';
 import { t } from './i18n';
-import { fixtureAirports, fixtureCityPairs, fixtureSearch, fixtureSeatMap } from './fixtures';
-import { SearchCriteria, Airport, CityPair, FlightOffer } from './types';
+import { fixtureAirports, fixtureCityPairs } from './fixtures';
+import { Airport, CityPair } from './types';
 import Search from './screens/Search';
 import Results from './screens/Results';
 import Passengers from './screens/Passengers';
@@ -37,14 +37,14 @@ const App: React.FC = () => {
     loadMasterData();
   }, []);
 
-  const renderScreen = () => {
-    const commonProps = {
-      airports,
-      cityPairs,
-      masterDataError,
-      masterDataLoading,
-    };
+  const commonProps = {
+    airports,
+    cityPairs,
+    masterDataError,
+    masterDataLoading,
+  };
 
+  const renderScreen = () => {
     switch (currentScreen) {
       case 'search':
         return <Search {...commonProps} />;
@@ -69,9 +69,7 @@ const App: React.FC = () => {
 
   return (
     <div className="gg-brand-vikki min-h-screen bg-white">
-      <main className="flex flex-col">
-        {renderScreen()}
-      </main>
+      <main className="flex flex-col">{renderScreen()}</main>
     </div>
   );
 };
