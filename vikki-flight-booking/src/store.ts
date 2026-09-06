@@ -42,8 +42,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setCurrentScreen('search');
   }, []);
 
+  const value: StoreContextType = {
+    currentScreen,
+    booking,
+    navigateTo,
+    updateBooking,
+    resetBooking,
+  };
+
   return (
-    <StoreContext.Provider value={{ currentScreen, booking, navigateTo, updateBooking, resetBooking }}>
+    <StoreContext.Provider value={value}>
       {children}
     </StoreContext.Provider>
   );
