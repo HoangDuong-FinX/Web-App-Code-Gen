@@ -40,7 +40,7 @@ export const i18n = {
 } as const;
 
 export function t(key: keyof typeof i18n.en, params?: Record<string, string | number>): string {
-  const value = i18n.en[key];
+  const value = i18n.en[key] as string;
   if (!value) return key;
   if (!params) return value;
   let result = value;

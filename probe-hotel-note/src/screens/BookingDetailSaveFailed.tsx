@@ -4,7 +4,7 @@ import { Button } from '../ui/Button';
 import { TextArea } from '../ui/TextArea';
 import { Alert } from '../ui/Alert';
 import { t } from '../i18n';
-import { BookingDetail } from '../fixtures/bookingDetail';
+import { type BookingDetail } from '../fixtures/bookingDetail';
 import { saveNote } from '../fixtures/saveNote';
 
 export interface BookingDetailSaveFailedProps {

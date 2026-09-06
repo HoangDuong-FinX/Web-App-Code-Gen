@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text } from '../ui/Text';
 import { Button } from '../ui/Button';
 import { t } from '../i18n';
-import { loadBookingsList, Booking } from '../fixtures/bookings';
+import { loadBookingsList, type Booking } from '../fixtures/bookings';
 
 export interface BookingsListProps {
   onSelectBooking: (bookingId: string) => void;

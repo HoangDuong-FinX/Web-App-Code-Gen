@@ -4,7 +4,7 @@ import { Button } from '../ui/Button';
 import { TextArea } from '../ui/TextArea';
 import { Alert } from '../ui/Alert';
 import { t } from '../i18n';
-import { loadBookingDetail, BookingDetail } from '../fixtures/bookingDetail';
+import { loadBookingDetail, type BookingDetail as BookingDetailData } from '../fixtures/bookingDetail';
 import { saveNote } from '../fixtures/saveNote';
 
 export interface BookingDetailProps {
@@ -20,7 +20,7 @@ export const BookingDetail: React.FC<BookingDetailProps> = ({
   onSaveSuccess,
   onSaveFailed,
 }) => {
-  const [booking, setBooking] = useState<BookingDetail | null>(null);
+  const [booking, setBooking] = useState<BookingDetailData | null>(null);
   const [noteText, setNoteText] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

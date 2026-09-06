@@ -21,6 +21,7 @@ export function resetSaveNoteOutcome() {
 }
 
 export async function saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
+  void request; // Use request to satisfy unused variable check
   return new Promise((resolve, reject) => {
     const timeoutMs = saveNoteOutcome === 'timeout' ? 5100 : 300;
     const timeout = setTimeout(() => {
