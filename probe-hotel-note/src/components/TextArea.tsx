@@ -1,13 +1,8 @@
 import React from 'react';
 
-interface TextAreaProps {
+interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   maxLength?: number;
   placeholder?: string;
-  aria-label?: string;
-  role?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  className?: string;
 }
 
 export function TextArea({
