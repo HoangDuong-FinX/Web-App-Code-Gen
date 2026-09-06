@@ -1,4 +1,11 @@
-import type { Booking } from '../App';
+export interface Booking {
+  bookingId: string;
+  hotelName: string;
+  checkInDate: string;
+  checkOutDate: string;
+  roomType: string;
+  note: string | null;
+}
 
 let bookingsOutcome: 'success' | 'fail' = 'success';
 let bookingDetailOutcome: 'success' | 'fail' = 'success';
