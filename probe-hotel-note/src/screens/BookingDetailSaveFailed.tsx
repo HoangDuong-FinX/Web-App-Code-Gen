@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Booking } from '../types';
+import { useEffect, useState } from 'react';
+import type { Booking } from '../types';
 import { loadBookingDetail, saveNote } from '../fixtures/bookings';
 import { t } from '../i18n/vi';
 
