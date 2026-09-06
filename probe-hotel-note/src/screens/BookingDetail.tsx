@@ -6,7 +6,7 @@ import { t } from '../i18n';
 interface BookingDetailProps {
   booking: Booking;
   onSaveSuccess: () => void;
-  onSaveFailure: () => void;
+  onSaveFailure: (noteText: string) => void;
   onBackToList: () => void;
 }
 
@@ -38,7 +38,7 @@ export const BookingDetail: React.FC<BookingDetailProps> = ({
         onSaveSuccess();
       }, 2000);
     } else {
-      onSaveFailure();
+      onSaveFailure(noteText);
     }
   };
 

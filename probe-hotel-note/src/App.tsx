@@ -37,8 +37,8 @@ export default function App() {
     navigateTo('booking-detail', appState.selectedBooking, '');
   };
 
-  const handleSaveFailure = () => {
-    navigateTo('booking-detail-save-failed', appState.selectedBooking, appState.noteText);
+  const handleSaveFailure = (noteText: string) => {
+    navigateTo('booking-detail-save-failed', appState.selectedBooking, noteText);
   };
 
   const handleRetrySuccess = () => {
