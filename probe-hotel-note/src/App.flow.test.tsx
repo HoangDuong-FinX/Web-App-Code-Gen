@@ -87,8 +87,7 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const textareas = screen.getAllByRole('textbox');
-    const noteInput = textareas[0] as HTMLTextAreaElement;
+    const noteInput = screen.getByRole('textbox') as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'Test note' } });
     
     const saveButtons = screen.getAllByRole('button');
@@ -120,8 +119,7 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const textareas = screen.getAllByRole('textbox');
-    const noteInput = textareas[0] as HTMLTextAreaElement;
+    const noteInput = screen.getByRole('textbox') as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'Test note' } });
     
     const saveButtons = screen.getAllByRole('button');
@@ -156,8 +154,7 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const textareas = screen.getAllByRole('textbox');
-    const noteInput = textareas[0] as HTMLTextAreaElement;
+    const noteInput = screen.getByRole('textbox') as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'Test note' } });
     
     const saveButtons = screen.getAllByRole('button');
@@ -201,8 +198,7 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const textareas = screen.getAllByRole('textbox');
-    const noteInput = textareas[0] as HTMLTextAreaElement;
+    const noteInput = screen.getByRole('textbox') as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'Test note' } });
     
     const saveButtons = screen.getAllByRole('button');

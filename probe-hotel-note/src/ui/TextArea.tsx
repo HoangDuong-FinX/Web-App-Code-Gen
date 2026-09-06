@@ -24,7 +24,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
       onChange={(e) => onChange?.(e.target.value)}
       placeholder={placeholder}
       maxLength={maxLength}
-      role={role}
+      role={role || 'textbox'}
       aria-label={ariaLabel}
       rows={4}
     />
