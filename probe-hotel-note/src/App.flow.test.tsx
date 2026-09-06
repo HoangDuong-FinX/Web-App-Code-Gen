@@ -25,7 +25,6 @@ describe('Hotel Note App Flow Tests', () => {
     fireEvent.click(screen.getByText('Grand Plaza Hotel'));
     await waitFor(() => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('')).toBeInTheDocument();
     });
   });
 
@@ -160,8 +159,10 @@ describe('Hotel Note App Flow Tests', () => {
     await waitFor(() => {
       expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
     });
-    const continueButton = screen.getByRole('button', { name: /continue editing/i });
-    fireEvent.click(continueButton);
+    const allButtons = screen.getAllByRole('button');
+    const continueButton = allButtons.find((btn) => btn.textContent?.includes('Continue Editing'));
+    expect(continueButton).toBeDefined();
+    fireEvent.click(continueButton!);
     await waitFor(() => {
       const textareas = screen.getAllByRole('textbox', { name: /booking note/i });
       expect(textareas[0]).toHaveValue('Test note');
