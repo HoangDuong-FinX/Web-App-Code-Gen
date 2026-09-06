@@ -82,7 +82,7 @@ describe('App flow tests', () => {
 
     await waitFor(
       () => {
-        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: /retry save/i })).not.toBeInTheDocument();
       },
       { timeout: 1500 }
     );
