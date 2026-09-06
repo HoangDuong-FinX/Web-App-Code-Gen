@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Booking, useLoadBookings } from './fixtures';
+import { useState } from 'react';
+import type { Booking } from './fixtures';
+import { useLoadBookings } from './fixtures';
 import { BookingList } from './screens/BookingList';
 import { BookingDetail } from './screens/BookingDetail';
 import { BookingDetailSaveFailed } from './screens/BookingDetailSaveFailed';
@@ -8,7 +9,7 @@ type ScreenId = 'booking-list' | 'booking-detail' | 'booking-detail-save-failed'
 
 interface AppState {
   currentScreen: ScreenId;
-  selectedBooking: Booking | null;
+  selectedBooking: Booking | undefined;
   noteText: string;
 }
 
@@ -16,14 +17,14 @@ export default function App() {
   const { bookings } = useLoadBookings();
   const [appState, setAppState] = useState<AppState>({
     currentScreen: 'booking-list',
-    selectedBooking: null,
+    selectedBooking: undefined,
     noteText: '',
   });
 
   const navigateTo = (screen: ScreenId, booking?: Booking, noteText?: string) => {
     setAppState({
       currentScreen: screen,
-      selectedBooking: booking || null,
+      selectedBooking: booking,
       noteText: noteText ?? '',
     });
   };
@@ -49,7 +50,7 @@ export default function App() {
   };
 
   const handleBackToList = () => {
-    navigateTo('booking-list', null, '');
+    navigateTo('booking-list', undefined, '');
   };
 
   return (

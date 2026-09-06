@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 export interface Booking {
   id: string;
   hotelName: string;
@@ -43,13 +41,12 @@ export function setSaveNoteOutcome(outcome: 'success' | 'fail'): void {
 }
 
 export function useLoadBookings(): { bookings: Booking[]; loading: boolean } {
-  const [bookings] = useState<Booking[]>(FIXTURE_BOOKINGS);
-  return { bookings, loading: false };
+  return { bookings: FIXTURE_BOOKINGS, loading: false };
 }
 
 export async function saveNote(
-  bookingId: string,
-  noteText: string
+  _bookingId: string,
+  _noteText: string
 ): Promise<{ success: boolean; message: string }> {
   // Simulate async operation
   return new Promise((resolve) => {

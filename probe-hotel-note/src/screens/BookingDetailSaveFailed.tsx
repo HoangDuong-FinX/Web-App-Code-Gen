@@ -1,5 +1,6 @@
 import React from 'react';
-import { Booking, saveNote } from '../fixtures';
+import type { Booking } from '../fixtures';
+import { saveNote } from '../fixtures';
 import { t } from '../i18n';
 
 interface BookingDetailSaveFailedProps {

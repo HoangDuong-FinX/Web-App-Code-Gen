@@ -1,5 +1,5 @@
 import React from 'react';
-import { Booking } from '../fixtures';
+import type { Booking } from '../fixtures';
 import { t } from '../i18n';
 
 interface BookingListProps {

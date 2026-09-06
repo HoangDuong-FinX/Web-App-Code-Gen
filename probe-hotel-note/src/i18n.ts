@@ -23,11 +23,13 @@ export const translations = {
 export type TranslationKey = keyof typeof translations;
 
 export function t(key: TranslationKey, params?: Record<string, string | number>): string {
-  let text = translations[key];
+  const text = translations[key] as string;
   if (params) {
+    let result = text;
     Object.entries(params).forEach(([k, v]) => {
-      text = text.replace(`{${k}}`, String(v));
+      result = result.replace(`{${k}}`, String(v));
     });
+    return result;
   }
   return text;
 }
