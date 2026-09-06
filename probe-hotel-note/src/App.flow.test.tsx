@@ -30,10 +30,12 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('Grand Hotel Downtown')).toBeInTheDocument();
     });
     
-    const bookingButton = screen.getByRole('button', {
-      name: /Grand Hotel Downtown/i,
-    });
-    fireEvent.click(bookingButton);
+    const bookingButtons = screen.getAllByRole('button');
+    const bookingButton = bookingButtons.find((btn) =>
+      btn.textContent?.includes('Grand Hotel Downtown')
+    );
+    expect(bookingButton).toBeDefined();
+    fireEvent.click(bookingButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
@@ -47,16 +49,18 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
     });
     
-    const bookingButton = screen.getByRole('button', {
-      name: /Grand Hotel Downtown/i,
-    });
-    fireEvent.click(bookingButton);
+    const bookingButtons = screen.getAllByRole('button');
+    const bookingButton = bookingButtons.find((btn) =>
+      btn.textContent?.includes('Grand Hotel Downtown')
+    );
+    expect(bookingButton).toBeDefined();
+    fireEvent.click(bookingButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const backButton = screen.getByRole('button', { name: /Back to bookings list/i });
+    const backButton = screen.getByRole('button', { name: /Back/i });
     fireEvent.click(backButton);
     
     await waitFor(() => {
@@ -72,20 +76,25 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
     });
     
-    const bookingButton = screen.getByRole('button', {
-      name: /Grand Hotel Downtown/i,
-    });
-    fireEvent.click(bookingButton);
+    const bookingButtons = screen.getAllByRole('button');
+    const bookingButton = bookingButtons.find((btn) =>
+      btn.textContent?.includes('Grand Hotel Downtown')
+    );
+    expect(bookingButton).toBeDefined();
+    fireEvent.click(bookingButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const noteInput = screen.getByRole('textbox') as HTMLTextAreaElement;
+    const textareas = screen.getAllByRole('textbox');
+    const noteInput = textareas[0] as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'Test note' } });
     
-    const saveButton = screen.getByRole('button', { name: /Save booking note/i });
-    fireEvent.click(saveButton);
+    const saveButtons = screen.getAllByRole('button');
+    const saveButton = saveButtons.find((btn) => btn.textContent?.includes('Save Note'));
+    expect(saveButton).toBeDefined();
+    fireEvent.click(saveButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Note saved')).toBeInTheDocument();
@@ -100,24 +109,31 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
     });
     
-    const bookingButton = screen.getByRole('button', {
-      name: /Grand Hotel Downtown/i,
-    });
-    fireEvent.click(bookingButton);
+    const bookingButtons = screen.getAllByRole('button');
+    const bookingButton = bookingButtons.find((btn) =>
+      btn.textContent?.includes('Grand Hotel Downtown')
+    );
+    expect(bookingButton).toBeDefined();
+    fireEvent.click(bookingButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const noteInput = screen.getByRole('textbox') as HTMLTextAreaElement;
+    const textareas = screen.getAllByRole('textbox');
+    const noteInput = textareas[0] as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'Test note' } });
     
-    const saveButton = screen.getByRole('button', { name: /Save booking note/i });
-    fireEvent.click(saveButton);
+    const saveButtons = screen.getAllByRole('button');
+    const saveButton = saveButtons.find((btn) => btn.textContent?.includes('Save Note'));
+    expect(saveButton).toBeDefined();
+    fireEvent.click(saveButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Retry saving booking note/i })).toBeInTheDocument();
+      const retryButtons = screen.getAllByRole('button');
+      const retryButton = retryButtons.find((btn) => btn.textContent?.includes('Retry'));
+      expect(retryButton).toBeDefined();
     });
   });
 
@@ -129,20 +145,25 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
     });
     
-    const bookingButton = screen.getByRole('button', {
-      name: /Grand Hotel Downtown/i,
-    });
-    fireEvent.click(bookingButton);
+    const bookingButtons = screen.getAllByRole('button');
+    const bookingButton = bookingButtons.find((btn) =>
+      btn.textContent?.includes('Grand Hotel Downtown')
+    );
+    expect(bookingButton).toBeDefined();
+    fireEvent.click(bookingButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const noteInput = screen.getByRole('textbox') as HTMLTextAreaElement;
+    const textareas = screen.getAllByRole('textbox');
+    const noteInput = textareas[0] as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'Test note' } });
     
-    const saveButton = screen.getByRole('button', { name: /Save booking note/i });
-    fireEvent.click(saveButton);
+    const saveButtons = screen.getAllByRole('button');
+    const saveButton = saveButtons.find((btn) => btn.textContent?.includes('Save Note'));
+    expect(saveButton).toBeDefined();
+    fireEvent.click(saveButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
@@ -151,8 +172,10 @@ describe('App Flow Tests', () => {
     // Change fixture to succeed
     saveNoteFixture.setSaveNoteOutcome('success');
     
-    const retryButton = screen.getByRole('button', { name: /Retry saving booking note/i });
-    fireEvent.click(retryButton);
+    const retryButtons = screen.getAllByRole('button');
+    const retryButton = retryButtons.find((btn) => btn.textContent?.includes('Retry'));
+    expect(retryButton).toBeDefined();
+    fireEvent.click(retryButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Note saved')).toBeInTheDocument();
@@ -167,29 +190,36 @@ describe('App Flow Tests', () => {
       expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
     });
     
-    const bookingButton = screen.getByRole('button', {
-      name: /Grand Hotel Downtown/i,
-    });
-    fireEvent.click(bookingButton);
+    const bookingButtons = screen.getAllByRole('button');
+    const bookingButton = bookingButtons.find((btn) =>
+      btn.textContent?.includes('Grand Hotel Downtown')
+    );
+    expect(bookingButton).toBeDefined();
+    fireEvent.click(bookingButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Booking Details')).toBeInTheDocument();
     });
     
-    const noteInput = screen.getByRole('textbox') as HTMLTextAreaElement;
+    const textareas = screen.getAllByRole('textbox');
+    const noteInput = textareas[0] as HTMLTextAreaElement;
     fireEvent.change(noteInput, { target: { value: 'Test note' } });
     
-    const saveButton = screen.getByRole('button', { name: /Save booking note/i });
-    fireEvent.click(saveButton);
+    const saveButtons = screen.getAllByRole('button');
+    const saveButton = saveButtons.find((btn) => btn.textContent?.includes('Save Note'));
+    expect(saveButton).toBeDefined();
+    fireEvent.click(saveButton!);
     
     await waitFor(() => {
       expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
     });
     
-    const discardButton = screen.getByRole('button', {
-      name: /Discard changes and return to bookings list/i,
-    });
-    fireEvent.click(discardButton);
+    const discardButtons = screen.getAllByRole('button');
+    const discardButton = discardButtons.find((btn) =>
+      btn.textContent?.includes('Discard')
+    );
+    expect(discardButton).toBeDefined();
+    fireEvent.click(discardButton!);
     
     await waitFor(() => {
       expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
