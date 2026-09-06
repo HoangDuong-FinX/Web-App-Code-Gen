@@ -1,8 +1,109 @@
-export default function App() {
+import React, { useState } from 'react';
+import { BookingsList } from './screens/BookingsList';
+import { BookingDetail } from './screens/BookingDetail';
+import { BookingDetailSaveFailed } from './screens/BookingDetailSaveFailed';
+import { BookingDetail as BookingDetailData } from './fixtures/bookingDetail';
+
+type ScreenId = 'bookings-list' | 'booking-detail' | 'booking-detail-save-failed';
+
+interface AppState {
+  currentScreen: ScreenId;
+  selectedBookingId: string | null;
+  selectedBookingData: BookingDetailData | null;
+  failedNoteText: string;
+}
+
+function App() {
+  const [state, setState] = useState<AppState>({
+    currentScreen: 'bookings-list',
+    selectedBookingId: null,
+    selectedBookingData: null,
+    failedNoteText: '',
+  });
+
+  // Navigation handlers
+  const handleSelectBooking = (bookingId: string) => {
+    setState((prev) => ({
+      ...prev,
+      currentScreen: 'booking-detail',
+      selectedBookingId: bookingId,
+    }));
+  };
+
+  const handleBackToList = () => {
+    setState((prev) => ({
+      ...prev,
+      currentScreen: 'bookings-list',
+      selectedBookingId: null,
+      selectedBookingData: null,
+      failedNoteText: '',
+    }));
+  };
+
+  const handleSaveSuccess = () => {
+    setState((prev) => ({
+      ...prev,
+      failedNoteText: '',
+    }));
+  };
+
+  const handleSaveFailed = (noteText: string) => {
+    setState((prev) => ({
+      ...prev,
+      currentScreen: 'booking-detail-save-failed',
+      failedNoteText: noteText,
+    }));
+  };
+
+  const handleRetrySuccess = () => {
+    setState((prev) => ({
+      ...prev,
+      currentScreen: 'booking-detail',
+      failedNoteText: '',
+    }));
+  };
+
+  const handleRetryFailed = (noteText: string) => {
+    setState((prev) => ({
+      ...prev,
+      failedNoteText: noteText,
+    }));
+  };
+
+  const handleDiscardChanges = () => {
+    setState((prev) => ({
+      ...prev,
+      currentScreen: 'bookings-list',
+      selectedBookingId: null,
+      selectedBookingData: null,
+      failedNoteText: '',
+    }));
+  };
+
   return (
-    <main>
-      <h1>Hotel Note App</h1>
-      <p>Scaffold only - generated screens replace this file.</p>
-    </main>
+    <div className="min-h-screen bg-white text-gray-900">
+      {state.currentScreen === 'bookings-list' && (
+        <BookingsList onSelectBooking={handleSelectBooking} />
+      )}
+      {state.currentScreen === 'booking-detail' && state.selectedBookingId && (
+        <BookingDetail
+          bookingId={state.selectedBookingId}
+          onBack={handleBackToList}
+          onSaveSuccess={handleSaveSuccess}
+          onSaveFailed={handleSaveFailed}
+        />
+      )}
+      {state.currentScreen === 'booking-detail-save-failed' && state.selectedBookingId && (
+        <BookingDetail
+          key={`booking-detail-${state.selectedBookingId}`}
+          bookingId={state.selectedBookingId}
+          onBack={handleBackToList}
+          onSaveSuccess={handleSaveSuccess}
+          onSaveFailed={handleSaveFailed}
+        />
+      )}
+    </div>
   );
 }
+
+export default App;
