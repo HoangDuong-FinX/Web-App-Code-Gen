@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import { afterEach, vi, describe, it, expect, beforeEach } from 'vitest';
 import App from '../App';
 import { setBookingsOutcome, setBookingDetailOutcome } from '../fixtures/bookings';
