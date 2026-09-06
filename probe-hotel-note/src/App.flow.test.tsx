@@ -53,7 +53,6 @@ describe('Hotel Note App - Flow Tests', () => {
     const saveButton = screen.getByRole('button', { name: /Save Note/i });
     fireEvent.click(saveButton);
 
-    // After successful save, should show confirmation and remain on detail screen
     await new Promise((resolve) => setTimeout(resolve, 600));
     expect(screen.getByText(/Note saved/i)).toBeInTheDocument();
   });
@@ -95,13 +94,11 @@ describe('Hotel Note App - Flow Tests', () => {
     await new Promise((resolve) => setTimeout(resolve, 600));
     expect(screen.getByRole('button', { name: /Retry/i })).toBeInTheDocument();
 
-    // Now switch to success and retry
     setSaveNoteOutcome('success');
     const retryButton = screen.getByRole('button', { name: /Retry/i });
     fireEvent.click(retryButton);
 
     await new Promise((resolve) => setTimeout(resolve, 600));
-    // Should be back on booking-detail (success state)
     expect(screen.getByText(/Booking Details/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Retry/i })).not.toBeInTheDocument();
   });
@@ -140,7 +137,6 @@ describe('Hotel Note App - Flow Tests', () => {
     const longText = 'a'.repeat(250);
     fireEvent.change(textarea, { target: { value: longText } });
 
-    // Should be truncated to 200
     expect(textarea).toHaveValue('a'.repeat(200));
   });
 });

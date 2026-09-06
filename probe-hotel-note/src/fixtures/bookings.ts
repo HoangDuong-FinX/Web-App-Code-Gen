@@ -65,8 +65,8 @@ export function loadBookingDetail(bookingId: string): Booking {
 
 // Fixture: save note with deterministic outcome
 export async function saveNote(
-  bookingId: string,
-  noteText: string
+  _bookingId: string,
+  _noteText: string
 ): Promise<SaveNoteResult> {
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 500));
