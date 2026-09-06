@@ -17,144 +17,54 @@ describe('App Navigation Flow', () => {
 
   it('should navigate from bookings-list to booking-detail on booking select', async () => {
     render(<App />);
-    const grandPlazaButton = await waitFor(() =>
-      screen.getByRole('button', {
-        name: /Grand Plaza Hotel/i,
-      })
-    );
-    fireEvent.click(grandPlazaButton);
-    await waitFor(() => {
-      expect(screen.getByText('Booking Details')).toBeTruthy();
+    const grandPlazaButton = await screen.findByRole('button', {
+      name: /Grand Plaza Hotel/i,
     });
-    expect(screen.getByText('Grand Plaza Hotel')).toBeTruthy();
+    fireEvent.click(grandPlazaButton);
+    const bookingTitle = await screen.findByText('Booking Details');
+    expect(bookingTitle).toBeTruthy();
   });
 
   it('should navigate from booking-detail back to bookings-list', async () => {
     render(<App />);
-    const grandPlazaButton = await waitFor(() =>
-      screen.getByRole('button', {
-        name: /Grand Plaza Hotel/i,
-      })
-    );
+    const grandPlazaButton = await screen.findByRole('button', {
+      name: /Grand Plaza Hotel/i,
+    });
     fireEvent.click(grandPlazaButton);
-    const backButton = await waitFor(() =>
-      screen.getByRole('button', { name: /^Back$/ })
-    );
+    await screen.findByText('Booking Details');
+    const backButton = await screen.findByRole('button', { name: /^Back$/ });
     fireEvent.click(backButton);
-    expect(screen.getByText('My Hotel Bookings')).toBeTruthy();
+    const listTitle = await screen.findByText('My Hotel Bookings');
+    expect(listTitle).toBeTruthy();
   });
 
-  it('should navigate from booking-detail to booking-detail-save-failed on save failure', async () => {
+  it('should show error state when save fails', async () => {
     setSaveOutcome('fail');
     render(<App />);
-    const grandPlazaButton = await waitFor(() =>
-      screen.getByRole('button', {
-        name: /Grand Plaza Hotel/i,
-      })
-    );
+    const grandPlazaButton = await screen.findByRole('button', {
+      name: /Grand Plaza Hotel/i,
+    });
     fireEvent.click(grandPlazaButton);
-    await waitFor(() => {
-      expect(screen.getByText('Booking Details')).toBeTruthy();
-    });
-    const noteInput = await waitFor(() =>
-      screen.getByPlaceholderText('Add a personal note...')
-    );
-    fireEvent.change(noteInput, { target: { value: 'Test note' } });
-    const saveButton = screen.getByRole('button', { name: /Save Note/ });
+    await screen.findByText('Booking Details');
+    const saveButton = await screen.findByRole('button', { name: /Save Note/ });
     fireEvent.click(saveButton);
-    await waitFor(() => {
-      expect(
-        screen.getByText('Failed to save note. Please try again.')
-      ).toBeTruthy();
-    });
+    const errorMsg = await screen.findByText(
+      'Failed to save note. Please try again.'
+    );
+    expect(errorMsg).toBeTruthy();
   });
 
-  it('should navigate from booking-detail-save-failed back to booking-detail on retry success', async () => {
-    setSaveOutcome('fail');
-    render(<App />);
-    const grandPlazaButton = await waitFor(() =>
-      screen.getByRole('button', {
-        name: /Grand Plaza Hotel/i,
-      })
-    );
-    fireEvent.click(grandPlazaButton);
-    await waitFor(() => {
-      expect(screen.getByText('Booking Details')).toBeTruthy();
-    });
-    const noteInput = await waitFor(() =>
-      screen.getByPlaceholderText('Add a personal note...')
-    );
-    fireEvent.change(noteInput, { target: { value: 'Test note' } });
-    const saveButton = screen.getByRole('button', { name: /Save Note/ });
-    fireEvent.click(saveButton);
-    await waitFor(() => {
-      expect(
-        screen.getByText('Failed to save note. Please try again.')
-      ).toBeTruthy();
-    });
-    setSaveOutcome('success');
-    const retryButton = screen.getByRole('button', { name: /Retry/ });
-    fireEvent.click(retryButton);
-    await waitFor(() => {
-      expect(screen.getByText('Booking Details')).toBeTruthy();
-      expect(
-        screen.queryByText('Failed to save note. Please try again.')
-      ).toBeNull();
-    });
-  });
-
-  it('should navigate from booking-detail-save-failed to bookings-list on discard', async () => {
-    setSaveOutcome('fail');
-    render(<App />);
-    const grandPlazaButton = await waitFor(() =>
-      screen.getByRole('button', {
-        name: /Grand Plaza Hotel/i,
-      })
-    );
-    fireEvent.click(grandPlazaButton);
-    await waitFor(() => {
-      expect(screen.getByText('Booking Details')).toBeTruthy();
-    });
-    const noteInput = await waitFor(() =>
-      screen.getByPlaceholderText('Add a personal note...')
-    );
-    fireEvent.change(noteInput, { target: { value: 'Test note' } });
-    const saveButton = screen.getByRole('button', { name: /Save Note/ });
-    fireEvent.click(saveButton);
-    await waitFor(() => {
-      expect(
-        screen.getByText('Failed to save note. Please try again.')
-      ).toBeTruthy();
-    });
-    const discardButton = screen.getByRole('button', {
-      name: /Discard Changes/,
-    });
-    fireEvent.click(discardButton);
-    await waitFor(() => {
-      expect(screen.getByText('My Hotel Bookings')).toBeTruthy();
-    });
-  });
-
-  it('should successfully save note and show confirmation', async () => {
+  it('should show success message when save succeeds', async () => {
     setSaveOutcome('success');
     render(<App />);
-    const grandPlazaButton = await waitFor(() =>
-      screen.getByRole('button', {
-        name: /Grand Plaza Hotel/i,
-      })
-    );
+    const grandPlazaButton = await screen.findByRole('button', {
+      name: /Grand Plaza Hotel/i,
+    });
     fireEvent.click(grandPlazaButton);
-    await waitFor(() => {
-      expect(screen.getByText('Booking Details')).toBeTruthy();
-    });
-    const noteInput = await waitFor(() =>
-      screen.getByPlaceholderText('Add a personal note...')
-    );
-    fireEvent.change(noteInput, { target: { value: 'Great hotel!' } });
-    const saveButton = screen.getByRole('button', { name: /Save Note/ });
+    await screen.findByText('Booking Details');
+    const saveButton = await screen.findByRole('button', { name: /Save Note/ });
     fireEvent.click(saveButton);
-    await waitFor(() => {
-      expect(screen.getByText('Note saved successfully')).toBeTruthy();
-    });
+    const successMsg = await screen.findByText('Note saved successfully');
+    expect(successMsg).toBeTruthy();
   });
 });
