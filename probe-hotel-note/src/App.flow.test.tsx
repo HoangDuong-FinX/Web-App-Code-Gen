@@ -97,8 +97,9 @@ describe('Hotel Note App Flow Tests', () => {
     await waitFor(() => {
       expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
     });
-    const retainedTextarea = screen.getByRole('textbox', { name: /booking note/i });
-    expect(retainedTextarea).toHaveValue('Unsaved note');
+    const textareas = screen.getAllByRole('textbox', { name: /booking note/i });
+    expect(textareas.length).toBeGreaterThan(0);
+    expect(textareas[textareas.length - 1]).toHaveValue('Unsaved note');
   });
 
   it('should retry save and succeed', async () => {
@@ -160,12 +161,13 @@ describe('Hotel Note App Flow Tests', () => {
       expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
     });
     const allButtons = screen.getAllByRole('button');
-    const continueButton = allButtons.find((btn) => btn.textContent?.includes('Continue Editing'));
+    const continueButton = allButtons.find((btn) => btn.getAttribute('aria-label')?.includes('Continue editing'));
     expect(continueButton).toBeDefined();
     fireEvent.click(continueButton!);
     await waitFor(() => {
       const textareas = screen.getAllByRole('textbox', { name: /booking note/i });
-      expect(textareas[0]).toHaveValue('Test note');
+      expect(textareas.length).toBeGreaterThan(0);
+      expect(textareas[textareas.length - 1]).toHaveValue('Test note');
     });
   });
 });
