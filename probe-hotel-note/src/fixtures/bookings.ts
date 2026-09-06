@@ -1,9 +1,5 @@
-// Fixture module for all three bindings: load-bookings, load-booking-detail, save-note
-// All are fixtures with deterministic failure control
+import type { Booking } from '../App';
 
-import { Booking } from '../App';
-
-// Fixture control: set outcome to 'fail' to trigger error paths
 let bookingsOutcome: 'success' | 'fail' = 'success';
 let bookingDetailOutcome: 'success' | 'fail' = 'success';
 let saveNoteOutcome: 'success' | 'fail' = 'success';
@@ -20,7 +16,6 @@ export function setSaveNoteOutcome(outcome: 'success' | 'fail') {
   saveNoteOutcome = outcome;
 }
 
-// Fixture data
 const fixtureBookings: Booking[] = [
   {
     bookingId: 'bk-001',
@@ -75,11 +70,7 @@ const fixtureBookingDetails: Record<string, Booking> = {
   },
 };
 
-// Binding: load-bookings
-// Trigger: screen entry (bookings-list loaded)
-// Returns: array of bookings
 export async function loadBookings(): Promise<Booking[]> {
-  // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 300));
 
   if (bookingsOutcome === 'fail') {
@@ -89,12 +80,7 @@ export async function loadBookings(): Promise<Booking[]> {
   return fixtureBookings;
 }
 
-// Binding: load-booking-detail
-// Trigger: user selects a booking (select-booking action)
-// Sends: bookingId
-// Returns: single booking detail
 export async function loadBookingDetail(bookingId: string): Promise<Booking> {
-  // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 300));
 
   if (bookingDetailOutcome === 'fail') {
@@ -109,19 +95,13 @@ export async function loadBookingDetail(bookingId: string): Promise<Booking> {
   return booking;
 }
 
-// Binding: save-note
-// Trigger: user presses 'Save Note' or 'Retry' button
-// Sends: bookingId, note
-// Returns: success response
 export async function saveNote(bookingId: string, note: string): Promise<{ success: true; bookingId: string; note: string }> {
-  // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   if (saveNoteOutcome === 'fail') {
     throw new Error('Failed to save note');
   }
 
-  // Update fixture data to reflect saved note
   if (fixtureBookingDetails[bookingId]) {
     fixtureBookingDetails[bookingId].note = note;
   }

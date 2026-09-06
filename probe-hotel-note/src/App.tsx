@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BookingsList } from './screens/BookingsList';
 import { BookingDetail } from './screens/BookingDetail';
 import { BookingDetailSaveFailed } from './screens/BookingDetailSaveFailed';
 import { loadBookings, loadBookingDetail } from './fixtures/bookings';
+import type { Booking } from './App';
 
 export interface Booking {
   bookingId: string;

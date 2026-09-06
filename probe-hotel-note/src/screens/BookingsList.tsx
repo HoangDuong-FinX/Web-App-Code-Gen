@@ -1,4 +1,3 @@
-import React from 'react';
 import { Booking } from '../App';
 import { t } from '../i18n/vi';
 
