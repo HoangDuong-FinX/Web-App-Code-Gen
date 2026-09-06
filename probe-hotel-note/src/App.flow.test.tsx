@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import App from './App';
 import { setSaveNoteOutcome } from './fixtures';
 
@@ -80,8 +80,12 @@ describe('App flow tests', () => {
     const retryButton = screen.getByRole('button', { name: /retry save/i });
     fireEvent.click(retryButton);
 
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    await waitFor(
+      () => {
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      },
+      { timeout: 1500 }
+    );
     expect(screen.getByRole('heading', { name: /booking details/i })).toBeInTheDocument();
   });
 
