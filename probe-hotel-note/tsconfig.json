@@ -11,8 +11,7 @@
     "esModuleInterop": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"]
+    "resolveJsonModule": true
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
