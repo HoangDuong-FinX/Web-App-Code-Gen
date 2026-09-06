@@ -160,10 +160,9 @@ describe('Hotel Note App Flow Tests', () => {
     await waitFor(() => {
       expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
     });
-    const allButtons = screen.getAllByRole('button');
-    const continueButton = allButtons.find((btn) => btn.getAttribute('aria-label')?.includes('Continue editing'));
-    expect(continueButton).toBeDefined();
-    fireEvent.click(continueButton!);
+    const continueButton = screen.getByText('Continue Editing');
+    expect(continueButton).toBeInTheDocument();
+    fireEvent.click(continueButton);
     await waitFor(() => {
       const textareas = screen.getAllByRole('textbox', { name: /booking note/i });
       expect(textareas.length).toBeGreaterThan(0);
