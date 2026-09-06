@@ -1,13 +1,9 @@
 import { describe, it, expect, afterEach, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
-import { expect as expectMatchers } from '@testing-library/jest-dom';
 import App from './App';
 import * as bookingsFixture from './fixtures/bookings';
 import * as bookingDetailFixture from './fixtures/bookingDetail';
 import * as saveNoteFixture from './fixtures/saveNote';
-
-// Extend vitest matchers with jest-dom matchers
-vi.extend(expectMatchers);
 
 describe('App Flow Tests', () => {
   beforeEach(() => {
