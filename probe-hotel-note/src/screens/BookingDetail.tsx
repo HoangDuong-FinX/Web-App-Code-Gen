@@ -46,7 +46,7 @@ function BookingDetail({
     };
 
     fetchDetail();
-  }, [bookingId, onNoteChange]);
+  }, [bookingId]);
 
   const handleSave = async () => {
     if (!booking) return;
