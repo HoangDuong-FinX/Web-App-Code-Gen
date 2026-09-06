@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { loadBookingDetail, saveNote } from '../fixtures/bookings';
-import { Booking } from '../types';
+import type { Booking } from '../types';
 import { i18n } from '../i18n/vi';
 
 interface BookingDetailProps {

@@ -1,6 +1,5 @@
-import { Booking } from '../types';
+import type { Booking } from '../types';
 
-// Fixture: Mock bookings data
 const mockBookings: Booking[] = [
   {
     id: 'booking-001',
@@ -31,14 +30,12 @@ const mockBookings: Booking[] = [
   },
 ];
 
-// Fixture control: simulate save success or failure
 let saveOutcome: 'success' | 'fail' = 'success';
 
 export function setSaveOutcome(outcome: 'success' | 'fail') {
   saveOutcome = outcome;
 }
 
-// Fixture: Load all bookings
 export async function loadBookings(): Promise<Booking[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -47,7 +44,6 @@ export async function loadBookings(): Promise<Booking[]> {
   });
 }
 
-// Fixture: Load single booking detail
 export async function loadBookingDetail(bookingId: string): Promise<Booking> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -61,7 +57,6 @@ export async function loadBookingDetail(bookingId: string): Promise<Booking> {
   });
 }
 
-// Fixture: Save note with deterministic failure control
 export async function saveNote(
   bookingId: string,
   noteText: string
@@ -74,7 +69,6 @@ export async function saveNote(
           message: 'Server error. Please try again later.',
         });
       } else {
-        // Update the mock booking with the new note
         const booking = mockBookings.find((b) => b.id === bookingId);
         if (booking) {
           booking.noteText = noteText;
