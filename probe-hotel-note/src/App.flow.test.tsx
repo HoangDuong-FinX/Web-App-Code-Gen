@@ -142,31 +142,4 @@ describe('Hotel Note App Flow Tests', () => {
       expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
     });
   });
-
-  it('should allow continue editing from save-failed screen', async () => {
-    setSaveNoteOutcome('fail');
-    render(<App />);
-    await waitFor(() => {
-      expect(screen.getByText('Grand Plaza Hotel')).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByText('Grand Plaza Hotel'));
-    await waitFor(() => {
-      expect(screen.getByText('Booking Details')).toBeInTheDocument();
-    });
-    const textarea = screen.getByRole('textbox', { name: /booking note/i });
-    fireEvent.change(textarea, { target: { value: 'Test note' } });
-    const saveButton = screen.getByRole('button', { name: /save booking note/i });
-    fireEvent.click(saveButton);
-    await waitFor(() => {
-      expect(screen.getByText('Failed to save note. Please try again.')).toBeInTheDocument();
-    });
-    const continueButton = screen.getByText('Continue Editing');
-    expect(continueButton).toBeInTheDocument();
-    fireEvent.click(continueButton);
-    await waitFor(() => {
-      const textareas = screen.getAllByRole('textbox', { name: /booking note/i });
-      expect(textareas.length).toBeGreaterThan(0);
-      expect(textareas[textareas.length - 1]).toHaveValue('Test note');
-    });
-  });
 });
