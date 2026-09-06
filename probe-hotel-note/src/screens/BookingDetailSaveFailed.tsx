@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text } from '../components/Text';
 import { Button } from '../components/Button';
 import { ErrorIcon } from '../components/icons/ErrorIcon';
