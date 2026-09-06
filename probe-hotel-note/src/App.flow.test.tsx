@@ -1,10 +1,7 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, it, expect, vi } from 'vitest';
-import { matchers } from '@testing-library/jest-dom';
 import App from './App';
 import { setSaveOutcome } from './fixtures/bookings';
-
-expect.extend(matchers);
 
 afterEach(() => {
   cleanup();
@@ -15,7 +12,7 @@ afterEach(() => {
 describe('App Navigation Flow', () => {
   it('should mount and render bookings list', () => {
     render(<App />);
-    expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
+    expect(screen.getByText('My Hotel Bookings')).toBeTruthy();
   });
 
   it('should navigate from bookings-list to booking-detail on booking select', async () => {
@@ -24,8 +21,8 @@ describe('App Navigation Flow', () => {
       name: /Grand Plaza Hotel/i,
     });
     fireEvent.click(grandPlazaButton);
-    expect(await screen.findByText('Booking Details')).toBeInTheDocument();
-    expect(screen.getByText('Grand Plaza Hotel')).toBeInTheDocument();
+    expect(await screen.findByText('Booking Details')).toBeTruthy();
+    expect(screen.getByText('Grand Plaza Hotel')).toBeTruthy();
   });
 
   it('should navigate from booking-detail back to bookings-list', async () => {
@@ -36,7 +33,7 @@ describe('App Navigation Flow', () => {
     fireEvent.click(grandPlazaButton);
     const backButton = await screen.findByRole('button', { name: /^Back$/ });
     fireEvent.click(backButton);
-    expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
+    expect(screen.getByText('My Hotel Bookings')).toBeTruthy();
   });
 
   it('should navigate from booking-detail to booking-detail-save-failed on save failure', async () => {
@@ -53,7 +50,7 @@ describe('App Navigation Flow', () => {
     fireEvent.click(saveButton);
     expect(
       await screen.findByText('Failed to save note. Please try again.')
-    ).toBeInTheDocument();
+    ).toBeTruthy();
   });
 
   it('should navigate from booking-detail-save-failed back to booking-detail on retry success', async () => {
@@ -72,10 +69,10 @@ describe('App Navigation Flow', () => {
     setSaveOutcome('success');
     const retryButton = screen.getByRole('button', { name: /Retry/ });
     fireEvent.click(retryButton);
-    expect(screen.getByText('Booking Details')).toBeInTheDocument();
+    expect(screen.getByText('Booking Details')).toBeTruthy();
     expect(
       screen.queryByText('Failed to save note. Please try again.')
-    ).not.toBeInTheDocument();
+    ).toBeNull();
   });
 
   it('should navigate from booking-detail-save-failed to bookings-list on discard', async () => {
@@ -95,7 +92,7 @@ describe('App Navigation Flow', () => {
       name: /Discard Changes/,
     });
     fireEvent.click(discardButton);
-    expect(screen.getByText('My Hotel Bookings')).toBeInTheDocument();
+    expect(screen.getByText('My Hotel Bookings')).toBeTruthy();
   });
 
   it('should successfully save note and show confirmation', async () => {
@@ -112,6 +109,6 @@ describe('App Navigation Flow', () => {
     fireEvent.click(saveButton);
     expect(
       await screen.findByText('Note saved successfully')
-    ).toBeInTheDocument();
+    ).toBeTruthy();
   });
 });
