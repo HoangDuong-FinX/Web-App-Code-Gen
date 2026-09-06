@@ -40,7 +40,7 @@ export async function loadBookings(): Promise<Booking[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockBookings);
-    }, 300);
+    }, 100);
   });
 }
 
@@ -53,7 +53,7 @@ export async function loadBookingDetail(bookingId: string): Promise<Booking> {
       } else {
         reject(new Error('Booking not found'));
       }
-    }, 300);
+    }, 100);
   });
 }
 
@@ -75,6 +75,6 @@ export async function saveNote(
         }
         resolve({ success: true });
       }
-    }, 500);
+    }, 100);
   });
 }
