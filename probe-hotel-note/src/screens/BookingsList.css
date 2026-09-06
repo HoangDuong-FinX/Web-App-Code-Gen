@@ -1,0 +1,62 @@
+.bookings-list-screen {
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: #f5f5f5;
+}
+
+.bookings-list-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.bookings-list-title {
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.bookings-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.booking-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.booking-hotel-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.booking-dates {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.booking-status-badge {
+  align-self: flex-start;
+}
+
+@media (max-width: 640px) {
+  .bookings-list-screen {
+    padding: 0.75rem;
+  }
+
+  .bookings-list-title {
+    font-size: 1.5rem;
+  }
+}

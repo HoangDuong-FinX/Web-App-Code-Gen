@@ -1,0 +1,70 @@
+.booking-detail-save-failed-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #f5f5f5;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 400px;
+  text-align: center;
+}
+
+.error-icon {
+  width: 60px;
+  height: 60px;
+  color: #d32f2f;
+  margin-bottom: 0.5rem;
+}
+
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.error-message {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1rem;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.retry-button {
+  flex: 1;
+  max-width: 150px;
+}
+
+.cancel-button {
+  flex: 1;
+  max-width: 150px;
+}
+
+@media (max-width: 640px) {
+  .error-container {
+    gap: 0.75rem;
+  }
+
+  .error-actions {
+    flex-direction: column;
+  }
+
+  .retry-button,
+  .cancel-button {
+    max-width: 100%;
+  }
+}
