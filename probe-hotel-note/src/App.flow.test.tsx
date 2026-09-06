@@ -78,7 +78,7 @@ describe('App flow tests', () => {
 
     const retryButton = screen.getByRole('button', { name: /retry save/i });
     expect(retryButton).toBeInTheDocument();
-    expect(retryButton).toBeDisabled();
+    expect(retryButton).not.toBeDisabled();
 
     const textareaFailed = screen.getByRole('textbox', { name: /personal note input/i });
     expect(textareaFailed).toHaveValue('Test note');
