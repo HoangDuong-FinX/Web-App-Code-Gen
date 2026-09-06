@@ -1,4 +1,4 @@
-import { Booking } from '../types';
+import type { Booking } from '../types';
 
 let saveNoteOutcome: 'success' | 'fail' = 'success';
 
@@ -55,8 +55,8 @@ export function loadBookingDetail(bookingId: string): Booking {
 }
 
 export async function saveBookingNote(
-  bookingId: string,
-  note: string
+  _bookingId: string,
+  _note: string
 ): Promise<{ success: boolean; message?: string }> {
   return new Promise((resolve) => {
     setTimeout(() => {

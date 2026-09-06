@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { loadBookingDetail, saveBookingNote } from '../fixtures/bookings';
-import { Booking } from '../types';
+import type { Booking } from '../types';
 import { Text } from '../components/Text';
 import { Button } from '../components/Button';
 import { TextArea } from '../components/TextArea';

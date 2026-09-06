@@ -1,7 +1,9 @@
 import React from 'react';
 
+type BadgeVariant = 'success' | 'warning' | 'error' | 'default';
+
 interface BadgeProps {
-  variant?: 'success' | 'warning' | 'error' | 'default';
+  variant?: BadgeVariant;
   role?: string;
   className?: string;
   children: React.ReactNode;

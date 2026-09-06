@@ -1,7 +1,6 @@
-import React from 'react';
 import { useEffect, useState } from 'react';
 import { loadBookings } from '../fixtures/bookings';
-import { Booking } from '../types';
+import type { Booking } from '../types';
 import { Text } from '../components/Text';
 import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
@@ -50,7 +49,7 @@ export function BookingsList({ onSelectBooking }: BookingsListProps) {
                   {booking.checkInDate} – {booking.checkOutDate}
                 </Text>
                 <Badge
-                  variant={booking.statusVariant}
+                  variant={booking.statusVariant as 'success' | 'warning' | 'default' | 'error'}
                   role="booking-status"
                   className="booking-status-badge"
                 >
