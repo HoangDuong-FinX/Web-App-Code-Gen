@@ -3,16 +3,7 @@ import { BookingsList } from './screens/BookingsList';
 import { BookingDetail } from './screens/BookingDetail';
 import { BookingDetailSaveFailed } from './screens/BookingDetailSaveFailed';
 import { loadBookings, loadBookingDetail } from './fixtures/bookings';
-import type { Booking } from './App';
-
-export interface Booking {
-  bookingId: string;
-  hotelName: string;
-  checkInDate: string;
-  checkOutDate: string;
-  roomType: string;
-  note: string | null;
-}
+import type { Booking } from './fixtures/bookings';
 
 export type ScreenId = 'bookings-list' | 'booking-detail' | 'booking-detail-save-failed';
 
@@ -47,7 +38,6 @@ const initialState: AppState = {
 export function App() {
   const [state, setState] = useState<AppState>(initialState);
 
-  // Load bookings on app mount
   useEffect(() => {
     loadBookingsData();
   }, []);

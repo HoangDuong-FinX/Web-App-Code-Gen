@@ -1,4 +1,4 @@
-import { Booking } from '../App';
+import type { Booking } from '../App';
 import { t } from '../i18n/vi';
 
 interface BookingsListProps {

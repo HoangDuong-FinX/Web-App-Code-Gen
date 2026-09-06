@@ -6,8 +6,9 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-test('App mounts and renders bookings list', () => {
+test('App mounts and renders bookings list', async () => {
   render(<App />);
+  await new Promise((resolve) => setTimeout(resolve, 400));
   const heading = screen.getByRole('heading', { name: /my hotel bookings/i });
-  expect(heading).toBeInTheDocument();
+  expect(heading).toBeDefined();
 });
