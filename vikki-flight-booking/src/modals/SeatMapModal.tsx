@@ -49,12 +49,10 @@ export function SeatMapModal({
   const zones: SeatOption['zone'][] = ['Front', 'Premium', 'Standard', 'Relax'];
 
   function handleSeatClick(seat: SeatOption) {
-    // BR-08: only seats with price_amount > 0 are selectable
     if (!seat.available || seat.priceAmount === null || seat.priceAmount <= 0) return;
-    const paxIndex = selectedPaxIndex + 1; // 1-based (BR-05)
+    const paxIndex = selectedPaxIndex + 1;
     setSelections(prev => {
       const filtered = prev.filter(s => s.passengerIndex !== paxIndex);
-      // Toggle: if already selected, deselect
       const alreadySelected = prev.find(s => s.passengerIndex === paxIndex && s.seatNumber === seat.seatNumber);
       if (alreadySelected) return filtered;
       return [...filtered, { passengerIndex: paxIndex, seatNumber: seat.seatNumber, priceAmount: seat.priceAmount! }];
@@ -63,7 +61,6 @@ export function SeatMapModal({
 
   const totalSeatCost = selections.reduce((sum, s) => sum + s.priceAmount, 0);
 
-  // Group seats by row
   const rowMap: Record<number, SeatOption[]> = {};
   seatMap.forEach(seat => {
     const row = parseInt(seat.seatNumber.replace(/[A-Z]/g, ''), 10);
@@ -71,8 +68,8 @@ export function SeatMapModal({
     rowMap[row].push(seat);
   });
 
-  const paxOptions = passengers.map((p, i) => ({
-    label: `Khách ${i + 1}`,
+  const paxOptions = passengers.map((_p, i) => ({
+    label: `Kh\u00e1ch ${i + 1}`,
     value: String(i),
   }));
 
@@ -84,12 +81,10 @@ export function SeatMapModal({
       data-testid="seat-map-modal"
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px' }}>
-        {/* Leg indicator */}
         <div style={{ font: 'var(--text-body-semibold)', color: 'var(--color-text-secondary)' }}>
           {origin} → {destination}
         </div>
 
-        {/* Passenger selector */}
         {passengers.length > 1 && (
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {paxOptions.map(opt => (
@@ -113,7 +108,6 @@ export function SeatMapModal({
           </div>
         )}
 
-        {/* Zone legend */}
         <Text variant="body-semibold">{t('seatMap.seatTypes')}</Text>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {zones.map(zone => (
@@ -127,13 +121,11 @@ export function SeatMapModal({
         {loading && <AlertNote tone="neutral" visible>{t('common.loading')}</AlertNote>}
         {error && <AlertNote tone="critical" visible role="alert">{error}</AlertNote>}
 
-        {/* Seat map grid */}
         {!loading && !error && (
           <div
             data-testid="seat-map-grid"
             style={{ overflowY: 'auto', maxHeight: '320px' }}
           >
-            {/* Column headers */}
             <div style={{ display: 'grid', gridTemplateColumns: '32px repeat(3, 1fr) 8px repeat(3, 1fr)', gap: '3px', marginBottom: '4px' }}>
               <div />
               {['A', 'B', 'C'].map(c => (
@@ -160,7 +152,6 @@ export function SeatMapModal({
           </div>
         )}
 
-        {/* Total */}
         <div style={{ display: 'flex', justifyContent: 'space-between', font: 'var(--text-body)' }}>
           <span>{t('seatMap.total')}</span>
           <Text variant="body-semibold">{formatVnd(totalSeatCost)}</Text>
@@ -198,7 +189,7 @@ function SeatButton({ seat, selections, selectedPaxIndex, onClick }: SeatButtonP
       type="button"
       onClick={() => onClick(seat)}
       disabled={!isSelectable || isSelectedByOther}
-      aria-label={`${t('seatMap.unavailable').replace('unavailable', seat.seatNumber)} ${seat.available ? '' : t('seatMap.unavailable')}`}
+      aria-label={`${seat.seatNumber} ${seat.available ? '' : t('seatMap.unavailable')}`}
       aria-pressed={isSelectedByMe}
       style={{
         width: '100%',

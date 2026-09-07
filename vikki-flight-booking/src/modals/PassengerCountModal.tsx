@@ -17,7 +17,7 @@ export function PassengerCountModal({
   children: initChildren,
   infants: initInfants,
   onConfirm,
-  onClose,
+  onClose: _onClose,
 }: PassengerCountModalProps): React.ReactElement {
   const [adults, setAdults] = useState(initAdults);
   const [children, setChildren] = useState(initChildren);
@@ -38,7 +38,6 @@ export function PassengerCountModal({
       set: (v: number) => {
         const a = clamp(v, 1, 4);
         setAdults(a);
-        // Infant max = adult count
         if (infants > a) setInfants(a);
       },
     },

@@ -6,7 +6,7 @@ import { ServicesScreen } from './screens/ServicesScreen';
 import { PaymentScreen } from './screens/PaymentScreen';
 import { CheckoutScreen } from './screens/CheckoutScreen';
 import { DoneScreen } from './screens/DoneScreen';
-import type { AppState, AppAction, ScreenId, Airport, CityPair, FlightOffer, PassengerInfo, ServicesData, BookingResult } from './types/state';
+import type { AppState, AppAction, ScreenId, Airport, CityPair, ServicesData } from './types/state';
 import { fixtureLoadAirports } from './fixtures/airports';
 import { fixtureLoadCityPairs } from './fixtures/cityPairs';
 import './styles/tokens.css';

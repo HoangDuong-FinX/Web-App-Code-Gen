@@ -4,10 +4,9 @@ import { Text } from '../components/Text';
 import { PriceHoldCountdown } from '../components/PriceHoldCountdown';
 import { AlertNote } from '../components/AlertNote';
 import { HoldExpiredNote } from '../components/HoldExpiredNote';
-import { Divider } from '../components/Divider';
 import { BookingSummary } from '../components/BookingSummary';
 import { t, formatVnd } from '../i18n';
-import { formatDateVi, formatDayOfWeek, get7DayStrip, isExpired } from '../utils/date';
+import { isExpired, get7DayStrip, formatDayOfWeek } from '../utils/date';
 import { fixtureFetchDailyPrices, fixtureSearchReturn } from '../fixtures/flights';
 import type { AppState, AppAction, ScreenId, FlightOffer } from '../types/state';
 
@@ -26,7 +25,6 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
     isReturn ? state.returnDate : state.departureDate
   );
 
-  // Load return offers on first render if isReturn and no returnOffers yet
   useEffect(() => {
     if (!isReturn || state.returnOffers.length > 0) return;
     if (!state.origin || !state.destination) return;
@@ -44,7 +42,6 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
     }).catch(() => {/* silently fail */});
   }, [isReturn, state, dispatch]);
 
-  // Fetch 7-day strip prices
   useEffect(() => {
     if (!state.origin || !state.destination) return;
     const strip = get7DayStrip(selectedDate);
@@ -73,7 +70,6 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
     }
   }, [holdExpired, isReturn, dispatch, navigate, state.tripType]);
 
-  // Group offers by flight number
   const flightGroups = offers.reduce<Record<string, FlightOffer[]>>((acc, offer) => {
     const key = `${offer.flightNumber}-${offer.departureTime}`;
     if (!acc[key]) acc[key] = [];
@@ -82,12 +78,10 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
   }, {});
 
   const dateStrip = get7DayStrip(selectedDate);
-
   const title = isReturn ? t('results.titleReturn') : t('results.title');
 
   return (
     <div style={{ maxWidth: '960px', margin: '0 auto', display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
-      {/* Main content */}
       <div style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', minWidth: 0 }}>
         <Text variant="title-1" semantic="h1" data-testid="results-title">{title}</Text>
 
@@ -103,7 +97,6 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
           <HoldExpiredNote onSearchAgain={() => navigate('search')} />
         )}
 
-        {/* 7-day date strip */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <Text variant="headline" data-testid="date-strip-header">{t('results.dateStrip.header')}</Text>
           <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
@@ -115,7 +108,7 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
                   key={date}
                   type="button"
                   onClick={() => setSelectedDate(date)}
-                  aria-label={`${formatDayOfWeek(date)}, ngày ${new Date(date + 'T00:00:00').getDate()}, giá từ ${price ? formatVnd(price) : '...'}`}
+                  aria-label={`${formatDayOfWeek(date)}, ng\u00e0y ${new Date(date + 'T00:00:00').getDate()}, gi\u00e1 t\u1eeb ${price ? formatVnd(price) : '...'}`}
                   aria-pressed={isSelected}
                   data-testid="date-strip-day-button"
                   style={{
@@ -147,7 +140,6 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
           </div>
         </div>
 
-        {/* Flight cards */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }} data-testid="flight-card-list">
           {Object.entries(flightGroups).map(([key, fareOffers]) => {
             const first = fareOffers[0];
@@ -166,11 +158,10 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Text variant="body-semibold">{first.flightNumber}</Text>
-                  <Text variant="body">{first.departureTime} — {first.arrivalTime} · {first.duration}</Text>
+                  <Text variant="body">{first.departureTime} \u2014 {first.arrivalTime} \u00b7 {first.duration}</Text>
                 </div>
-                <Text variant="footnote">{first.aircraft} · {t('results.flightCard.direct')}</Text>
+                <Text variant="footnote">{first.aircraft} \u00b7 {t('results.flightCard.direct')}</Text>
 
-                {/* Fare classes */}
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {fareOffers.map(offer => (
                     <div
@@ -212,14 +203,13 @@ export function ResultsScreen({ state, dispatch, navigate, isReturn }: ResultsSc
         </div>
       </div>
 
-      {/* Desktop sidebar */}
       <div style={{
         width: '330px',
         flexShrink: 0,
         position: 'sticky',
         top: '16px',
         padding: '16px',
-        display: 'none', // hidden on mobile via inline style; shown via media query
+        display: 'none',
       }}
         className="results-sidebar"
       >

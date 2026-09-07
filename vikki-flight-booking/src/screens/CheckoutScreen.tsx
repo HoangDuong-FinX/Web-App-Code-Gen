@@ -9,7 +9,7 @@ import { PriceHoldCountdown } from '../components/PriceHoldCountdown';
 import { HoldExpiredNote } from '../components/HoldExpiredNote';
 import { PaymentMethodRail } from '../components/PaymentMethodRail';
 import { t, formatVnd } from '../i18n';
-import { isExpired, formatTimestamp } from '../utils/date';
+import { isExpired } from '../utils/date';
 import { calculateTotal, calculateSubtotal, calculateServiceFee } from '../utils/price';
 import { fixtureLoadPaymentInquiry } from '../fixtures/paymentInquiry';
 import { fixtureStartPayment, getPaymentHubOutcome } from '../fixtures/paymentHub';
@@ -30,7 +30,6 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
   const subtotal = calculateSubtotal(state);
   const serviceFee = calculateServiceFee(state);
 
-  // Load payment inquiry payload on mount
   useEffect(() => {
     if (!state.sessionId) return;
     setLoadingPayload(true);
@@ -60,16 +59,13 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
         offerId: state.selectedOutboundOffer.offerId,
       });
 
-      // BR-10: cancellation stays on checkout
       if (outboundResult.status === 'cancelled') {
         dispatch({ type: 'SET_SUBMITTING_PAYMENT', value: false });
         return;
       }
 
-      // Round-trip: second payment
       if (state.tripType === 'round-trip' && state.selectedReturnOffer) {
         if (outboundResult.status === 'failed') {
-          // First leg failed — don't attempt second
           const result: BookingResult = {
             paymentResult: 'failed',
             outboundBookingCode: '',
@@ -91,7 +87,6 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
         });
 
         if (returnResult.status === 'failed') {
-          // BR-11: partial payment
           const result: BookingResult = {
             paymentResult: 'partial',
             outboundBookingCode: generateBookingCode(),
@@ -105,7 +100,6 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
           return;
         }
 
-        // Both legs succeeded
         const hubOutcome = getPaymentHubOutcome();
         const result: BookingResult = {
           paymentResult: hubOutcome === 'simulated' ? 'simulated' : 'success',
@@ -121,7 +115,6 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
         return;
       }
 
-      // One-way
       if (outboundResult.status === 'failed') {
         const result: BookingResult = {
           paymentResult: 'failed',
@@ -167,7 +160,6 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
 
       {holdExpired && <HoldExpiredNote onSearchAgain={() => navigate('search')} />}
 
-      {/* Payment details card */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '12px', background: 'var(--gray-50)', borderRadius: 'var(--radius-12)' }}>
         <Text variant="body-semibold">{t('checkout.paymentDetails')}</Text>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -189,7 +181,6 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
         </div>
       </div>
 
-      {/* Promo code (disabled per KL-01) */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <Text variant="body">{t('checkout.promoCode')}</Text>
         <TextField
@@ -202,7 +193,6 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
         </Button>
       </div>
 
-      {/* VAT invoice checkbox (KL-02: not consumed) */}
       <Checkbox
         label={t('checkout.vatInvoice')}
         ariaLabel={t('checkout.vatInvoice.ariaLabel')}
@@ -211,13 +201,11 @@ export function CheckoutScreen({ state, dispatch, navigate }: CheckoutScreenProp
         data-testid="vat-invoice-checkbox"
       />
 
-      {/* Payment method rail */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <Text variant="body-semibold">{t('checkout.paymentMethod')}</Text>
         <PaymentMethodRail data-testid="payment-method-rail" />
       </div>
 
-      {/* Simulated payment notice */}
       <AlertNote tone="warning" visible data-testid="checkout-simulated-note">
         {t('checkout.simulatedNote')}
       </AlertNote>

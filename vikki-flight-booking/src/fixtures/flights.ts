@@ -115,12 +115,11 @@ export async function fixtureSearchReturn(params: SearchParams): Promise<SearchR
 }
 
 export async function fixtureFetchDailyPrices(
-  origin: string,
-  destination: string,
+  _origin: string,
+  _destination: string,
   date: string,
 ): Promise<number> {
   await new Promise(r => setTimeout(r, 200));
-  // Return a fixture price per date (deterministic from date string)
   const base = 2000000;
   const seed = date.split('-').reduce((a, b) => a + parseInt(b, 10), 0);
   return base + (seed % 10) * 100000;

@@ -6,7 +6,7 @@ import { AlertNote } from '../components/AlertNote';
 import { ResultIcon } from '../components/ResultIcon';
 import { t, formatVnd, formatVndMinus } from '../i18n';
 import { formatTimestamp } from '../utils/date';
-import type { AppState, AppAction, ScreenId, PaymentResult } from '../types/state';
+import type { AppState, AppAction, ScreenId } from '../types/state';
 
 interface DoneScreenProps {
   state: AppState;
@@ -18,7 +18,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
   const result = state.bookingResult;
 
   if (!result) {
-    // Guard: shouldn't happen, but redirect gracefully
     return (
       <div style={{ padding: '16px' }}>
         <Text variant="body">{t('common.loading')}</Text>
@@ -26,7 +25,7 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
     );
   }
 
-  const { paymentResult, outboundBookingCode, returnBookingCode, transactionId, amount, timestamp, errorMessage, viaHost } = result;
+  const { paymentResult, outboundBookingCode, returnBookingCode, transactionId, amount, timestamp, errorMessage } = result;
 
   function getTitle(): string {
     switch (paymentResult) {
@@ -47,7 +46,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
   const isSimulated = paymentResult === 'simulated';
 
   function handleShare() {
-    // BR: silent if unsupported
     if (!navigator.share) return;
     navigator.share({
       title: t('done.merchant'),
@@ -104,7 +102,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
         {formatTimestamp(timestamp)}
       </Text>
 
-      {/* Transaction details card */}
       <div
         style={{
           display: 'flex',
@@ -123,7 +120,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
           <Text variant="body">{t('done.merchant')}</Text>
         </div>
 
-        {/* BR-13: only show booking code if it exists */}
         {outboundBookingCode && (
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Text variant="body">{isPartial ? t('done.outboundCode') : t('done.bookingCode')}</Text>
@@ -131,15 +127,13 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
           </div>
         )}
 
-        {/* BR-13: return booking code only if exists and not partial */}
         {returnBookingCode && !isPartial && (
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Text variant="body">{t('done.bookingCode')} (về)</Text>
+            <Text variant="body">{t('done.bookingCode')} (v\u1ec1)</Text>
             <Text variant="mono-label" style={{ fontFamily: 'var(--font-mono)' }}>{returnBookingCode}</Text>
           </div>
         )}
 
-        {/* BR-13: transaction ID only if exists */}
         {transactionId && (
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Text variant="body">{t('done.transactionId')}</Text>
@@ -152,7 +146,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
           <Text variant="body">{t('done.description')}</Text>
         </div>
 
-        {/* Error message for failed */}
         {isFailed && errorMessage && (
           <>
             <Divider />
@@ -160,7 +153,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
           </>
         )}
 
-        {/* Partial note */}
         {isPartial && (
           <>
             <Divider />
@@ -169,24 +161,20 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
         )}
       </div>
 
-      {/* VAT note: only for success/simulated */}
-      {(isSuccess) && (
+      {isSuccess && (
         <Text variant="footnote" data-testid="vat-invoice-info-note" style={{ textAlign: 'center' }}>
           {t('done.vatNote')}
         </Text>
       )}
 
-      {/* BR-12: simulated payment banner */}
       {isSimulated && (
         <AlertNote tone="warning" visible data-testid="simulated-payment-banner">
           {t('done.simulatedBanner')}
         </AlertNote>
       )}
 
-      {/* CTAs */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-        {/* Share: only for success */}
-        {(isSuccess) && (
+        {isSuccess && (
           <Button
             variant="secondary"
             onClick={handleShare}
@@ -198,7 +186,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
           </Button>
         )}
 
-        {/* Book another: success and partial */}
         {(isSuccess || isPartial) && (
           <Button
             variant="secondary"
@@ -211,7 +198,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
           </Button>
         )}
 
-        {/* Retry: failed only */}
         {isFailed && (
           <Button
             variant="primary"
@@ -224,7 +210,6 @@ export function DoneScreen({ state, dispatch, navigate }: DoneScreenProps): Reac
           </Button>
         )}
 
-        {/* Go home: always */}
         <Button
           variant="secondary"
           onClick={handleGoHome}
