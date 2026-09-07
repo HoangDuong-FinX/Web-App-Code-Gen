@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { BookingSession, Passenger, PassengerWithId } from '../types';
+import type { PassengerWithId } from '../types';
 
 interface StoreState {
   // Search state

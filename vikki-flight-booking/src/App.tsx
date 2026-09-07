@@ -17,10 +17,9 @@ interface AppProps {
     identity?: { getUser?: () => Promise<{ id: string; name: string }> };
     theme?: { subscribe?: (callback: (theme: { theme: 'light' | 'dark'; brand: string }) => void) => () => void };
   };
-  basename?: string;
 }
 
-export const App: React.FC<AppProps> = ({ hostRuntime, basename = '/' }) => {
+export const App: React.FC<AppProps> = ({ hostRuntime }) => {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('search');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const { resetStore } = useStore();
@@ -63,8 +62,8 @@ export const App: React.FC<AppProps> = ({ hostRuntime, basename = '/' }) => {
   }, [currentScreen]);
 
   const screenProps = {
-    navigate,
-    handleResetAndNavigate,
+    navigate: navigate as (screen: string) => void,
+    handleResetAndNavigate: handleResetAndNavigate as (screen: string) => void,
     hostRuntime,
     t: vi,
   };
