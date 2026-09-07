@@ -1,5 +1,53 @@
 @import "tailwindcss";
+@import "./styles/tokens.css";
 
-/* Tailwind v4 needs no config file: this single import is the whole styling layer.
-   Add app-specific rules below it, and keep using utility classes in the screens -
-   they only become CSS because this file is imported. */
+/* Vikki brand font families */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: local('Be Vietnam Pro');
+}
+
+/* App-level overrides */
+.gg-brand-vikki {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+}
+
+/* Font display utility */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Focus visible for all interactive elements */
+*:focus-visible {
+  outline: 2px solid var(--vikki-vkblue-500);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 2px;
+}

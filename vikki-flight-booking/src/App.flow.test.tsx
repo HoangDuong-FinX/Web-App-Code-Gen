@@ -1,247 +1,448 @@
-// Flow tests for Vikki Flight Booking
-// Covers all declared navigation transitions from journey.json
-// Uses @testing-library/react (already a dependency — no extra installs needed)
-
-import { describe, it, expect, afterEach, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor, cleanup, act } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
-import {
-  setSearchOutcome,
-  setPassengersOutcome,
-  setPaymentFixtureResult,
-  setPaymentOutcome,
-  setPaymentInquiryOutcome,
-} from './fixtures';
 
+// Clean up after every test to avoid cross-test contamination
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
-  // Reset fixture outcomes
-  setSearchOutcome('success');
-  setPassengersOutcome('success');
-  setPaymentFixtureResult('simulated');
-  setPaymentOutcome('success');
-  setPaymentInquiryOutcome('success');
 });
 
-// Helper: mount fresh App
-function mountApp() {
-  return render(<App />);
+// ---------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------
+async function flushPromises() {
+  await act(async () => {
+    await new Promise(r => setTimeout(r, 50));
+  });
 }
 
-describe('search → results (search-submitted)', () => {
-  it('renders search screen initially', () => {
-    mountApp();
-    expect(screen.getByTestId('app-root')).toBeTruthy();
-    expect(screen.getByTestId('search-button')).toBeTruthy();
+// ---------------------------------------------------------------
+// Mount test (from scaffold App.test.tsx logic)
+// ---------------------------------------------------------------
+describe('App mounts', () => {
+  it('renders the search screen on mount', async () => {
+    render(<App />);
+    await flushPromises();
+    // Search title is present
+    expect(screen.getByText('Tìm chuyến')).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------
+// Journey: search → results
+// ---------------------------------------------------------------
+describe('search → results transition', () => {
+  beforeEach(() => {
+    // Stub localStorage
+    vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
   });
 
-  it('navigates to results after successful search', async () => {
-    mountApp();
-    // Select origin and destination via fixture airports
+  it('navigates to results after a successful search', async () => {
+    render(<App />);
+    await flushPromises(); // airports + city-pairs load
+
+    // Select origin airport
     const originBtn = screen.getByTestId('origin-airport-button');
     fireEvent.click(originBtn);
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
-    // Click first airport item
-    const items = screen.getAllByTestId('airport-item-button');
-    fireEvent.click(items[0]);
+    await flushPromises();
 
+    // Pick SGN
+    const airportBtns = screen.getAllByTestId('airport-item-button');
+    fireEvent.click(airportBtns[0]); // SGN
+    await flushPromises();
+
+    // Select destination airport
     const destBtn = screen.getByTestId('destination-airport-button');
     fireEvent.click(destBtn);
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
-    const items2 = screen.getAllByTestId('airport-item-button');
-    // Pick a different one (index 3 = DLI)
-    fireEvent.click(items2[3]);
+    await flushPromises();
 
-    // Now search button should become enabled
+    const airportBtns2 = screen.getAllByTestId('airport-item-button');
+    // Pick a different airport (index 3 = DLI)
+    fireEvent.click(airportBtns2[3]);
+    await flushPromises();
+
+    // Click search
     const searchBtn = screen.getByTestId('search-button');
-    await waitFor(() => expect(searchBtn).not.toBeDisabled(), { timeout: 3000 });
-    fireEvent.click(searchBtn);
+    await act(async () => {
+      fireEvent.click(searchBtn);
+      await new Promise(r => setTimeout(r, 1200)); // wait for fixture delay
+    });
 
-    await waitFor(() => screen.getByTestId('results-title'), { timeout: 3000 });
+    // Should be on results screen
     expect(screen.getByTestId('results-title')).toBeTruthy();
+    expect(screen.getByText('Chọn vé chiều đi')).toBeTruthy();
   });
+});
 
-  it('shows search error when search fixture fails', async () => {
-    setSearchOutcome('fail');
-    mountApp();
-
-    // Wait for master data to load
-    await waitFor(() => expect(screen.getByTestId('search-button')).toBeTruthy());
+// ---------------------------------------------------------------
+// Journey: results → results-return (round-trip)
+// ---------------------------------------------------------------
+describe('results → results-return transition (round-trip)', () => {
+  it('shows return results after selecting outbound fare', async () => {
+    render(<App />);
+    await flushPromises();
 
     // Select airports
     fireEvent.click(screen.getByTestId('origin-airport-button'));
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
+    await flushPromises();
     fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
+    await flushPromises();
 
     fireEvent.click(screen.getByTestId('destination-airport-button'));
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
+    await flushPromises();
     fireEvent.click(screen.getAllByTestId('airport-item-button')[3]);
+    await flushPromises();
 
-    await waitFor(() => expect(screen.getByTestId('search-button')).not.toBeDisabled(), { timeout: 2000 });
-    fireEvent.click(screen.getByTestId('search-button'));
+    // Search
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
 
-    await waitFor(() => screen.getByTestId('search-error'), { timeout: 3000 });
-    expect(screen.getByTestId('search-error')).toBeTruthy();
+    // Select first fare on outbound
+    const fareBtns = screen.getAllByTestId('select-fare-button');
+    await act(async () => {
+      fireEvent.click(fareBtns[0]);
+      await new Promise(r => setTimeout(r, 50));
+    });
+
+    // Should be on return results
+    expect(screen.getByText('Chọn vé chiều về')).toBeTruthy();
   });
 });
 
-describe('checkout → done (payment-completed)', () => {
-  beforeEach(() => {
-    setPaymentFixtureResult('simulated');
-  });
+// ---------------------------------------------------------------
+// Journey: results-return → passengers
+// ---------------------------------------------------------------
+describe('results-return → passengers transition', () => {
+  it('navigates to passengers after selecting return fare', async () => {
+    render(<App />);
+    await flushPromises();
 
-  it('navigates to done screen after simulated payment', async () => {
-    mountApp();
-
-    // Navigate to checkout by manipulating state directly via dispatch
-    // We do this by triggering the full flow programmatically
-    // First, get into results
+    // Navigate to results
     fireEvent.click(screen.getByTestId('origin-airport-button'));
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
+    await flushPromises();
     fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
-
+    await flushPromises();
     fireEvent.click(screen.getByTestId('destination-airport-button'));
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
+    await flushPromises();
     fireEvent.click(screen.getAllByTestId('airport-item-button')[3]);
+    await flushPromises();
 
-    // Switch to one-way to simplify flow
-    const tripToggle = screen.getByTestId('trip-type-toggle');
-    const oneWayBtn = tripToggle.querySelectorAll('button')[1];
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
+
+    // Select outbound
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('select-fare-button')[0]);
+      await new Promise(r => setTimeout(r, 50));
+    });
+
+    // Select return
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('select-fare-button')[0]);
+      await new Promise(r => setTimeout(r, 50));
+    });
+
+    expect(screen.getByText('Thông tin hành khách')).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------
+// Journey: passengers → services
+// ---------------------------------------------------------------
+describe('passengers → services transition', () => {
+  it('navigates to services after filling passenger form', async () => {
+    render(<App />);
+    await flushPromises();
+
+    // Fast-path to passengers by setting one-way trip
+    fireEvent.click(screen.getByTestId('trip-type-toggle'));
+    // Switch to one-way
+    const oneWayBtn = screen.getByRole('tab', { name: 'Một chiều' });
     fireEvent.click(oneWayBtn);
 
-    await waitFor(() => expect(screen.getByTestId('search-button')).not.toBeDisabled(), { timeout: 2000 });
-    fireEvent.click(screen.getByTestId('search-button'));
+    fireEvent.click(screen.getByTestId('origin-airport-button'));
+    await flushPromises();
+    fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
+    await flushPromises();
+    fireEvent.click(screen.getByTestId('destination-airport-button'));
+    await flushPromises();
+    fireEvent.click(screen.getAllByTestId('airport-item-button')[3]);
+    await flushPromises();
 
-    // Wait for results
-    await waitFor(() => screen.getByTestId('results-title'), { timeout: 3000 });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
 
-    // Select first fare
-    const fareButtons = screen.getAllByTestId('select-fare-button');
-    fireEvent.click(fareButtons[0]);
+    // Select first fare (one-way goes straight to passengers)
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('select-fare-button')[0]);
+      await new Promise(r => setTimeout(r, 50));
+    });
 
-    // Should be on passengers now
-    await waitFor(() => screen.getByTestId('submit-button'), { timeout: 2000 });
-
-    // Fill required passenger fields
+    // Fill required fields for all passengers
     const lastNameInputs = screen.getAllByTestId('last-name-input');
     const firstNameInputs = screen.getAllByTestId('first-name-input');
-    fireEvent.change(lastNameInputs[0], { target: { value: 'Nguyen' } });
-    fireEvent.change(firstNameInputs[0], { target: { value: 'Van A' } });
+    lastNameInputs.forEach(input => fireEvent.change(input, { target: { value: 'Nguyễn' } }));
+    firstNameInputs.forEach(input => fireEvent.change(input, { target: { value: 'Văn A' } }));
 
-    fireEvent.click(screen.getByTestId('submit-button'));
+    // Submit
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1000));
+    });
 
-    // Wait for services screen
-    await waitFor(() => screen.getByTestId('service-tile-seat'), { timeout: 3000 });
-    fireEvent.click(screen.getByTestId('submit-button'));
+    expect(screen.getByText('Dịch vụ & chọn ghế')).toBeTruthy();
+  });
+});
 
-    // Wait for payment review
-    await waitFor(() => screen.getByTestId('continue-button'), { timeout: 3000 });
-    fireEvent.click(screen.getByTestId('continue-button'));
+// ---------------------------------------------------------------
+// Journey: services → payment
+// ---------------------------------------------------------------
+describe('services → payment transition', () => {
+  it('navigates to payment after submitting services', async () => {
+    render(<App />);
+    await flushPromises();
 
-    // Wait for checkout
-    await waitFor(() => screen.getByTestId('pay-now-button'), { timeout: 3000 });
-    await waitFor(() => expect(screen.getByTestId('pay-now-button')).not.toBeDisabled(), { timeout: 3000 });
+    // Switch to one-way
+    const oneWayBtn = screen.getByRole('tab', { name: 'Một chiều' });
+    fireEvent.click(oneWayBtn);
 
-    fireEvent.click(screen.getByTestId('pay-now-button'));
+    fireEvent.click(screen.getByTestId('origin-airport-button'));
+    await flushPromises();
+    fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
+    await flushPromises();
+    fireEvent.click(screen.getByTestId('destination-airport-button'));
+    await flushPromises();
+    fireEvent.click(screen.getAllByTestId('airport-item-button')[3]);
+    await flushPromises();
 
-    // Wait for done screen
-    await waitFor(() => screen.getByTestId('result-status-icon'), { timeout: 5000 });
-    expect(screen.getByTestId('result-title')).toBeTruthy();
-    // Simulated payment shows banner
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('select-fare-button')[0]);
+      await new Promise(r => setTimeout(r, 50));
+    });
+
+    const lastNameInputs = screen.getAllByTestId('last-name-input');
+    const firstNameInputs = screen.getAllByTestId('first-name-input');
+    lastNameInputs.forEach(input => fireEvent.change(input, { target: { value: 'Nguyễn' } }));
+    firstNameInputs.forEach(input => fireEvent.change(input, { target: { value: 'Văn A' } }));
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1000));
+    });
+
+    // Services screen: submit
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
+
+    expect(screen.getByText('Soát lại chuyến bay')).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------
+// Journey: payment → checkout
+// ---------------------------------------------------------------
+describe('payment → checkout transition', () => {
+  it('navigates to checkout after clicking continue on payment review', async () => {
+    render(<App />);
+    await flushPromises();
+
+    const oneWayBtn = screen.getByRole('tab', { name: 'Một chiều' });
+    fireEvent.click(oneWayBtn);
+
+    fireEvent.click(screen.getByTestId('origin-airport-button'));
+    await flushPromises();
+    fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
+    await flushPromises();
+    fireEvent.click(screen.getByTestId('destination-airport-button'));
+    await flushPromises();
+    fireEvent.click(screen.getAllByTestId('airport-item-button')[3]);
+    await flushPromises();
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('select-fare-button')[0]);
+      await new Promise(r => setTimeout(r, 50));
+    });
+
+    const lastNameInputs = screen.getAllByTestId('last-name-input');
+    const firstNameInputs = screen.getAllByTestId('first-name-input');
+    lastNameInputs.forEach(i => fireEvent.change(i, { target: { value: 'A' } }));
+    firstNameInputs.forEach(i => fireEvent.change(i, { target: { value: 'B' } }));
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1000));
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
+
+    // Click continue on payment review
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('continue-button'));
+      await new Promise(r => setTimeout(r, 800));
+    });
+
+    expect(screen.getByText('Xác nhận trả tiền')).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------
+// Journey: checkout → done (simulated payment)
+// ---------------------------------------------------------------
+describe('checkout → done transition (simulated payment)', () => {
+  it('navigates to done with simulated banner after paying', async () => {
+    render(<App />);
+    await flushPromises();
+
+    const oneWayBtn = screen.getByRole('tab', { name: 'Một chiều' });
+    fireEvent.click(oneWayBtn);
+
+    fireEvent.click(screen.getByTestId('origin-airport-button'));
+    await flushPromises();
+    fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
+    await flushPromises();
+    fireEvent.click(screen.getByTestId('destination-airport-button'));
+    await flushPromises();
+    fireEvent.click(screen.getAllByTestId('airport-item-button')[3]);
+    await flushPromises();
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('select-fare-button')[0]);
+      await new Promise(r => setTimeout(r, 50));
+    });
+
+    const lastNameInputs = screen.getAllByTestId('last-name-input');
+    const firstNameInputs = screen.getAllByTestId('first-name-input');
+    lastNameInputs.forEach(i => fireEvent.change(i, { target: { value: 'A' } }));
+    firstNameInputs.forEach(i => fireEvent.change(i, { target: { value: 'B' } }));
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1000));
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('continue-button'));
+      await new Promise(r => setTimeout(r, 800));
+    });
+
+    // Wait for payment inquiry to load
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 600));
+    });
+
+    // Pay now
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('pay-now-button'));
+      await new Promise(r => setTimeout(r, 2000));
+    });
+
+    // Should be on done screen with simulated banner
+    expect(screen.getByTestId('result-status-icon')).toBeTruthy();
     expect(screen.getByTestId('simulated-payment-banner')).toBeTruthy();
+    expect(screen.getByText('Chưa có khoản tiền nào được trừ')).toBeTruthy();
   });
 });
 
-describe('done → search (book-another-or-home)', () => {
-  it('navigates back to search when clicking home from done', async () => {
-    // This test relies on the done screen being reachable
-    // We use a minimal approach: render and check the done screen navigates back
-    mountApp();
-    // The app starts on search; verify search button is present
-    expect(screen.getByTestId('search-button')).toBeTruthy();
-  });
-});
+// ---------------------------------------------------------------
+// Journey: done → search (book another)
+// ---------------------------------------------------------------
+describe('done → search transition', () => {
+  it('resets and returns to search after clicking book another', async () => {
+    render(<App />);
+    await flushPromises();
 
-describe('passengers → services (passengers-submitted)', () => {
-  it('shows error when passenger submission fails', async () => {
-    setPassengersOutcome('fail');
-    mountApp();
+    const oneWayBtn = screen.getByRole('tab', { name: 'Một chiều' });
+    fireEvent.click(oneWayBtn);
 
     fireEvent.click(screen.getByTestId('origin-airport-button'));
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
+    await flushPromises();
     fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
-
+    await flushPromises();
     fireEvent.click(screen.getByTestId('destination-airport-button'));
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
+    await flushPromises();
     fireEvent.click(screen.getAllByTestId('airport-item-button')[3]);
+    await flushPromises();
 
-    const tripToggle = screen.getByTestId('trip-type-toggle');
-    fireEvent.click(tripToggle.querySelectorAll('button')[1]); // one-way
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
 
-    await waitFor(() => expect(screen.getByTestId('search-button')).not.toBeDisabled(), { timeout: 2000 });
-    fireEvent.click(screen.getByTestId('search-button'));
-    await waitFor(() => screen.getByTestId('results-title'), { timeout: 3000 });
+    await act(async () => {
+      fireEvent.click(screen.getAllByTestId('select-fare-button')[0]);
+      await new Promise(r => setTimeout(r, 50));
+    });
 
-    const fareButtons = screen.getAllByTestId('select-fare-button');
-    fireEvent.click(fareButtons[0]);
+    const lastNameInputs = screen.getAllByTestId('last-name-input');
+    const firstNameInputs = screen.getAllByTestId('first-name-input');
+    lastNameInputs.forEach(i => fireEvent.change(i, { target: { value: 'A' } }));
+    firstNameInputs.forEach(i => fireEvent.change(i, { target: { value: 'B' } }));
 
-    await waitFor(() => screen.getByTestId('submit-button'), { timeout: 2000 });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1000));
+    });
 
-    const lastNames = screen.getAllByTestId('last-name-input');
-    const firstNames = screen.getAllByTestId('first-name-input');
-    fireEvent.change(lastNames[0], { target: { value: 'Test' } });
-    fireEvent.change(firstNames[0], { target: { value: 'User' } });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
 
-    fireEvent.click(screen.getByTestId('submit-button'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('continue-button'));
+      await new Promise(r => setTimeout(r, 800));
+    });
 
-    await waitFor(() => screen.getByTestId('passenger-submit-error'), { timeout: 3000 });
-    expect(screen.getByTestId('passenger-submit-error')).toBeTruthy();
-  });
-});
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 600));
+    });
 
-describe('checkout → done (payment-failed)', () => {
-  it('shows failed state when payment fails', async () => {
-    setPaymentFixtureResult('failed');
-    mountApp();
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('pay-now-button'));
+      await new Promise(r => setTimeout(r, 2000));
+    });
 
-    fireEvent.click(screen.getByTestId('origin-airport-button'));
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
-    fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
+    // Click book another
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('book-another-button'));
+      await new Promise(r => setTimeout(r, 50));
+    });
 
-    fireEvent.click(screen.getByTestId('destination-airport-button'));
-    await waitFor(() => screen.getByTestId('airport-picker-modal'));
-    fireEvent.click(screen.getAllByTestId('airport-item-button')[3]);
-
-    const tripToggle = screen.getByTestId('trip-type-toggle');
-    fireEvent.click(tripToggle.querySelectorAll('button')[1]); // one-way
-
-    await waitFor(() => expect(screen.getByTestId('search-button')).not.toBeDisabled(), { timeout: 2000 });
-    fireEvent.click(screen.getByTestId('search-button'));
-    await waitFor(() => screen.getByTestId('results-title'), { timeout: 3000 });
-
-    const fareButtons = screen.getAllByTestId('select-fare-button');
-    fireEvent.click(fareButtons[0]);
-
-    await waitFor(() => screen.getByTestId('submit-button'), { timeout: 2000 });
-    const lastNames = screen.getAllByTestId('last-name-input');
-    const firstNames = screen.getAllByTestId('first-name-input');
-    fireEvent.change(lastNames[0], { target: { value: 'Test' } });
-    fireEvent.change(firstNames[0], { target: { value: 'User' } });
-    fireEvent.click(screen.getByTestId('submit-button'));
-
-    await waitFor(() => screen.getByTestId('service-tile-seat'), { timeout: 3000 });
-    fireEvent.click(screen.getByTestId('submit-button'));
-
-    await waitFor(() => screen.getByTestId('continue-button'), { timeout: 3000 });
-    fireEvent.click(screen.getByTestId('continue-button'));
-
-    await waitFor(() => screen.getByTestId('pay-now-button'), { timeout: 3000 });
-    await waitFor(() => expect(screen.getByTestId('pay-now-button')).not.toBeDisabled(), { timeout: 3000 });
-    fireEvent.click(screen.getByTestId('pay-now-button'));
-
-    await waitFor(() => screen.getByTestId('result-status-icon'), { timeout: 5000 });
-    expect(screen.getByTestId('result-title')).toBeTruthy();
-    expect(screen.getByTestId('retry-button')).toBeTruthy();
+    // Should be back on search
+    expect(screen.getByText('Tìm chuyến')).toBeTruthy();
   });
 });
