@@ -1,141 +1,125 @@
 import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
-import { vi } from '../../i18n/vi';
-import type { PassengerCounts } from '../../types';
+import { Text } from '../ui/Text';
+import { t } from '../../i18n';
 
-interface Props {
+interface PassengerCountModalProps {
   open: boolean;
+  adults: number;
+  children: number;
+  infants: number;
+  onConfirm: (adults: number, children: number, infants: number) => void;
   onClose: () => void;
-  passengers: PassengerCounts;
-  onConfirm: (passengers: PassengerCounts) => void;
 }
 
 interface CounterRowProps {
   label: string;
-  sublabel: string;
+  description: string;
   count: number;
   onDecrement: () => void;
   onIncrement: () => void;
-  decrementLabel: string;
-  incrementLabel: string;
   min?: number;
   max?: number;
+  decrementAriaLabel: string;
+  incrementAriaLabel: string;
 }
 
-const CounterRow: React.FC<CounterRowProps> = ({
-  label, sublabel, count, onDecrement, onIncrement, decrementLabel, incrementLabel, min = 0, max = 9,
-}) => (
-  <div className="flex flex-col gap-2 p-3 rounded-xl bg-[var(--gray-50)] border border-[var(--gray-200)]">
-    <div>
-      <div className="text-sm font-semibold text-[var(--color-text-primary)]">{label}</div>
-      <div className="text-xs text-[var(--color-text-secondary)]">{sublabel}</div>
+function CounterRow({
+  label, description, count, onDecrement, onIncrement, min = 0, max = 9,
+  decrementAriaLabel, incrementAriaLabel,
+}: CounterRowProps) {
+  return (
+    <div className="flex flex-col gap-2 p-3 rounded-xl bg-[var(--gray-50)]">
+      <Text variant="body-semibold" as="span">{label}</Text>
+      <Text variant="footnote" as="span">{description}</Text>
+      <div className="flex items-center justify-center gap-4">
+        <Button
+          variant="secondary"
+          aria-label={decrementAriaLabel}
+          data-testid="decrement-button"
+          onClick={onDecrement}
+          disabled={count <= min}
+          className="!px-3 !py-2"
+        >
+          −
+        </Button>
+        <Text variant="headline" as="span">{count}</Text>
+        <Button
+          variant="secondary"
+          aria-label={incrementAriaLabel}
+          data-testid="increment-button"
+          onClick={onIncrement}
+          disabled={count >= max}
+          className="!px-3 !py-2"
+        >
+          +
+        </Button>
+      </div>
     </div>
-    <div className="flex items-center justify-center gap-4">
-      <Button
-        variant="secondary"
-        ariaLabel={decrementLabel}
-        data-testid="decrement-button"
-        onClick={onDecrement}
-        disabled={count <= min}
-      >
-        −
-      </Button>
-      <span className="text-[var(--text-headline)] text-[var(--color-text-primary)] w-8 text-center">
-        {count}
-      </span>
-      <Button
-        variant="secondary"
-        ariaLabel={incrementLabel}
-        data-testid="increment-button"
-        onClick={onIncrement}
-        disabled={count >= max}
-      >
-        +
-      </Button>
-    </div>
-  </div>
-);
+  );
+}
 
-export const PassengerCountModal: React.FC<Props> = ({
-  open,
-  onClose,
-  passengers,
-  onConfirm,
-}) => {
-  const [local, setLocal] = useState<PassengerCounts>(passengers);
-
-  React.useEffect(() => {
-    if (open) setLocal(passengers);
-  }, [open, passengers]);
+export function PassengerCountModal({
+  open, adults, children, infants, onConfirm, onClose,
+}: PassengerCountModalProps) {
+  const [localAdults, setLocalAdults] = useState(adults);
+  const [localChildren, setLocalChildren] = useState(children);
+  const [localInfants, setLocalInfants] = useState(infants);
 
   const handleConfirm = () => {
-    onConfirm(local);
+    onConfirm(localAdults, localChildren, localInfants);
   };
 
   return (
     <Modal
+      title={t('passengerCount.title')}
       open={open}
-      onClose={() => { onConfirm(local); onClose(); }}
-      title={vi.passengerCount.title}
+      onClose={onClose}
       data-testid="passenger-count-modal"
     >
-      <div className="flex flex-col gap-4 p-4">
-        <p className="text-xs text-[var(--color-text-secondary)]">
-          {vi.passengerCount.specialAssistance}
-        </p>
-
+      <div className="flex flex-col gap-3 p-4">
+        <Text variant="footnote" as="p">{t('passengerCount.specialHelp')}</Text>
         <CounterRow
-          label={vi.common.adults}
-          sublabel={vi.common.over12}
-          count={local.adults}
-          onDecrement={() => setLocal((p) => ({ ...p, adults: Math.max(1, p.adults - 1) }))}
-          onIncrement={() => setLocal((p) => ({ ...p, adults: Math.min(4, p.adults + 1) }))}
-          decrementLabel={vi.passengerCount.decrementAdult}
-          incrementLabel={vi.passengerCount.incrementAdult}
-          min={1}
-          max={4}
+          label={t('passengerCount.adults')}
+          description={t('passengerCount.adults.desc')}
+          count={localAdults}
+          onDecrement={() => setLocalAdults(n => Math.max(1, n - 1))}
+          onIncrement={() => setLocalAdults(n => Math.min(4, n + 1))}
+          min={1} max={4}
+          decrementAriaLabel={t('passengerCount.decrement.aria', { type: t('common.adult') })}
+          incrementAriaLabel={t('passengerCount.increment.aria', { type: t('common.adult') })}
         />
-
         <CounterRow
-          label={vi.common.children}
-          sublabel={vi.common.age2to12}
-          count={local.children}
-          onDecrement={() => setLocal((p) => ({ ...p, children: Math.max(0, p.children - 1) }))}
-          onIncrement={() => setLocal((p) => ({ ...p, children: Math.min(4, p.children + 1) }))}
-          decrementLabel={vi.passengerCount.decrementChild}
-          incrementLabel={vi.passengerCount.incrementChild}
-          min={0}
-          max={4}
+          label={t('passengerCount.children')}
+          description={t('passengerCount.children.desc')}
+          count={localChildren}
+          onDecrement={() => setLocalChildren(n => Math.max(0, n - 1))}
+          onIncrement={() => setLocalChildren(n => Math.min(4, n + 1))}
+          min={0} max={4}
+          decrementAriaLabel={t('passengerCount.decrement.aria', { type: t('common.child') })}
+          incrementAriaLabel={t('passengerCount.increment.aria', { type: t('common.child') })}
         />
-
         <CounterRow
-          label={vi.common.infants}
-          sublabel={vi.common.under2}
-          count={local.infants}
-          onDecrement={() => setLocal((p) => ({ ...p, infants: Math.max(0, p.infants - 1) }))}
-          onIncrement={() =>
-            setLocal((p) => ({
-              ...p,
-              infants: Math.min(p.adults, p.infants + 1),
-            }))
-          }
-          decrementLabel={vi.passengerCount.decrementInfant}
-          incrementLabel={vi.passengerCount.incrementInfant}
-          min={0}
-          max={local.adults}
+          label={t('passengerCount.infants')}
+          description={t('passengerCount.infants.desc')}
+          count={localInfants}
+          onDecrement={() => setLocalInfants(n => Math.max(0, n - 1))}
+          onIncrement={() => setLocalInfants(n => Math.min(localAdults, n + 1))}
+          min={0} max={localAdults}
+          decrementAriaLabel={t('passengerCount.decrement.aria', { type: t('common.infant') })}
+          incrementAriaLabel={t('passengerCount.increment.aria', { type: t('common.infant') })}
         />
-
         <Button
           variant="primary"
-          ariaLabel={vi.passengerCount.confirmLabel}
+          fullWidth
+          aria-label={t('passengerCount.confirm.aria')}
           data-testid="confirm-button"
           onClick={handleConfirm}
-          fullWidth
         >
-          {vi.passengerCount.confirm}
+          {t('passengerCount.confirm')}
         </Button>
       </div>
     </Modal>
   );
-};
+}

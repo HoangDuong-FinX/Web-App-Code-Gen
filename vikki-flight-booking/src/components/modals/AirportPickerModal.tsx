@@ -1,35 +1,29 @@
 import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
-import { SegmentedControl } from '../ui/SegmentedControl';
 import { TextField } from '../ui/TextField';
 import { Button } from '../ui/Button';
-import { vi } from '../../i18n/vi';
-import type { Airport } from '../../types';
+import { SegmentedControl } from '../ui/SegmentedControl';
+import { Text } from '../ui/Text';
+import { t } from '../../i18n';
+import type { Airport } from '../../types/state';
 
-interface Props {
+interface AirportPickerModalProps {
   open: boolean;
-  onClose: () => void;
-  mode: 'origin' | 'destination';
   airports: Airport[];
-  onSelect: (airport: Airport, mode: 'origin' | 'destination') => void;
+  mode: 'origin' | 'destination';
+  onSelect: (airport: Airport) => void;
+  onClose: () => void;
 }
 
-export const AirportPickerModal: React.FC<Props> = ({
-  open,
-  onClose,
-  mode,
-  airports,
-  onSelect,
-}) => {
+const GROUP_ORDER = ['Popular', 'Vietnam', 'International'] as const;
+
+export function AirportPickerModal({ open, airports, mode, onSelect, onClose }: AirportPickerModalProps) {
+  const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'origin' | 'destination'>(mode);
-  const [query, setQuery] = useState('');
 
-  React.useEffect(() => { setTab(mode); }, [mode]);
-  React.useEffect(() => { if (open) setQuery(''); }, [open]);
-
-  const filtered = airports.filter((a) => {
-    if (!query) return true;
-    const q = query.toLowerCase();
+  const filtered = airports.filter(a => {
+    if (!search) return true;
+    const q = search.toLowerCase();
     return (
       a.code.toLowerCase().includes(q) ||
       a.name.toLowerCase().includes(q) ||
@@ -37,63 +31,58 @@ export const AirportPickerModal: React.FC<Props> = ({
     );
   });
 
-  const groups: Array<{ label: string; items: Airport[] }> = [
-    { label: vi.airportPicker.popularGroup, items: filtered.filter((a) => a.group === 'Popular') },
-    { label: vi.airportPicker.vietnamGroup, items: filtered.filter((a) => a.group === 'Vietnam') },
-    { label: vi.airportPicker.internationalGroup, items: filtered.filter((a) => a.group === 'International') },
-  ].filter((g) => g.items.length > 0);
+  const grouped: Record<string, Airport[]> = {};
+  GROUP_ORDER.forEach(g => { grouped[g] = []; });
+  filtered.forEach(a => { if (grouped[a.group]) grouped[a.group].push(a); });
 
   return (
     <Modal
+      title={t('airportPicker.title')}
       open={open}
       onClose={onClose}
-      title={vi.airportPicker.title}
       data-testid="airport-picker-modal"
     >
       <div className="flex flex-col gap-3 p-4">
         <SegmentedControl
           options={[
-            { label: vi.airportPicker.originTab, value: 'origin' },
-            { label: vi.airportPicker.destinationTab, value: 'destination' },
+            { label: t('airportPicker.origin'), value: 'origin' },
+            { label: t('airportPicker.destination'), value: 'destination' },
           ]}
           value={tab}
-          onChange={(v) => setTab(v as 'origin' | 'destination')}
-          ariaLabel={vi.airportPicker.title}
+          onChange={v => setTab(v as 'origin' | 'destination')}
+          aria-label={t('airportPicker.title')}
           data-testid="origin-destination-tabs"
         />
-
         <TextField
-          placeholder={vi.airportPicker.searchPlaceholder}
-          value={query}
-          onChange={setQuery}
-          ariaLabel={vi.airportPicker.searchLabel}
+          placeholder={t('airportPicker.search.placeholder')}
+          value={search}
+          onChange={setSearch}
+          aria-label={t('airportPicker.search.aria')}
           data-testid="airport-search-input"
         />
-
-        {groups.map((group) => (
-          <div key={group.label} className="flex flex-col gap-1">
-            <h3 className="text-[10px] font-medium text-[var(--color-text-secondary)] uppercase tracking-wide">
-              {group.label}
-            </h3>
-            {group.items.map((airport) => (
-              <Button
-                key={airport.code}
-                variant="ghost"
-                ariaLabel={`${vi.airportPicker.title}: ${airport.city}, ${airport.name}`}
-                data-testid="airport-item-button"
-                onClick={() => onSelect(airport, tab)}
-                fullWidth
-                className="justify-start text-left"
-              >
-                <span className="font-semibold mr-2">{airport.code}</span>
-                <span className="text-[var(--color-text-secondary)]">
-                  {airport.city} — {airport.name}
-                </span>
-              </Button>
-            ))}
-          </div>
-        ))}
+        {GROUP_ORDER.map(group => {
+          const items = grouped[group];
+          if (!items || items.length === 0) return null;
+          return (
+            <div key={group} className="flex flex-col gap-1">
+              <Text variant="caption-2" as="h3">{t('airportPicker.popular')}</Text>
+              {items.map(airport => (
+                <button
+                  key={airport.code}
+                  type="button"
+                  onClick={() => onSelect(airport)}
+                  aria-label={`Chọn sân bay ${airport.name}, ${airport.city}`}
+                  data-testid="airport-item-button"
+                  className="text-left px-3 py-2 rounded-xl hover:bg-[var(--vikki-vkblue-50)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--vikki-vkblue-500)] transition-colors"
+                >
+                  <div className="text-[14px] font-semibold">{airport.code} — {airport.city}</div>
+                  <div className="text-[12px] text-[var(--gray-500)]">{airport.name}</div>
+                </button>
+              ))}
+            </div>
+          );
+        })}
       </div>
     </Modal>
   );
-};
+}

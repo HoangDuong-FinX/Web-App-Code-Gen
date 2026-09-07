@@ -1,96 +1,57 @@
 import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
-import { SegmentedControl } from '../ui/SegmentedControl';
 import { Button } from '../ui/Button';
-import { vi } from '../../i18n/vi';
-import type { MealOption, MealSelection } from '../../types';
-import { formatVND } from '../../utils/format';
+import { Text } from '../ui/Text';
+import { t } from '../../i18n';
+import type { MealOption } from '../../types/state';
 
-interface Props {
+interface MealPickerModalProps {
   open: boolean;
-  onClose: () => void;
   meals: MealOption[];
-  currentSelections: MealSelection[];
-  onConfirm: (selections: MealSelection[]) => void;
+  quantities: Record<string, number>;
+  onConfirm: (quantities: Record<string, number>) => void;
+  onClose: () => void;
 }
 
-export const MealPickerModal: React.FC<Props> = ({
-  open,
-  onClose,
-  meals,
-  currentSelections,
-  onConfirm,
-}) => {
-  const [quantities, setQuantities] = useState<Record<string, number>>(() =>
-    Object.fromEntries(currentSelections.map((s) => [s.optionId, s.quantity])),
-  );
+export function MealPickerModal({ open, meals, quantities: initial, onConfirm, onClose }: MealPickerModalProps) {
+  const [qty, setQty] = useState<Record<string, number>>(initial);
 
-  React.useEffect(() => {
-    if (open) {
-      setQuantities(Object.fromEntries(currentSelections.map((s) => [s.optionId, s.quantity])))
-    }
-  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  const totalPrice = meals.reduce((sum, meal) => {
+    return sum + (qty[meal.optionId] ?? 0) * meal.priceAmount;
+  }, 0);
 
-  const totalCost = meals.reduce((s, m) => s + m.priceAmount * (quantities[m.optionId] ?? 0), 0);
-
-  const handleConfirm = () => {
-    const selections: MealSelection[] = meals
-      .filter((m) => (quantities[m.optionId] ?? 0) > 0)
-      .map((m) => ({
-        optionId: m.optionId,
-        quantity: quantities[m.optionId] ?? 0,
-        name: m.name,
-        priceAmount: m.priceAmount,
-      }));
-    onConfirm(selections);
-  };
+  const handleConfirm = () => onConfirm(qty);
 
   return (
     <Modal
+      title={t('mealPicker.title')}
       open={open}
       onClose={onClose}
-      title={vi.services.mealPickerTitle}
       data-testid="meal-picker-modal"
     >
       <div className="flex flex-col gap-3 p-4">
-        <SegmentedControl
-          options={[{ label: vi.services.outboundLeg, value: 'outbound' }]}
-          value="outbound"
-          ariaLabel={vi.services.legSelector}
-          data-testid="leg-tab"
-        />
-
-        {meals.map((meal) => (
-          <div
-            key={meal.optionId}
-            className="flex flex-col gap-2 p-3 rounded-xl bg-[var(--gray-50)] border border-[var(--gray-200)]"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-[var(--color-text-primary)]">{meal.name}</span>
-              <span className="text-sm text-[var(--color-text-secondary)]">{formatVND(meal.priceAmount)}</span>
-            </div>
+        {meals.map(meal => (
+          <div key={meal.optionId} className="flex flex-col gap-2 p-3 rounded-xl bg-[var(--gray-50)]">
+            <Text variant="body-semibold" as="span">{meal.name}</Text>
+            <Text variant="body" as="span">{meal.priceAmount.toLocaleString('vi-VN')} VND</Text>
             <div className="flex items-center justify-center gap-4">
               <Button
                 variant="secondary"
-                ariaLabel={`${vi.services.decrement} ${meal.name}`}
+                aria-label={t('mealPicker.decrement.aria')}
                 data-testid="decrement-button"
-                onClick={() =>
-                  setQuantities((q) => ({ ...q, [meal.optionId]: Math.max(0, (q[meal.optionId] ?? 0) - 1) }))
-                }
-                disabled={(quantities[meal.optionId] ?? 0) <= 0}
+                onClick={() => setQty(q => ({ ...q, [meal.optionId]: Math.max(0, (q[meal.optionId] ?? 0) - 1) }))}
+                disabled={(qty[meal.optionId] ?? 0) <= 0}
+                className="!px-3 !py-2"
               >
                 −
               </Button>
-              <span className="text-sm font-semibold w-8 text-center">
-                {quantities[meal.optionId] ?? 0}
-              </span>
+              <Text variant="body" as="span">{qty[meal.optionId] ?? 0}</Text>
               <Button
                 variant="secondary"
-                ariaLabel={`${vi.services.increment} ${meal.name}`}
+                aria-label={t('mealPicker.increment.aria')}
                 data-testid="increment-button"
-                onClick={() =>
-                  setQuantities((q) => ({ ...q, [meal.optionId]: (q[meal.optionId] ?? 0) + 1 }))
-                }
+                onClick={() => setQty(q => ({ ...q, [meal.optionId]: (q[meal.optionId] ?? 0) + 1 }))}
+                className="!px-3 !py-2"
               >
                 +
               </Button>
@@ -98,21 +59,21 @@ export const MealPickerModal: React.FC<Props> = ({
           </div>
         ))}
 
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-[var(--color-text-primary)]">{vi.services.total}</span>
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">{formatVND(totalCost)}</span>
+        <div className="flex justify-between items-center">
+          <Text variant="body" as="span">{t('mealPicker.total')}</Text>
+          <Text variant="body-semibold" as="span">{totalPrice.toLocaleString('vi-VN')} VND</Text>
         </div>
 
         <Button
           variant="primary"
-          ariaLabel={vi.services.confirmLabel}
+          fullWidth
+          aria-label={t('mealPicker.continue.aria')}
           data-testid="confirm-button"
           onClick={handleConfirm}
-          fullWidth
         >
-          {vi.services.confirm}
+          {t('mealPicker.continue')}
         </Button>
       </div>
     </Modal>
   );
-};
+}

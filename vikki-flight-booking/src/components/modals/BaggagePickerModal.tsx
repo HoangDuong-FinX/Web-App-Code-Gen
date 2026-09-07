@@ -1,116 +1,85 @@
 import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
-import { SegmentedControl } from '../ui/SegmentedControl';
 import { Button } from '../ui/Button';
+import { Text } from '../ui/Text';
 import { Radio } from '../ui/Radio';
-import { vi } from '../../i18n/vi';
-import type { BaggageOption, BaggageSelection } from '../../types';
-import { formatVND } from '../../utils/format';
+import { t } from '../../i18n';
+import type { BaggageOption } from '../../types/state';
 
-interface Props {
+interface BaggagePickerModalProps {
   open: boolean;
+  baggageOptions: BaggageOption[];
+  selectedId: string | null;
+  onConfirm: (selectedId: string | null) => void;
   onClose: () => void;
-  options: BaggageOption[];
-  currentSelections: BaggageSelection[];
-  onConfirm: (selections: BaggageSelection[]) => void;
 }
 
-export const BaggagePickerModal: React.FC<Props> = ({
-  open,
-  onClose,
-  options,
-  currentSelections,
-  onConfirm,
-}) => {
-  const [selectedId, setSelectedId] = useState<string | null>(
-    () => currentSelections[0]?.optionId ?? null,
-  );
+export function BaggagePickerModal({ open, baggageOptions, selectedId: initialId, onConfirm, onClose }: BaggagePickerModalProps) {
+  const [selected, setSelected] = useState<string | null>(initialId);
 
-  React.useEffect(() => {
-    if (open) setSelectedId(currentSelections[0]?.optionId ?? null);
-  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const selected = options.find((o) => o.optionId === selectedId);
-  const totalCost = selected?.priceAmount ?? 0;
-
-  const handleConfirm = () => {
-    const selections: BaggageSelection[] = selected
-      ? [{ optionId: selected.optionId, name: selected.name, priceAmount: selected.priceAmount }]
-      : [];
-    onConfirm(selections);
-  };
+  const selectedOption = baggageOptions.find(b => b.optionId === selected);
+  const totalPrice = selectedOption?.priceAmount ?? 0;
 
   return (
     <Modal
+      title={t('baggagePicker.title')}
       open={open}
       onClose={onClose}
-      title={vi.services.baggagePickerTitle}
       data-testid="baggage-picker-modal"
     >
       <div className="flex flex-col gap-3 p-4">
-        <SegmentedControl
-          options={[{ label: vi.services.outboundLeg, value: 'outbound' }]}
-          value="outbound"
-          ariaLabel={vi.services.legSelector}
-          data-testid="leg-tab"
-        />
+        <Text variant="body" as="p">{t('baggagePicker.oversize')}</Text>
 
-        <span className="text-sm text-[var(--color-text-secondary)]">
-          {vi.services.oversizeBaggage}
-        </span>
-
-        {options.map((opt) => (
+        {baggageOptions.map(opt => (
           <div
             key={opt.optionId}
             className="flex flex-col gap-1 p-3 rounded-xl bg-[var(--gray-50)] border border-[var(--gray-200)]"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-[var(--color-text-primary)]">{opt.name}</span>
-              <span className="text-sm text-[var(--color-text-secondary)]">{formatVND(opt.priceAmount)}</span>
+              <div className="flex flex-col gap-0.5">
+                <Text variant="body-semibold" as="span">{opt.name}</Text>
+                <Text variant="body" as="span">{opt.priceAmount.toLocaleString('vi-VN')} VND</Text>
+              </div>
+              <Radio
+                checked={selected === opt.optionId}
+                onChange={() => setSelected(opt.optionId)}
+                aria-label={t('baggagePicker.select.aria', { name: opt.name })}
+                data-testid="baggage-selection"
+                name="baggage"
+                value={opt.optionId}
+              />
             </div>
-            <Radio
-              label=""
-              checked={selectedId === opt.optionId}
-              onChange={(checked) => checked && setSelectedId(opt.optionId)}
-              ariaLabel={`Chọn ${opt.name}`}
-              data-testid="baggage-selection"
-              name="baggage"
-              value={opt.optionId}
-            />
           </div>
         ))}
 
-        {/* No extra baggage option */}
-        <div className="flex flex-col gap-1 p-3 rounded-xl bg-[var(--gray-50)] border border-[var(--gray-200)]">
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">{vi.services.noExtraBaggage}</span>
+        {/* No extra option */}
+        <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--gray-50)] border border-[var(--gray-200)]">
+          <Text variant="body-semibold" as="span">{t('baggagePicker.noExtra')}</Text>
           <Radio
-            label=""
-            checked={selectedId === null}
-            onChange={(checked) => checked && setSelectedId(null)}
-            ariaLabel={vi.services.noExtraBaggage}
+            checked={selected === null}
+            onChange={() => setSelected(null)}
+            aria-label={t('baggagePicker.noExtra.aria')}
             data-testid="no-bag-selection"
             name="baggage"
             value="none"
           />
         </div>
 
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-[var(--color-text-primary)]">{vi.services.total}</span>
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">
-            {totalCost > 0 ? formatVND(totalCost) : vi.common.free}
-          </span>
+        <div className="flex justify-between items-center">
+          <Text variant="body" as="span">{t('baggagePicker.total')}</Text>
+          <Text variant="body-semibold" as="span">{totalPrice.toLocaleString('vi-VN')} VND</Text>
         </div>
 
         <Button
           variant="primary"
-          ariaLabel={vi.services.confirmLabel}
-          data-testid="confirm-button"
-          onClick={handleConfirm}
           fullWidth
+          aria-label={t('baggagePicker.continue.aria')}
+          data-testid="confirm-button"
+          onClick={() => onConfirm(selected)}
         >
-          {vi.services.confirm}
+          {t('baggagePicker.continue')}
         </Button>
       </div>
     </Modal>
   );
-};
+}
