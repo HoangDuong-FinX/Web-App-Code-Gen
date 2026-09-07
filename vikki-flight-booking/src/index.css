@@ -1,5 +1,890 @@
 @import "tailwindcss";
 
-/* Tailwind v4 needs no config file: this single import is the whole styling layer.
-   Add app-specific rules below it, and keep using utility classes in the screens -
-   they only become CSS because this file is imported. */
+/* ===================================================================
+   Vikki Design Tokens
+   Source: design-system-vikki-used-tokens.txt (30 verified tokens)
+   =================================================================== */
+
+:root {
+  /* Brand colours */
+  --vikki-vkblue-50: rgb(232, 241, 255);
+  --vikki-vkblue-100: rgb(209, 226, 255);
+  --vikki-vkblue-500: rgb(47, 69, 255);
+  --vikki-vkblue-700: rgb(0, 0, 255);
+
+  /* Neutral greys */
+  --gray-50: rgb(247, 247, 248);
+  --gray-100: rgb(237, 237, 240);
+  --gray-200: rgb(218, 218, 221);
+  --gray-400: rgb(161, 161, 168);
+  --gray-600: rgb(96, 96, 108);
+  --gray-900: rgb(17, 17, 22);
+
+  /* Semantic colours */
+  --color-bg-page: #ffffff;
+  --color-text-primary: var(--gray-900);
+  --color-text-secondary: var(--gray-600);
+  --color-border: var(--gray-200);
+  --color-success: #16a34a;
+  --color-error: #dc2626;
+  --color-warning: #d97706;
+
+  /* Typography */
+  --font-display: 'Inter', 'SVN-Gilroy', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Text styles */
+  --text-title-1-font: 700 28px/1.35 var(--font-display);
+  --text-title-2-font: 700 24px/1.35 var(--font-display);
+  --text-headline-font: 600 17px/1.4 var(--font-display);
+  --text-body-font: 400 14px/1.45 var(--font-body);
+  --text-body-semibold-font: 600 14px/1.45 var(--font-body);
+  --text-footnote-font: 400 12px/1.4 var(--font-body);
+  --text-caption-2-font: 500 10px/1.3 var(--font-body);
+  --text-mono-label-font: 500 12px/1.3 var(--font-mono);
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --color-bg-page: #0e0e0f;
+  --color-text-primary: rgb(247, 247, 248);
+  --color-text-secondary: rgb(161, 161, 168);
+  --color-border: rgb(50, 50, 60);
+  --gray-50: rgb(30, 30, 36);
+}
+
+/* ===================================================================
+   Base
+   =================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font: var(--text-body-font);
+  color: var(--color-text-primary);
+  background: var(--color-bg-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===================================================================
+   Typography classes
+   =================================================================== */
+
+.text-title-1   { font: var(--text-title-1-font); color: var(--color-text-primary); }
+.text-title-2   { font: var(--text-title-2-font); color: var(--color-text-primary); }
+.text-headline  { font: var(--text-headline-font); color: var(--color-text-primary); }
+.text-body      { font: var(--text-body-font); color: var(--color-text-primary); }
+.text-body-semibold { font: var(--text-body-semibold-font); color: var(--color-text-primary); }
+.text-footnote  { font: var(--text-footnote-font); color: var(--color-text-secondary); }
+.text-caption-2 { font: var(--text-caption-2-font); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.text-mono-label { font: var(--text-mono-label-font); color: var(--color-text-primary); }
+
+/* ===================================================================
+   Layout
+   =================================================================== */
+
+.app-root {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+}
+
+.screen {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 0 80px;
+}
+
+.screen__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.screen__content--center {
+  align-items: center;
+  text-align: center;
+}
+
+.stack--col { display: flex; flex-direction: column; }
+.stack--row { display: flex; flex-direction: row; }
+.gap-4  { gap: 4px; }
+.gap-6  { gap: 6px; }
+.gap-8  { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.gap-24 { gap: 24px; }
+.mt-24  { margin-top: 24px; }
+.p-16   { padding: 16px; }
+.w-full { width: 100%; }
+
+.row-between {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.row-start {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===================================================================
+   Buttons
+   =================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font: var(--text-body-semibold-font);
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+  text-align: center;
+  min-height: 44px;
+  width: 100%;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--vikki-vkblue-500);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--vikki-vkblue-500);
+  color: #ffffff;
+}
+
+.btn-primary:not(:disabled):hover {
+  background: var(--vikki-vkblue-700);
+}
+
+.btn-secondary {
+  background: var(--gray-100);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:not(:disabled):hover {
+  background: var(--gray-200);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--vikki-vkblue-500);
+  width: auto;
+  padding: 6px 8px;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--vikki-vkblue-500);
+  border: 1px solid var(--vikki-vkblue-500);
+}
+
+.btn-danger {
+  background: var(--color-error);
+  color: #ffffff;
+}
+
+.swap-btn {
+  width: auto;
+  align-self: center;
+  font-size: 20px;
+  padding: 8px 12px;
+}
+
+/* ===================================================================
+   SegmentedControl
+   =================================================================== */
+
+.segmented-control {
+  display: flex;
+  background: var(--gray-100);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.segmented-option {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font: var(--text-body-semibold-font);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: background 0.15s, color 0.15s;
+  min-height: 36px;
+}
+
+.segmented-option:focus-visible {
+  outline: 2px solid var(--vikki-vkblue-500);
+  outline-offset: 1px;
+}
+
+.segmented-option--active {
+  background: #ffffff;
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] .segmented-option--active {
+  background: var(--gray-900);
+}
+
+/* ===================================================================
+   TextField
+   =================================================================== */
+
+.text-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.text-field__label {
+  font: var(--text-body-semibold-font);
+  color: var(--color-text-primary);
+}
+
+.text-field__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font: var(--text-body-font);
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  min-height: 44px;
+}
+
+.text-field__input:focus {
+  outline: none;
+  border-color: var(--vikki-vkblue-500);
+  box-shadow: 0 0 0 2px var(--vikki-vkblue-100);
+}
+
+.text-field__input--error {
+  border-color: var(--color-error);
+}
+
+.text-field__error {
+  font: var(--text-footnote-font);
+  color: var(--color-error);
+}
+
+.text-field__input:disabled {
+  background: var(--gray-100);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+/* ===================================================================
+   Checkbox & Radio
+   =================================================================== */
+
+.checkbox, .radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.checkbox__input, .radio__input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--vikki-vkblue-500);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox__label, .radio__label {
+  font: var(--text-body-font);
+  color: var(--color-text-primary);
+}
+
+/* ===================================================================
+   Divider
+   =================================================================== */
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 4px 0;
+}
+
+/* ===================================================================
+   InlineError & AlertNote
+   =================================================================== */
+
+.inline-error {
+  font: var(--text-footnote-font);
+  color: var(--color-error);
+  display: block;
+}
+
+.alert-note {
+  padding: 12px;
+  border-radius: 8px;
+  font: var(--text-body-font);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.alert-note--neutral { background: var(--gray-50); color: var(--color-text-primary); border: 1px solid var(--color-border); }
+.alert-note--error   { background: #fef2f2; color: var(--color-error); border: 1px solid #fecaca; }
+.alert-note--warning { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+.alert-note--success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+
+/* ===================================================================
+   ServiceTile
+   =================================================================== */
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.service-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-page);
+  cursor: pointer;
+  transition: background 0.15s;
+  min-height: 80px;
+  position: relative;
+}
+
+.service-tile:focus-visible {
+  outline: 2px solid var(--vikki-vkblue-500);
+  outline-offset: 2px;
+}
+
+.service-tile--disabled {
+  background: var(--gray-50);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.service-tile--selected {
+  background: var(--vikki-vkblue-50);
+  border-color: var(--vikki-vkblue-500);
+}
+
+.service-tile__icon { font-size: 24px; }
+.service-tile__label { font: var(--text-footnote-font); text-align: center; color: var(--color-text-primary); }
+
+.service-tile__badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font: var(--text-caption-2-font);
+  background: var(--gray-200);
+  color: var(--color-text-secondary);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+/* ===================================================================
+   PriceHoldCountdown
+   =================================================================== */
+
+.price-hold-countdown {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--vikki-vkblue-50);
+  border-radius: 8px;
+  font: var(--text-body-semibold-font);
+  color: var(--vikki-vkblue-500);
+}
+
+.price-hold-countdown--expired {
+  background: #fef2f2;
+  color: var(--color-error);
+}
+
+/* ===================================================================
+   Modal
+   =================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+@media (min-width: 600px) {
+  .modal-overlay { align-items: center; }
+}
+
+.modal {
+  background: var(--color-bg-page);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+}
+
+@media (min-width: 600px) {
+  .modal {
+    border-radius: 16px;
+    max-height: 80vh;
+  }
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-page);
+  z-index: 1;
+}
+
+.modal__title { margin: 0; }
+.modal__close { width: auto; font-size: 20px; }
+
+/* ===================================================================
+   Flight cards
+   =================================================================== */
+
+.flight-card {
+  background: var(--gray-50);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flight-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.flight-card__fares {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fare-option {
+  background: var(--vikki-vkblue-50);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ===================================================================
+   Date strip
+   =================================================================== */
+
+.date-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.date-strip__day {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-page);
+  cursor: pointer;
+  font: var(--text-footnote-font);
+  min-width: 56px;
+  min-height: 44px;
+}
+
+.date-strip__day:focus-visible { outline: 2px solid var(--vikki-vkblue-500); }
+
+.date-strip__day--selected {
+  background: var(--vikki-vkblue-50);
+  border-color: var(--vikki-vkblue-500);
+  color: var(--vikki-vkblue-500);
+}
+
+.date-strip__price {
+  font: var(--text-caption-2-font);
+  color: var(--vikki-vkblue-500);
+}
+
+/* ===================================================================
+   Passenger card
+   =================================================================== */
+
+.passenger-card {
+  background: var(--gray-50);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===================================================================
+   Recent search card
+   =================================================================== */
+
+.recent-search-card {
+  background: var(--gray-50);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+
+.recent-search-card .btn-ghost {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.recent-search-card__route { font: var(--text-body-semibold-font); }
+.recent-search-card__dates { font: var(--text-footnote-font); color: var(--color-text-secondary); }
+
+/* ===================================================================
+   Passenger counter row
+   =================================================================== */
+
+.pax-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--gray-50);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.pax-counter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pax-counter .btn { width: auto; min-width: 36px; padding: 6px 10px; }
+
+/* ===================================================================
+   Calendar
+   =================================================================== */
+
+.calendar { width: 100%; }
+
+.calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.calendar__weekday {
+  text-align: center;
+  font: var(--text-caption-2-font);
+  color: var(--color-text-secondary);
+  padding: 4px;
+}
+
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendar__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 6px 2px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: var(--text-body-font);
+  min-height: 44px;
+}
+
+.calendar__cell:focus-visible { outline: 2px solid var(--vikki-vkblue-500); }
+
+.calendar__cell--selected {
+  background: var(--vikki-vkblue-500);
+  color: #ffffff;
+}
+
+.calendar__cell--past {
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
+.calendar__cell--empty { cursor: default; }
+
+.calendar__day { font: var(--text-body-font); }
+.calendar__price { font: var(--text-caption-2-font); color: var(--vikki-vkblue-500); }
+
+.calendar__cell--selected .calendar__price { color: rgba(255,255,255,0.8); }
+
+/* ===================================================================
+   Seat map
+   =================================================================== */
+
+.seat-map { display: flex; flex-direction: column; gap: 16px; }
+
+.seat-map__zone-label {
+  font: var(--text-body-semibold-font);
+  margin-bottom: 6px;
+}
+
+.seat-map__seats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.seat {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-page);
+  font: var(--text-footnote-font);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seat:focus-visible { outline: 2px solid var(--vikki-vkblue-500); }
+
+.seat--disabled {
+  background: var(--gray-100);
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
+.seat--mine {
+  background: var(--vikki-vkblue-500);
+  color: #ffffff;
+  border-color: var(--vikki-vkblue-700);
+}
+
+.seat--taken {
+  background: var(--gray-200);
+  color: var(--gray-600);
+}
+
+/* ===================================================================
+   Payment details / checkout cards
+   =================================================================== */
+
+.payment-details-card,
+.journey-header-card,
+.leg-summary-card,
+.transaction-details-card {
+  background: var(--gray-50);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.total-card {
+  background: var(--vikki-vkblue-50);
+  border-radius: 12px;
+  padding: 12px;
+  border-top: 2px solid var(--vikki-vkblue-500);
+}
+
+.payment-method-rail {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--gray-50);
+}
+
+/* ===================================================================
+   ResultIcon
+   =================================================================== */
+
+.result-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #ffffff;
+  margin: 0 auto;
+}
+
+/* ===================================================================
+   Airport item
+   =================================================================== */
+
+.airport-item {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--color-text-primary);
+}
+
+.airport-item:hover { background: var(--gray-50); }
+
+/* ===================================================================
+   Meal option
+   =================================================================== */
+
+.meal-option {
+  background: var(--gray-50);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ===================================================================
+   Baggage option
+   =================================================================== */
+
+.baggage-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gray-50);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+}
+
+/* ===================================================================
+   Loading state
+   =================================================================== */
+
+.loading-state {
+  padding: 24px;
+  text-align: center;
+  font: var(--text-body-font);
+  color: var(--color-text-secondary);
+}
+
+/* ===================================================================
+   Desktop sidebar (NFR-05: sticky 330px sidebar)
+   =================================================================== */
+
+@media (min-width: 900px) {
+  .screen {
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 330px;
+    gap: 24px;
+    padding: 24px;
+    align-items: start;
+  }
+
+  .screen__content {
+    padding: 0;
+  }
+
+  .booking-summary-sidebar {
+    position: sticky;
+    top: 24px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid var(--color-border);
+  }
+}
+
+@media (max-width: 899px) {
+  .booking-summary-sidebar {
+    display: none;
+  }
+}
+
+/* ===================================================================
+   Responsive: narrow phone (390px)
+   =================================================================== */
+
+@media (max-width: 390px) {
+  .service-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .service-tile {
+    padding: 8px 4px;
+    min-height: 70px;
+  }
+
+  .service-tile__label {
+    font-size: 10px;
+  }
+
+  .date-strip__day {
+    min-width: 46px;
+    padding: 6px 6px;
+  }
+}
