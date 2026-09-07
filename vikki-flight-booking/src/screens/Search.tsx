@@ -76,19 +76,6 @@ export const Search: React.FC<SearchProps> = ({ navigate, t }) => {
     }
   };
 
-  const handleFillSampleData = () => {
-    store.setOrigin('SGN');
-    store.setDestination('HAN');
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    store.setDepartDate(tomorrow.toISOString().split('T')[0]);
-    if (store.tripType === 'roundTrip') {
-      const returnDate = new Date(tomorrow);
-      returnDate.setDate(returnDate.getDate() + 7);
-      store.setReturnDate(returnDate.toISOString().split('T')[0]);
-    }
-  };
-
   const minDepartDate = new Date().toISOString().split('T')[0];
   const minReturnDate = store.departDate || minDepartDate;
 

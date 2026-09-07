@@ -7,7 +7,7 @@ import { SegmentedControl } from '../components/SegmentedControl';
 import { StatusNote } from '../components/StatusNote';
 import { Layout } from '../components/Layout';
 import { useStore } from '../store/store';
-import { PassengerWithId } from '../types';
+import type { PassengerWithId } from '../types';
 
 interface PassengersProps {
   navigate: (screen: string) => void;
@@ -19,7 +19,6 @@ export const Passengers: React.FC<PassengersProps> = ({ navigate, t }) => {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const totalPassengers = store.adultCount + store.childCount + store.infantCount;
 
   // Initialize passengers array if empty
   React.useEffect(() => {
@@ -59,7 +58,7 @@ export const Passengers: React.FC<PassengersProps> = ({ navigate, t }) => {
     }
   }, []);
 
-  const updatePassenger = (index: number, field: keyof PassengerWithId, value: any) => {
+  const updatePassenger = (index: number, field: keyof PassengerWithId, value: unknown) => {
     const updated = [...store.passengers];
     updated[index] = { ...updated[index], [field]: value };
     store.setPassengers(updated);

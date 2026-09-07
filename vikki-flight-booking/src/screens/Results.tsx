@@ -15,7 +15,6 @@ export const Results: React.FC<ResultsProps> = ({ navigate, t }) => {
   const store = useStore();
   const [countdownText, setCountdownText] = useState('');
   const [selectedLeg, setSelectedLeg] = useState<'outbound' | 'return'>('outbound');
-  const [isRoundTripReturnReady, setIsRoundTripReturnReady] = useState(false);
 
   // 15-minute countdown timer
   useEffect(() => {
@@ -47,7 +46,6 @@ export const Results: React.FC<ResultsProps> = ({ navigate, t }) => {
       const returnExpiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
       store.setReturnSession('session_return_001', returnExpiresAt);
       setSelectedLeg('return');
-      setIsRoundTripReturnReady(true);
     } else if (store.tripType === 'roundTrip' && selectedLeg === 'return') {
       store.setReturnOffer(offerId);
       navigate('passengers');
@@ -58,7 +56,6 @@ export const Results: React.FC<ResultsProps> = ({ navigate, t }) => {
   };
 
   const heading = selectedLeg === 'return' ? t['results.headingReturn'] : t['results.title'];
-  const stepText = store.tripType === 'roundTrip' ? (selectedLeg === 'return' ? '1b. Chọn chuyến' : '1a. Chọn chuyến') : '1. Chọn chuyến';
 
   return (
     <div className="max-w-2xl mx-auto p-4">
