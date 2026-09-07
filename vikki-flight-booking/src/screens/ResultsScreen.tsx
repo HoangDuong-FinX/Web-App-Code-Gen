@@ -6,8 +6,8 @@ import { AlertNote } from '../components/ui/AlertNote';
 import { PriceHoldCountdown } from '../components/ui/PriceHoldCountdown';
 import { Divider } from '../components/ui/Divider';
 import { isHoldExpired } from '../utils/holdExpiry';
-import { formatVND, fixtureDailyPrice, formatDateShort } from '../utils/format';
-import { fixtureSearch } from '../fixtures';
+import { formatVND, formatDateShort } from '../utils/format';
+import { fixtureSearch, fixtureDailyPrice } from '../fixtures';
 
 interface Props {
   state: AppState;
@@ -136,7 +136,7 @@ export const ResultsScreen: React.FC<Props> = ({ state, dispatch }) => {
                     ? 'bg-[var(--vikki-vkblue-50)] border-[var(--vikki-vkblue-500)] text-[var(--vikki-vkblue-700)]'
                     : 'bg-white border-[var(--gray-200)] text-[var(--color-text-primary)] hover:bg-[var(--gray-50)]'
                 }`}
-                aria-label={`Ngày ${parseInt(day, 10)} tháng ${parseInt(month, 10)}, giá từ ${price ? formatVND(price) : ''}`}
+                aria-label={`Ngày ${parseInt(day ?? '1', 10)} tháng ${parseInt(month ?? '1', 10)}, giá từ ${price ? formatVND(price) : ''}`}
                 aria-pressed={isSelected}
                 data-testid="date-strip-day-button"
               >
@@ -152,6 +152,7 @@ export const ResultsScreen: React.FC<Props> = ({ state, dispatch }) => {
       <div className="flex flex-col gap-3" data-testid="flight-card-list">
         {Array.from(grouped.entries()).map(([key, fareOffers]) => {
           const first = fareOffers[0];
+          if (!first) return null;
           return (
             <div
               key={key}

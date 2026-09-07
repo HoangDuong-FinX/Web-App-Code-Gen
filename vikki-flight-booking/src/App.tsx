@@ -7,7 +7,6 @@ import { ServicesScreen } from './screens/ServicesScreen';
 import { PaymentScreen } from './screens/PaymentScreen';
 import { CheckoutScreen } from './screens/CheckoutScreen';
 import { DoneScreen } from './screens/DoneScreen';
-import type { ScreenId } from './types';
 
 // Navigation state machine: one root component, one screen ID in state,
 // one named transition per edge. No router library (C-14).
@@ -17,14 +16,19 @@ export default function App() {
 
   // Deep-link / direct-navigation guard: if session is missing on a protected
   // screen, redirect to search (binding: deep-link-redirect).
-  const protectedScreens: ScreenId[] = [
-    'results', 'results-return', 'passengers', 'services', 'payment', 'checkout', 'done',
-  ];
-  const needsSession = protectedScreens.includes(state.screen);
+  const needsSession =
+    state.screen === 'results' ||
+    state.screen === 'results-return' ||
+    state.screen === 'passengers' ||
+    state.screen === 'services' ||
+    state.screen === 'payment' ||
+    state.screen === 'checkout';
+
   const hasSession = state.outboundSession !== null;
-  if (needsSession && !hasSession && state.screen !== 'done') {
+  if (needsSession && !hasSession) {
     // Redirect to search without rendering the protected screen
-    dispatch({ type: 'NAVIGATE', screen: 'search' });
+    // Use setTimeout to avoid dispatch-during-render
+    setTimeout(() => dispatch({ type: 'NAVIGATE', screen: 'search' }), 0);
     return null;
   }
 
@@ -45,11 +49,8 @@ export default function App() {
         return <CheckoutScreen state={state} dispatch={dispatch} />;
       case 'done':
         return <DoneScreen state={state} dispatch={dispatch} />;
-      default: {
-        // Exhaustive check: TypeScript will catch unhandled cases
-        const _exhaustive: never = state.screen;
+      default:
         return <SearchScreen state={state} dispatch={dispatch} />;
-      }
     }
   };
 
