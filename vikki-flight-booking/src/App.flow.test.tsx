@@ -15,13 +15,24 @@ afterEach(() => {
   setAncillaryOutcome('success');
 });
 
+// Wait for master data (airports + city pairs) to finish loading (300ms + 200ms fixture delays)
 async function renderApp() {
   let container: ReturnType<typeof render>;
   await act(async () => {
     container = render(<App />);
-    await new Promise(r => setTimeout(r, 500));
+    // Wait for both fixtures: airports (300ms) + city pairs (200ms) + margin
+    await new Promise(r => setTimeout(r, 700));
   });
   return container!;
+}
+
+// Helper: open airport picker, wait for list to render, pick by index
+async function pickAirport(testId: string, index: number) {
+  fireEvent.click(screen.getByTestId(testId));
+  await act(async () => { await new Promise(r => setTimeout(r, 100)); });
+  const btns = screen.getAllByTestId('airport-item-button');
+  fireEvent.click(btns[index]);
+  await act(async () => { await new Promise(r => setTimeout(r, 100)); });
 }
 
 describe('App mount', () => {
@@ -36,20 +47,15 @@ describe('Search => Results transition', () => {
   it('navigates to results screen after successful search', async () => {
     await renderApp();
 
-    fireEvent.click(screen.getByTestId('origin-airport-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
-    const airportBtns = screen.getAllByTestId('airport-item-button');
-    fireEvent.click(airportBtns[0]);
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
+    // Pick SGN as origin (index 0), DLI as destination (index 2)
+    await pickAirport('origin-airport-button', 0); // SGN
+    await pickAirport('destination-airport-button', 2); // DLI
 
-    fireEvent.click(screen.getByTestId('destination-airport-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
-    const airportBtns2 = screen.getAllByTestId('airport-item-button');
-    fireEvent.click(airportBtns2[2]);
-    await act(async () => { await new Promise(r => setTimeout(r, 100)); });
-
-    fireEvent.click(screen.getByTestId('search-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 1000)); });
+    // Now click search
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
 
     expect(screen.getByTestId('results-title')).toBeTruthy();
   });
@@ -60,18 +66,13 @@ describe('Search failure path', () => {
     setSearchOutcome('fail');
     await renderApp();
 
-    fireEvent.click(screen.getByTestId('origin-airport-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
-    fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
+    await pickAirport('origin-airport-button', 0); // SGN
+    await pickAirport('destination-airport-button', 2); // DLI
 
-    fireEvent.click(screen.getByTestId('destination-airport-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
-    fireEvent.click(screen.getAllByTestId('airport-item-button')[2]);
-    await act(async () => { await new Promise(r => setTimeout(r, 100)); });
-
-    fireEvent.click(screen.getByTestId('search-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 1000)); });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('search-button'));
+      await new Promise(r => setTimeout(r, 1200));
+    });
 
     expect(screen.getByTestId('search-error')).toBeTruthy();
   });
@@ -83,6 +84,7 @@ describe('Trip type toggle', () => {
     const oneWayBtn = screen.getByRole('button', { name: /m\u1ed9t chi\u1ec1u/i });
     fireEvent.click(oneWayBtn);
     await act(async () => { await new Promise(r => setTimeout(r, 50)); });
+    // Return date button should be gone
     expect(screen.queryByTestId('return-date-button')).toBeNull();
   });
 });
@@ -91,7 +93,7 @@ describe('Passenger count modal', () => {
   it('opens and confirms passenger count', async () => {
     await renderApp();
     fireEvent.click(screen.getByTestId('passenger-count-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
+    await act(async () => { await new Promise(r => setTimeout(r, 100)); });
     expect(screen.getByTestId('passenger-count-modal')).toBeTruthy();
     fireEvent.click(screen.getByTestId('confirm-button'));
     await act(async () => { await new Promise(r => setTimeout(r, 50)); });
@@ -103,7 +105,7 @@ describe('Airport picker modal', () => {
   it('opens airport picker and filters airports', async () => {
     await renderApp();
     fireEvent.click(screen.getByTestId('origin-airport-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
+    await act(async () => { await new Promise(r => setTimeout(r, 100)); });
     expect(screen.getByTestId('airport-picker-modal')).toBeTruthy();
 
     const searchInput = screen.getByTestId('airport-search-input');
@@ -118,15 +120,8 @@ describe('Swap airports', () => {
   it('swaps origin and destination airports', async () => {
     await renderApp();
 
-    fireEvent.click(screen.getByTestId('origin-airport-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
-    fireEvent.click(screen.getAllByTestId('airport-item-button')[0]);
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
-
-    fireEvent.click(screen.getByTestId('destination-airport-button'));
-    await act(async () => { await new Promise(r => setTimeout(r, 50)); });
-    fireEvent.click(screen.getAllByTestId('airport-item-button')[2]);
-    await act(async () => { await new Promise(r => setTimeout(r, 100)); });
+    await pickAirport('origin-airport-button', 0); // SGN
+    await pickAirport('destination-airport-button', 2); // DLI
 
     fireEvent.click(screen.getByTestId('swap-airports-button'));
     await act(async () => { await new Promise(r => setTimeout(r, 50)); });
@@ -139,7 +134,6 @@ describe('Swap airports', () => {
 describe('App renders without session guard redirect', () => {
   it('stays on search when no session and screen guard triggers', async () => {
     await renderApp();
-    // App starts on search, guard is only active for deeper screens
     expect(screen.getByTestId('search-button')).toBeTruthy();
   });
 });
