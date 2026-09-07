@@ -39,7 +39,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ navigate, t }) => {
 
   const subtotal = 500000;
   const serviceFees = 50000;
-  const promoDiscount = 0;
+  const promoDiscount: number = 0;
   const total = subtotal + serviceFees - promoDiscount;
 
   const handlePay = async () => {
@@ -165,7 +165,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ navigate, t }) => {
           <Layout layoutType="stack" direction="row" gap={12} justifyContent="space-between">
             <Text variant="body">{t['checkout.discount']}</Text>
             <Text variant="body" testId="promo-discount">
-              {promoDiscount === 0 ? '0 VND' : `-${promoDiscount.toLocaleString()} VND`}
+              {promoDiscount === 0 ? '0 VND' : `-${(promoDiscount as number).toLocaleString()} VND`}
             </Text>
           </Layout>
           <Layout layoutType="stack" direction="row" gap={12} justifyContent="space-between" className="border-t border-gray-100 pt-3">
