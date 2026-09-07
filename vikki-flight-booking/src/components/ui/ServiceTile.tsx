@@ -1,40 +1,39 @@
 import React from 'react';
+import { t } from '../../i18n';
 
 interface ServiceTileProps {
   label: string;
-  icon?: string;
-  enabled?: boolean;
+  icon: string;
+  enabled: boolean;
   badge?: string;
   onClick?: () => void;
-  ariaLabel?: string;
+  'aria-label'?: string;
   'data-testid'?: string;
   selected?: boolean;
 }
 
-const ICON_MAP: Record<string, string> = {
+const iconMap: Record<string, string> = {
   'airplane-seat': '💺',
-  utensils: '🍽️',
-  luggage: '🧳',
-  shield: '🛡️',
+  'utensils': '🍽️',
+  'luggage': '🧳',
+  'shield': '🛡️',
   'shopping-bag': '🛍️',
-  gift: '🎁',
-  building: '🏨',
-  activity: '🎯',
-  car: '🚗',
+  'gift': '🎁',
+  'building': '🏨',
+  'activity': '🎯',
+  'car': '🚗',
 };
 
-export const ServiceTile: React.FC<ServiceTileProps> = ({
+export function ServiceTile({
   label,
   icon,
-  enabled = true,
+  enabled,
   badge,
   onClick,
-  ariaLabel,
+  'aria-label': ariaLabel,
   'data-testid': testId,
-  selected = false,
-}) => {
-  const iconChar = icon ? (ICON_MAP[icon] ?? '✈️') : '✈️';
-
+  selected,
+}: ServiceTileProps) {
   return (
     <button
       type="button"
@@ -43,23 +42,21 @@ export const ServiceTile: React.FC<ServiceTileProps> = ({
       aria-label={ariaLabel ?? label}
       aria-pressed={selected}
       data-testid={testId}
-      className={`relative flex flex-col items-center justify-center gap-1 rounded-xl p-3 min-h-[80px] text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--vikki-vkblue-700)] ${
-        !enabled
-          ? 'bg-[var(--gray-50)] text-[var(--color-text-secondary)] opacity-60 cursor-not-allowed'
-          : selected
-          ? 'bg-[var(--vikki-vkblue-50)] border-2 border-[var(--vikki-vkblue-700)] text-[var(--vikki-vkblue-700)]'
-          : 'bg-[var(--gray-50)] border border-[var(--gray-200)] text-[var(--color-text-primary)] hover:bg-[var(--vikki-vkblue-50)]'
+      className={`relative flex flex-col items-center justify-center gap-1 rounded-xl p-3 text-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--vikki-vkblue-500)] ${
+        enabled
+          ? selected
+            ? 'bg-[var(--vikki-vkblue-50)] border-2 border-[var(--vikki-vkblue-500)] cursor-pointer'
+            : 'bg-[var(--gray-50)] border border-[var(--gray-200)] hover:bg-[var(--vikki-vkblue-50)] cursor-pointer'
+          : 'bg-[var(--gray-50)] border border-[var(--gray-200)] opacity-60 cursor-not-allowed'
       }`}
     >
-      <span className="text-2xl" aria-hidden="true">
-        {iconChar}
-      </span>
-      <span className="text-xs font-medium leading-tight">{label}</span>
+      <span className="text-2xl" aria-hidden>{iconMap[icon] ?? '•'}</span>
+      <span className="text-[11px] font-medium leading-tight text-[var(--gray-800)]">{label}</span>
       {badge && (
-        <span className="absolute top-1 right-1 text-[9px] bg-[var(--gray-200)] text-[var(--color-text-secondary)] rounded px-1">
-          {badge}
+        <span className="absolute -top-1 -right-1 bg-[var(--vikki-vkblue-500)] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+          {t('services.comingSoon')}
         </span>
       )}
     </button>
   );
-};
+}

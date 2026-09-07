@@ -1,66 +1,47 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
+import { t } from '../../i18n';
 
 interface ModalProps {
+  title: string;
   open: boolean;
   onClose: () => void;
-  title: string;
   children: React.ReactNode;
   'data-testid'?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({ open, onClose, title, children, 'data-testid': testId }) => {
-  const dialogRef = useRef<HTMLDivElement>(null);
-
+export function Modal({ title, open, onClose, children, 'data-testid': testId }: ModalProps) {
   useEffect(() => {
     if (!open) return;
-    const prevFocus = document.activeElement as HTMLElement | null;
-    const firstFocusable = dialogRef.current?.querySelector<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    );
-    firstFocusable?.focus();
-    return () => {
-      prevFocus?.focus();
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
   if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
-      aria-modal="true"
       role="dialog"
-      aria-labelledby="modal-title"
+      aria-modal
+      aria-label={title}
       data-testid={testId}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
     >
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/40"
         onClick={onClose}
-        aria-hidden="true"
+        aria-hidden
       />
       {/* Panel */}
-      <div
-        ref={dialogRef}
-        className="relative z-10 w-full max-w-lg bg-white rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-xl"
-      >
-        <div className="flex items-center justify-between px-4 pt-4 pb-2 border-b border-[var(--gray-100)]">
-          <h2 id="modal-title" className="text-base font-semibold text-[var(--color-text-primary)]">
-            {title}
-          </h2>
+      <div className="relative z-10 w-full sm:max-w-lg bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-4 pt-4 pb-2 sticky top-0 bg-white border-b border-[var(--gray-100)]">
+          <span className="text-[17px] font-semibold text-[var(--gray-900)]">{title}</span>
           <button
+            type="button"
             onClick={onClose}
-            aria-label="Đóng"
-            className="p-2 rounded-full hover:bg-[var(--gray-50)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--vikki-vkblue-700)]"
+            aria-label={t('common.close.aria')}
+            className="p-2 rounded-lg text-[var(--gray-500)] hover:bg-[var(--gray-100)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--vikki-vkblue-500)]"
           >
             ✕
           </button>
@@ -69,4 +50,4 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, title, children, 'd
       </div>
     </div>
   );
-};
+}

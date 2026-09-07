@@ -4,38 +4,36 @@ interface CheckboxProps {
   label: string;
   checked?: boolean;
   onChange?: (checked: boolean) => void;
-  ariaLabel?: string;
+  'aria-label'?: string;
   'data-testid'?: string;
   disabled?: boolean;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({
+export function Checkbox({
   label,
   checked = false,
   onChange,
-  ariaLabel,
+  'aria-label': ariaLabel,
   'data-testid': testId,
-  disabled = false,
-}) => {
-  const id = React.useId();
+  disabled,
+}: CheckboxProps) {
+  const id = testId ?? label;
   return (
     <label
       htmlFor={id}
-      className={`flex items-center gap-2 cursor-pointer select-none text-sm ${
-        disabled ? 'opacity-50 cursor-not-allowed' : ''
-      }`}
+      className="flex items-center gap-2 cursor-pointer select-none text-[14px] font-normal"
     >
       <input
         id={id}
         type="checkbox"
         checked={checked}
-        onChange={(e) => onChange?.(e.target.checked)}
-        aria-label={ariaLabel ?? label}
+        onChange={e => onChange?.(e.target.checked)}
+        aria-label={ariaLabel}
         data-testid={testId}
         disabled={disabled}
-        className="w-4 h-4 accent-[var(--vikki-vkblue-700)] focus-visible:ring-2 focus-visible:ring-[var(--vikki-vkblue-700)]"
+        className="w-4 h-4 rounded border-[var(--gray-300)] accent-[var(--vikki-vkblue-500)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--vikki-vkblue-500)]"
       />
-      <span>{label}</span>
+      {label}
     </label>
   );
-};
+}

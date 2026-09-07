@@ -4,21 +4,19 @@ interface InlineErrorProps {
   visible?: boolean;
   children: React.ReactNode;
   'data-testid'?: string;
+  id?: string;
 }
 
-export const InlineError: React.FC<InlineErrorProps> = ({
-  visible = true,
-  children,
-  'data-testid': testId,
-}) => {
+export function InlineError({ visible = true, children, 'data-testid': testId, id }: InlineErrorProps) {
   if (!visible) return null;
   return (
     <span
-      role="alert"
+      id={id}
       data-testid={testId}
-      className="text-xs text-red-600 block mt-1"
+      role="alert"
+      className="text-[12px] text-[var(--color-error)] font-normal"
     >
       {children}
     </span>
   );
-};
+}

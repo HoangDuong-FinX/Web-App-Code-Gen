@@ -1,37 +1,38 @@
 import React from 'react';
 
+type Tone = 'neutral' | 'error' | 'warning' | 'success' | 'info';
+
 interface AlertNoteProps {
+  tone?: Tone;
   visible?: boolean;
   children: React.ReactNode;
-  tone?: 'neutral' | 'warning' | 'error' | 'success';
   'data-testid'?: string;
-  action?: React.ReactNode;
+  role?: 'alert' | 'status';
 }
 
-export const AlertNote: React.FC<AlertNoteProps> = ({
+const toneStyles: Record<Tone, string> = {
+  neutral: 'bg-[var(--gray-100)] text-[var(--gray-800)] border-[var(--gray-300)]',
+  error: 'bg-[var(--color-error-bg)] text-[var(--color-error)] border-[var(--color-error)]',
+  warning: 'bg-[var(--color-warning-bg)] text-[var(--gray-800)] border-[var(--color-warning)]',
+  success: 'bg-[var(--color-success-bg)] text-[var(--gray-800)] border-[var(--color-success)]',
+  info: 'bg-[var(--color-info-bg)] text-[var(--vikki-vkblue-700)] border-[var(--vikki-vkblue-300)]',
+};
+
+export function AlertNote({
+  tone = 'neutral',
   visible = true,
   children,
-  tone = 'neutral',
   'data-testid': testId,
-  action,
-}) => {
+  role,
+}: AlertNoteProps) {
   if (!visible) return null;
-
-  const toneStyles: Record<string, string> = {
-    neutral: 'bg-[var(--gray-50)] border-[var(--gray-200)] text-[var(--color-text-primary)]',
-    warning: 'bg-amber-50 border-amber-200 text-amber-800',
-    error: 'bg-red-50 border-red-200 text-red-800',
-    success: 'bg-green-50 border-green-200 text-green-800',
-  };
-
   return (
     <div
-      role="alert"
+      role={role}
       data-testid={testId}
-      className={`rounded-xl border px-4 py-3 text-sm flex items-start gap-2 ${toneStyles[tone] ?? toneStyles.neutral}`}
+      className={`rounded-xl border px-4 py-3 text-[14px] font-normal ${toneStyles[tone]}`}
     >
-      <span className="flex-1">{children}</span>
-      {action && <span className="shrink-0">{action}</span>}
+      {children}
     </div>
   );
-};
+}

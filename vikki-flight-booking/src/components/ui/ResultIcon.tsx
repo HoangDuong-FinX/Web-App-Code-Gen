@@ -1,26 +1,28 @@
 import React from 'react';
-import type { PaymentResult } from '../../types';
+
+type State = 'success' | 'failed' | 'partial' | 'simulated';
 
 interface ResultIconProps {
-  state: PaymentResult;
+  state: State;
   'data-testid'?: string;
 }
 
-export const ResultIcon: React.FC<ResultIconProps> = ({ state, 'data-testid': testId }) => {
-  const configs: Record<PaymentResult, { bg: string; icon: string; label: string }> = {
-    success: { bg: 'bg-green-100 text-green-600', icon: '✓', label: 'Thành công' },
-    failed: { bg: 'bg-red-100 text-red-600', icon: '✕', label: 'Thất bại' },
-    partial: { bg: 'bg-amber-100 text-amber-600', icon: '~', label: 'Một phần' },
-    simulated: { bg: 'bg-green-100 text-green-600', icon: '✓', label: 'Mô phỏng' },
-  };
-  const cfg = configs[state];
+const config: Record<State, { bg: string; text: string; symbol: string; label: string }> = {
+  success: { bg: 'bg-[var(--color-success-bg)]', text: 'text-[var(--color-success)]', symbol: '✓', label: 'Thành công' },
+  simulated: { bg: 'bg-[var(--color-success-bg)]', text: 'text-[var(--color-success)]', symbol: '✓', label: 'Giả lập thành công' },
+  failed: { bg: 'bg-[var(--color-error-bg)]', text: 'text-[var(--color-error)]', symbol: '✕', label: 'Thất bại' },
+  partial: { bg: 'bg-[var(--color-warning-bg)]', text: 'text-[var(--color-warning)]', symbol: '~', label: 'Một phần' },
+};
+
+export function ResultIcon({ state, 'data-testid': testId }: ResultIconProps) {
+  const c = config[state];
   return (
     <div
       data-testid={testId}
-      aria-label={cfg.label}
-      className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl font-bold ${cfg.bg}`}
+      aria-label={c.label}
+      className={`w-20 h-20 rounded-full flex items-center justify-center ${c.bg}`}
     >
-      {cfg.icon}
+      <span className={`text-4xl font-bold ${c.text}`} aria-hidden>{c.symbol}</span>
     </div>
   );
-};
+}
