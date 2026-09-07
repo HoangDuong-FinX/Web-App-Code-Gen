@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppState, NavigationAction } from '../types';
+import type { AppState, NavigationAction } from '../types';
 import { vi } from '../i18n/vi';
 
 interface LoginProps {
