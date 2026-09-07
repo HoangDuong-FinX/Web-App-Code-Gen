@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { BookingSession, Passenger, PassengerWithId } from '../types';
+import type { BookingSession, Passenger, PassengerWithId } from '../types';
 
 interface StoreState {
   // Search state
@@ -120,15 +120,15 @@ const initialState = {
 export const useStore = create<StoreState>((set) => ({
   ...initialState,
 
-  setTripType: (type) => set({ tripType: type }),
-  setOrigin: (origin) => set({ origin }),
-  setDestination: (destination) => set({ destination }),
-  setDepartDate: (departDate) => set({ departDate }),
-  setReturnDate: (returnDate) => set({ returnDate }),
-  setAdultCount: (adultCount) => set({ adultCount }),
-  setChildCount: (childCount) => set({ childCount }),
-  setInfantCount: (infantCount) => set({ infantCount }),
-  addRecentSearch: (search) =>
+  setTripType: (type: 'roundTrip' | 'oneWay') => set({ tripType: type }),
+  setOrigin: (origin: string) => set({ origin }),
+  setDestination: (destination: string) => set({ destination }),
+  setDepartDate: (departDate: string) => set({ departDate }),
+  setReturnDate: (returnDate: string) => set({ returnDate }),
+  setAdultCount: (adultCount: number) => set({ adultCount }),
+  setChildCount: (childCount: number) => set({ childCount }),
+  setInfantCount: (infantCount: number) => set({ infantCount }),
+  addRecentSearch: (search: { origin: string; destination: string; tripType: string }) =>
     set((state) => {
       const existing = state.recentSearches.filter(
         (s) => !(s.origin === search.origin && s.destination === search.destination && s.tripType === search.tripType)
@@ -142,28 +142,28 @@ export const useStore = create<StoreState>((set) => ({
     }),
   clearRecentSearches: () => set({ recentSearches: [] }),
 
-  setOutboundSession: (sessionId, expiresAt) => set({ outboundSessionId: sessionId, outboundExpiresAt: expiresAt }),
-  setReturnSession: (sessionId, expiresAt) => set({ returnSessionId: sessionId, returnExpiresAt: expiresAt }),
-  setHoldExpired: (expired) => set({ holdExpired: expired }),
+  setOutboundSession: (sessionId: string, expiresAt: string) => set({ outboundSessionId: sessionId, outboundExpiresAt: expiresAt }),
+  setReturnSession: (sessionId: string, expiresAt: string) => set({ returnSessionId: sessionId, returnExpiresAt: expiresAt }),
+  setHoldExpired: (expired: boolean) => set({ holdExpired: expired }),
 
-  setOutboundOffer: (offerId) => set({ outboundOfferId: offerId, outboundAncillaries: {}, outboundSeats: {} }),
-  setReturnOffer: (offerId) => set({ returnOfferId: offerId, returnAncillaries: {}, returnSeats: {} }),
+  setOutboundOffer: (offerId: string) => set({ outboundOfferId: offerId, outboundAncillaries: {}, outboundSeats: {} }),
+  setReturnOffer: (offerId: string) => set({ returnOfferId: offerId, returnAncillaries: {}, returnSeats: {} }),
 
-  setPassengers: (passengers) => set({ passengers }),
-  setOutboundPassengers: (passengers) => set({ outboundPassengers: passengers }),
-  setReturnPassengers: (passengers) => set({ returnPassengers: passengers }),
+  setPassengers: (passengers: PassengerWithId[]) => set({ passengers }),
+  setOutboundPassengers: (passengers: PassengerWithId[]) => set({ outboundPassengers: passengers }),
+  setReturnPassengers: (passengers: PassengerWithId[]) => set({ returnPassengers: passengers }),
 
-  setOutboundAncillaries: (ancillaries) => set({ outboundAncillaries: ancillaries }),
-  setOutboundSeats: (seats) => set({ outboundSeats: seats }),
-  setReturnAncillaries: (ancillaries) => set({ returnAncillaries: ancillaries }),
-  setReturnSeats: (seats) => set({ returnSeats: seats }),
+  setOutboundAncillaries: (ancillaries: Record<string, string[]>) => set({ outboundAncillaries: ancillaries }),
+  setOutboundSeats: (seats: Record<string, string>) => set({ outboundSeats: seats }),
+  setReturnAncillaries: (ancillaries: Record<string, string[]>) => set({ returnAncillaries: ancillaries }),
+  setReturnSeats: (seats: Record<string, string>) => set({ returnSeats: seats }),
 
-  setOutboundBookingKey: (key, amount) => set({ outboundBookingKey: key, outboundAmount: amount }),
-  setReturnBookingKey: (key, amount) => set({ returnBookingKey: key, returnAmount: amount }),
-  setOutboundTransactionId: (id) => set({ outboundTransactionId: id }),
-  setReturnTransactionId: (id) => set({ returnTransactionId: id }),
-  setPaymentOutcome: (outcome) => set({ paymentOutcome: outcome }),
-  setPaymentError: (error) => set({ paymentError: error }),
+  setOutboundBookingKey: (key: string, amount: number) => set({ outboundBookingKey: key, outboundAmount: amount }),
+  setReturnBookingKey: (key: string, amount: number) => set({ returnBookingKey: key, returnAmount: amount }),
+  setOutboundTransactionId: (id: string) => set({ outboundTransactionId: id }),
+  setReturnTransactionId: (id: string) => set({ returnTransactionId: id }),
+  setPaymentOutcome: (outcome: 'success' | 'failure' | 'partial' | 'simulated') => set({ paymentOutcome: outcome }),
+  setPaymentError: (error: string | null) => set({ paymentError: error }),
 
   resetStore: () => set(initialState),
 }));
