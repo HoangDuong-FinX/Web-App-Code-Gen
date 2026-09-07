@@ -1,64 +1,68 @@
-// src/fixtures/index.ts
+// Fixture module for Vikki Flight Booking
+// All service calls go through this module when the real backend is not available.
+// Each fixture has a deterministic outcome switch so tests can force the failure path.
+
 import type {
   Airport,
   CityPair,
   FlightOffer,
   SearchSession,
-  PassengerWithId,
   MealOption,
   BaggageOption,
   SeatOption,
-  AncillaryCatalog,
-  PaymentInquiryPayload,
+  PassengerInfo,
 } from '../types';
 
-// ─── Outcome switches (deterministic, testable) ───────────────────────────────
+// --- Outcome switches (export so tests can set them) ---
 export type FixtureOutcome = 'success' | 'fail';
 
-let submitSearchOutcome: FixtureOutcome = 'success';
-let submitPassengersOutcome: FixtureOutcome = 'success';
-let submitServicesOutcome: FixtureOutcome = 'success';
-let fetchPaymentPayloadOutcome: FixtureOutcome = 'success';
+let searchOutcome: FixtureOutcome = 'success';
+let passengersOutcome: FixtureOutcome = 'success';
+let ancillaryOutcome: FixtureOutcome = 'success';
+let seatOutcome: FixtureOutcome = 'success';
+let paymentInquiryOutcome: FixtureOutcome = 'success';
 let paymentOutcome: FixtureOutcome = 'success';
-let paymentHubAvailable = true;
+let ancillaryCatalogOutcome: FixtureOutcome = 'success';
+let seatMapOutcome: FixtureOutcome = 'success';
 
-export function setSubmitSearchOutcome(o: FixtureOutcome): void { submitSearchOutcome = o; }
-export function setSubmitPassengersOutcome(o: FixtureOutcome): void { submitPassengersOutcome = o; }
-export function setSubmitServicesOutcome(o: FixtureOutcome): void { submitServicesOutcome = o; }
-export function setFetchPaymentPayloadOutcome(o: FixtureOutcome): void { fetchPaymentPayloadOutcome = o; }
-export function setPaymentOutcome(o: FixtureOutcome): void { paymentOutcome = o; }
-export function setPaymentHubAvailable(v: boolean): void { paymentHubAvailable = v; }
+export function setSearchOutcome(o: FixtureOutcome) { searchOutcome = o; }
+export function setPassengersOutcome(o: FixtureOutcome) { passengersOutcome = o; }
+export function setAncillaryOutcome(o: FixtureOutcome) { ancillaryOutcome = o; }
+export function setSeatOutcome(o: FixtureOutcome) { seatOutcome = o; }
+export function setPaymentInquiryOutcome(o: FixtureOutcome) { paymentInquiryOutcome = o; }
+export function setPaymentOutcome(o: FixtureOutcome) { paymentOutcome = o; }
+export function setAncillaryCatalogOutcome(o: FixtureOutcome) { ancillaryCatalogOutcome = o; }
+export function setSeatMapOutcome(o: FixtureOutcome) { seatMapOutcome = o; }
 
-// ─── Airport data ─────────────────────────────────────────────────────────────
-export const AIRPORTS: Airport[] = [
+// --- Static fixture data ---
+export const FIXTURE_AIRPORTS: Airport[] = [
   { code: 'SGN', name: 'Tân Sơn Nhất', city: 'TP. Hồ Chí Minh', country: 'VN', group: 'Popular' },
   { code: 'HAN', name: 'Nội Bài', city: 'Hà Nội', country: 'VN', group: 'Popular' },
-  { code: 'DLI', name: 'Liên Khương', city: 'Đà Lạt', country: 'VN', group: 'Popular' },
-  { code: 'DAD', name: 'Đà Nẵng', city: 'Đà Nẵng', country: 'VN', group: 'Vietnam' },
-  { code: 'HPH', name: 'Cát Bi', city: 'Hải Phòng', country: 'VN', group: 'Vietnam' },
-  { code: 'HUI', name: 'Phú Bài', city: 'Huế', country: 'VN', group: 'Vietnam' },
-  { code: 'VCA', name: 'Cần Thơ', city: 'Cần Thơ', country: 'VN', group: 'Vietnam' },
-  { code: 'PQC', name: 'Phú Quốc', city: 'Phú Quốc', country: 'VN', group: 'Vietnam' },
+  { code: 'DAD', name: 'Đà Nẵng', city: 'Đà Nẵng', country: 'VN', group: 'Popular' },
+  { code: 'DLI', name: 'Liên Khương', city: 'Đà Lạt', country: 'VN', group: 'Vietnam' },
   { code: 'CXR', name: 'Cam Ranh', city: 'Nha Trang', country: 'VN', group: 'Vietnam' },
+  { code: 'PQC', name: 'Phú Quốc', city: 'Phú Quốc', country: 'VN', group: 'Vietnam' },
+  { code: 'UIH', name: 'Phù Cát', city: 'Quy Nhơn', country: 'VN', group: 'Vietnam' },
+  { code: 'VCA', name: 'Cần Thơ', city: 'Cần Thơ', country: 'VN', group: 'Vietnam' },
   { code: 'BKK', name: 'Suvarnabhumi', city: 'Bangkok', country: 'TH', group: 'International' },
   { code: 'SIN', name: 'Changi', city: 'Singapore', country: 'SG', group: 'International' },
 ];
 
-export const CITY_PAIRS: CityPair[] = [
+export const FIXTURE_CITY_PAIRS: CityPair[] = [
   { origin: 'SGN', destination: 'HAN' },
   { origin: 'HAN', destination: 'SGN' },
-  { origin: 'SGN', destination: 'DLI' },
-  { origin: 'DLI', destination: 'SGN' },
   { origin: 'SGN', destination: 'DAD' },
   { origin: 'DAD', destination: 'SGN' },
+  { origin: 'SGN', destination: 'DLI' },
+  { origin: 'DLI', destination: 'SGN' },
+  { origin: 'SGN', destination: 'CXR' },
+  { origin: 'CXR', destination: 'SGN' },
   { origin: 'SGN', destination: 'PQC' },
   { origin: 'PQC', destination: 'SGN' },
   { origin: 'HAN', destination: 'DAD' },
   { origin: 'DAD', destination: 'HAN' },
   { origin: 'HAN', destination: 'DLI' },
   { origin: 'DLI', destination: 'HAN' },
-  { origin: 'SGN', destination: 'CXR' },
-  { origin: 'CXR', destination: 'SGN' },
   { origin: 'SGN', destination: 'BKK' },
   { origin: 'BKK', destination: 'SGN' },
   { origin: 'SGN', destination: 'SIN' },
@@ -68,186 +72,207 @@ export const CITY_PAIRS: CityPair[] = [
 function makeOffers(origin: string, destination: string, date: string): FlightOffer[] {
   return [
     {
-      offer_id: `offer-${origin}-${destination}-${date}-VJ123-eco`,
-      flight_number: 'VJ123',
-      aircraft_type: 'Airbus A321',
-      departure_time: '08:45',
-      arrival_time: '10:30',
-      duration_minutes: 105,
+      offerId: `offer-${origin}-${destination}-eco-${date}`,
+      flightNumber: 'VJ123',
+      aircraft: 'Airbus A321',
+      departureTime: '08:45',
+      arrivalTime: '10:30',
+      duration: '1h 45m',
       stops: 0,
-      fare_class: 'Eco',
-      fare_label: 'Eco',
-      price_amount: 2500000,
-      available_seats: 12,
-      baggage_allowance: 'Xách tay 7kg và 01 túi xách nhỏ',
+      fareClass: 'Eco',
+      priceAmount: 2_500_000,
+      availableSeats: 12,
+      baggageInfo: 'Xách tay 7kg và 01 túi xách nhỏ',
+      departureDate: date,
+      origin,
+      destination,
     },
     {
-      offer_id: `offer-${origin}-${destination}-${date}-VJ123-flex`,
-      flight_number: 'VJ123',
-      aircraft_type: 'Airbus A321',
-      departure_time: '08:45',
-      arrival_time: '10:30',
-      duration_minutes: 105,
+      offerId: `offer-${origin}-${destination}-flex-${date}`,
+      flightNumber: 'VJ123',
+      aircraft: 'Airbus A321',
+      departureTime: '08:45',
+      arrivalTime: '10:30',
+      duration: '1h 45m',
       stops: 0,
-      fare_class: 'Flex',
-      fare_label: 'Flex',
-      price_amount: 3200000,
-      available_seats: 5,
-      baggage_allowance: 'Xách tay 7kg + Ký gửi 20kg',
+      fareClass: 'Flex',
+      priceAmount: 3_200_000,
+      availableSeats: 5,
+      baggageInfo: 'Xách tay 7kg, 01 túi xách nhỏ và 20kg hành lý ký gửi',
+      departureDate: date,
+      origin,
+      destination,
     },
     {
-      offer_id: `offer-${origin}-${destination}-${date}-VJ456-eco`,
-      flight_number: 'VJ456',
-      aircraft_type: 'Boeing 737',
-      departure_time: '14:20',
-      arrival_time: '16:05',
-      duration_minutes: 105,
+      offerId: `offer-${origin}-${destination}-eco2-${date}`,
+      flightNumber: 'VJ456',
+      aircraft: 'Airbus A320',
+      departureTime: '14:20',
+      arrivalTime: '16:05',
+      duration: '1h 45m',
       stops: 0,
-      fare_class: 'Eco',
-      fare_label: 'Eco',
-      price_amount: 2800000,
-      available_seats: 20,
-      baggage_allowance: 'Xách tay 7kg và 01 túi xách nhỏ',
+      fareClass: 'Eco',
+      priceAmount: 2_200_000,
+      availableSeats: 20,
+      baggageInfo: 'Xách tay 7kg và 01 túi xách nhỏ',
+      departureDate: date,
+      origin,
+      destination,
     },
   ];
 }
 
-// ─── API fixture implementations ──────────────────────────────────────────────
-export async function fixtureLoadAirports(): Promise<Airport[]> {
-  await delay(300);
-  return AIRPORTS;
-}
+let sessionCounter = 0;
 
-export async function fixtureLoadCityPairs(): Promise<CityPair[]> {
-  await delay(200);
-  return CITY_PAIRS;
-}
-
-export async function fixtureSubmitSearch(
+export async function fixtureSearch(
   origin: string,
   destination: string,
-  departureDate: string
+  departureDate: string,
 ): Promise<SearchSession> {
-  await delay(800);
-  if (submitSearchOutcome === 'fail') {
-    throw new Error('search.error');
+  await delay(400);
+  if (searchOutcome === 'fail') {
+    throw new Error('FIXTURE_SEARCH_FAIL');
   }
-  const now = new Date();
-  const expiresAt = new Date(now.getTime() + 15 * 60 * 1000).toISOString();
+  sessionCounter += 1;
+  const sessionId = `sess_${sessionCounter}_${Date.now()}`;
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
   return {
-    session_id: `sess_${Math.random().toString(36).slice(2, 10)}`,
-    expires_at: expiresAt,
+    sessionId,
+    expiresAt,
     offers: makeOffers(origin, destination, departureDate),
   };
 }
 
+export async function fixtureLoadAirports(): Promise<Airport[]> {
+  await delay(200);
+  return FIXTURE_AIRPORTS;
+}
+
+export async function fixtureLoadCityPairs(): Promise<CityPair[]> {
+  await delay(200);
+  return FIXTURE_CITY_PAIRS;
+}
+
 export async function fixtureSubmitPassengers(
   _sessionId: string,
-  passengers: { last_name: string; first_name: string }[]
-): Promise<PassengerWithId[]> {
-  await delay(600);
-  if (submitPassengersOutcome === 'fail') {
-    throw new Error('passenger.error');
+  passengers: PassengerInfo[],
+): Promise<PassengerInfo[]> {
+  await delay(500);
+  if (passengersOutcome === 'fail') {
+    throw new Error('FIXTURE_PASSENGERS_FAIL');
   }
   return passengers.map((p, i) => ({
     ...p,
-    gender: 'M' as const,
-    date_of_birth: null,
-    phone: null,
-    email: null,
-    passenger_id: `pax_${i + 1}`,
+    passengerId: `pax_${i + 1}_${Date.now()}`,
   }));
 }
 
-export async function fixtureFetchAncillaryCatalog(_sessionId: string): Promise<AncillaryCatalog> {
+export const FIXTURE_MEALS: MealOption[] = [
+  { optionId: 'meal_001', name: '🍖 Cơm gà', priceAmount: 150_000, available: true },
+  { optionId: 'meal_002', name: '🥗 Cơm chay', priceAmount: 120_000, available: true },
+  { optionId: 'meal_003', name: '🍜 Mì hải sản', priceAmount: 130_000, available: true },
+];
+
+export const FIXTURE_BAGGAGE: BaggageOption[] = [
+  { optionId: 'bag_002', name: 'Hành lý ký gửi +2kg', priceAmount: 200_000, available: true },
+  { optionId: 'bag_020', name: 'Hành lý ký gửi 20kg', priceAmount: 500_000, available: true },
+  { optionId: 'bag_030', name: 'Hành lý ký gửi 30kg', priceAmount: 700_000, available: true },
+];
+
+export async function fixtureLoadAncillaryCatalog(_sessionId: string): Promise<{ meals: MealOption[]; baggage: BaggageOption[] }> {
+  await delay(300);
+  if (ancillaryCatalogOutcome === 'fail') {
+    throw new Error('FIXTURE_ANCILLARY_CATALOG_FAIL');
+  }
+  return { meals: FIXTURE_MEALS, baggage: FIXTURE_BAGGAGE };
+}
+
+export const FIXTURE_SEATS: SeatOption[] = [
+  { seatNumber: '1A', zone: 'Front', priceAmount: 500_000, available: true },
+  { seatNumber: '1B', zone: 'Front', priceAmount: 500_000, available: false },
+  { seatNumber: '1C', zone: 'Front', priceAmount: 500_000, available: true },
+  { seatNumber: '2A', zone: 'Front', priceAmount: 500_000, available: true },
+  { seatNumber: '2B', zone: 'Front', priceAmount: 500_000, available: true },
+  { seatNumber: '2C', zone: 'Front', priceAmount: 500_000, available: true },
+  { seatNumber: '5A', zone: 'Premium', priceAmount: 300_000, available: true },
+  { seatNumber: '5B', zone: 'Premium', priceAmount: 300_000, available: true },
+  { seatNumber: '5C', zone: 'Premium', priceAmount: 300_000, available: false },
+  { seatNumber: '10A', zone: 'Standard', priceAmount: 150_000, available: true },
+  { seatNumber: '10B', zone: 'Standard', priceAmount: 150_000, available: true },
+  { seatNumber: '10C', zone: 'Standard', priceAmount: 150_000, available: true },
+  { seatNumber: '15A', zone: 'Relax', priceAmount: null, available: false },
+  { seatNumber: '15B', zone: 'Relax', priceAmount: null, available: false },
+];
+
+export async function fixtureLoadSeatMap(_sessionId: string): Promise<SeatOption[]> {
+  await delay(300);
+  if (seatMapOutcome === 'fail') {
+    throw new Error('FIXTURE_SEAT_MAP_FAIL');
+  }
+  return FIXTURE_SEATS;
+}
+
+export async function fixtureSubmitAncillary(_sessionId: string): Promise<void> {
   await delay(400);
-  const meals: MealOption[] = [
-    { option_id: 'meal_001', name: '🍖 Cơm gà', price_amount: 150000, available: true },
-    { option_id: 'meal_002', name: '🍜 Mì xào', price_amount: 120000, available: true },
-    { option_id: 'meal_003', name: '🥗 Salad', price_amount: 100000, available: true },
-  ];
-  const baggage: BaggageOption[] = [
-    { option_id: 'bag_2kg', name: 'Hành lý ký gửi +2kg', price_amount: 200000, available: true },
-    { option_id: 'bag_20kg', name: 'Hành lý ký gửi 20kg', price_amount: 500000, available: true },
-    { option_id: 'bag_30kg', name: 'Hành lý ký gửi 30kg', price_amount: 700000, available: true },
-  ];
-  return { meals, baggage };
-}
-
-export async function fixtureFetchSeatMap(_sessionId: string): Promise<SeatOption[]> {
-  await delay(500);
-  const zones: Array<SeatOption['zone']> = ['Front', 'Front', 'Premium', 'Standard', 'Standard', 'Standard', 'Relax'];
-  const rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-  const cols = ['A', 'B', 'C', 'D', 'E', 'F'];
-  const seats: SeatOption[] = [];
-  rows.forEach((row) => {
-    const zoneIndex = Math.min(Math.floor((row - 1) / 2), zones.length - 1);
-    const zone = zones[zoneIndex];
-    const price = zone === 'Front' ? 500000 : zone === 'Premium' ? 350000 : zone === 'Standard' ? 200000 : 150000;
-    cols.forEach((col) => {
-      const seatNum = `${row}${col}`;
-      const taken = ['2B', '3C', '5A', '7D', '10F'].includes(seatNum);
-      seats.push({
-        seat_number: seatNum,
-        zone,
-        price_amount: price,
-        available: !taken,
-      });
-    });
-  });
-  return seats;
-}
-
-export async function fixtureSubmitAncillarySelections(_sessionId: string): Promise<void> {
-  await delay(500);
-  if (submitServicesOutcome === 'fail') {
-    throw new Error('services.saveError');
+  if (ancillaryOutcome === 'fail') {
+    throw new Error('FIXTURE_ANCILLARY_FAIL');
   }
 }
 
-export async function fixtureSubmitSeatSelections(_sessionId: string): Promise<void> {
+export async function fixtureSubmitSeats(_sessionId: string): Promise<void> {
   await delay(400);
-  if (submitServicesOutcome === 'fail') {
-    throw new Error('services.saveError');
+  if (seatOutcome === 'fail') {
+    throw new Error('FIXTURE_SEAT_FAIL');
   }
 }
 
-export async function fixtureFetchPaymentPayload(_sessionId: string): Promise<PaymentInquiryPayload> {
-  await delay(400);
-  if (fetchPaymentPayloadOutcome === 'fail') {
-    throw new Error('payment.loadError');
+export async function fixtureGetPaymentInquiry(
+  _sessionId: string,
+  amount: number,
+): Promise<{ bookingKey: string; amount: number }> {
+  await delay(300);
+  if (paymentInquiryOutcome === 'fail') {
+    throw new Error('FIXTURE_PAYMENT_INQUIRY_FAIL');
   }
-  return {
-    booking_key: 'VJA' + Math.random().toString(36).toUpperCase().slice(2, 10),
-    amount: 6000000,
-  };
+  const key = `VJA${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+  return { bookingKey: key, amount };
 }
 
-export async function fixtureInitiatePayment(): Promise<{
-  paymentSessionId: string;
-  status: 'pending' | 'success' | 'failed' | 'cancelled';
-}> {
-  await delay(1200);
-  if (!paymentHubAvailable) {
-    throw new Error('payment.unavailable');
-  }
-  if (paymentOutcome === 'fail') {
-    return { paymentSessionId: '', status: 'failed' };
-  }
-  return {
-    paymentSessionId: `pay_${Math.random().toString(36).slice(2, 10)}`,
-    status: 'success',
-  };
-}
+export type PaymentFixtureResult = 'success' | 'failed' | 'cancelled' | 'simulated';
+let paymentFixtureResult: PaymentFixtureResult = 'simulated';
+export function setPaymentFixtureResult(r: PaymentFixtureResult) { paymentFixtureResult = r; }
 
-export async function fixturePollPaymentResult(): Promise<{ transactionId: string; status: 'success' | 'failed' }> {
-  await delay(600);
-  return {
-    transactionId: `TXN${Math.random().toString(36).toUpperCase().slice(2, 10)}`,
-    status: 'success',
-  };
+export async function fixtureInitiatePayment(
+  _sessionId: string,
+  _offerId: string,
+): Promise<{ status: PaymentFixtureResult; transactionId: string | null }> {
+  await delay(800);
+  if (paymentOutcome === 'fail' || paymentFixtureResult === 'failed') {
+    return { status: 'failed', transactionId: null };
+  }
+  if (paymentFixtureResult === 'cancelled') {
+    return { status: 'cancelled', transactionId: null };
+  }
+  if (paymentFixtureResult === 'simulated') {
+    const txId = `TXN${Date.now().toString(36).toUpperCase()}`;
+    return { status: 'simulated', transactionId: txId };
+  }
+  const txId = `TXN${Date.now().toString(36).toUpperCase()}`;
+  return { status: 'success', transactionId: txId };
 }
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Daily price fixture for date strip
+export function fixtureDailyPrice(date: string): number {
+  // Deterministic but varied price based on date string hash
+  let hash = 0;
+  for (let i = 0; i < date.length; i++) {
+    hash = (hash * 31 + date.charCodeAt(i)) & 0xffffffff;
+  }
+  const base = 1_800_000;
+  const variation = Math.abs(hash % 1_200_000);
+  return base + variation;
 }
