@@ -20,24 +20,19 @@ function Checkout() {
   useEffect(() => {
     const load = async () => {
       try {
-        const result = await fetchPaymentInquiry(store.outboundSession?.session_id);
+        const result = await fetchPaymentInquiry();
         setPaymentInquiry(result);
       } catch (err) {
         setError('load');
       }
     };
     load();
-  }, [store.outboundSession?.session_id]);
+  }, []);
 
   const handlePay = async () => {
     setLoading(true);
     try {
-      const result = await initiatePayment({
-        transactionType: 'booking',
-        provider: 'VJA',
-        sessionId: store.outboundSession?.session_id,
-        offerId: store.outboundOffer?.offer_id,
-      });
+      const result = await initiatePayment();
       store.setBookingCode('ABCD1234');
       if (result.simulated) {
         store.setPaymentResult('simulated');

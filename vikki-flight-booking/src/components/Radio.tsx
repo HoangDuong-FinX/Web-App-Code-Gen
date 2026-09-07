@@ -12,7 +12,7 @@ export default function Radio({ checked = false, onChange, ariaLabel, testId }: 
     <input
       type="radio"
       checked={checked}
-      onChange={(e) => onChange?.(e.target.checked)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.checked)}
       aria-label={ariaLabel}
       data-testid={testId}
       className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-500"

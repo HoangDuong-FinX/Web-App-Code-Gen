@@ -70,7 +70,7 @@ export async function loadCityPairs() {
   return cityPairs;
 }
 
-export async function submitSearch(criteria: any) {
+export async function submitSearch() {
   if (fixtureOverrides.submitSearch === 'error') {
     throw new Error('Search failed');
   }
@@ -83,40 +83,41 @@ export async function submitSearch(criteria: any) {
   };
 }
 
-export async function submitPassengers(sessionId: string, passengers: any) {
+export async function submitPassengers() {
   if (fixtureOverrides.submitPassengers === 'error') {
     throw new Error('Passenger submission failed');
   }
   return {
-    passengers: passengers.map((p: any, i: number) => ({
-      ...p,
-      passenger_id: `pax_${i + 1}`,
-    })),
+    passengers: [
+      { passenger_id: 'pax_1' },
+      { passenger_id: 'pax_2' },
+      { passenger_id: 'pax_3' },
+    ],
   };
 }
 
-export async function submitAncillarySelections(sessionId: string, selections: any) {
+export async function submitAncillarySelections() {
   if (fixtureOverrides.submitServices === 'error') {
     throw new Error('Service submission failed');
   }
-  return { selections };
+  return { selections: [] };
 }
 
-export async function submitSeatSelections(sessionId: string, selections: any) {
+export async function submitSeatSelections() {
   if (fixtureOverrides.submitServices === 'error') {
     throw new Error('Seat submission failed');
   }
-  return { selections };
+  return { selections: [] };
 }
 
-export async function fetchPaymentInquiry(sessionId: string) {
+export async function fetchPaymentInquiry() {
   return {
     booking_key: 'ABCD1234',
     amount: 6000000,
   };
 }
 
-export async function initiatePayment(payload: any) {
+export async function initiatePayment() {
   if (fixtureOverrides.initializePayment === 'error') {
     throw new Error('Payment failed');
   }

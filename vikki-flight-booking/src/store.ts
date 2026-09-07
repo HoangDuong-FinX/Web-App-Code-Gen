@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AppState, SearchCriteria, Session, FlightOffer, Passenger } from './types';
+import type { AppState, SearchCriteria, Session, FlightOffer, Passenger } from './types';
 
 const useStore = create<
   AppState & {
@@ -33,19 +33,20 @@ const useStore = create<
   bookingCode: null,
   transactionId: null,
 
-  setCurrentScreen: (screen) => set({ currentScreen: screen }),
-  setSearchCriteria: (criteria) => set({ searchCriteria: criteria }),
-  setOutboundSession: (session) => set({ outboundSession: session }),
-  setReturnSession: (session) => set({ returnSession: session }),
-  setOutboundOffer: (offer) => set({ outboundOffer: offer }),
-  setReturnOffer: (offer) => set({ returnOffer: offer }),
-  setPassengers: (passengers) => set({ passengers }),
-  setHostIdentity: (name) => set({ hostIdentity: name }),
-  setError: (error) => set({ error }),
-  setLoading: (loading) => set({ loading }),
-  setPaymentResult: (result) => set({ paymentResult: result }),
-  setBookingCode: (code) => set({ bookingCode: code }),
-  setTransactionId: (id) => set({ transactionId: id }),
+  setCurrentScreen: (screen: string) => set({ currentScreen: screen }),
+  setSearchCriteria: (criteria: SearchCriteria) => set({ searchCriteria: criteria }),
+  setOutboundSession: (session: Session) => set({ outboundSession: session }),
+  setReturnSession: (session: Session) => set({ returnSession: session }),
+  setOutboundOffer: (offer: FlightOffer) => set({ outboundOffer: offer }),
+  setReturnOffer: (offer: FlightOffer) => set({ returnOffer: offer }),
+  setPassengers: (passengers: Passenger[]) => set({ passengers }),
+  setHostIdentity: (name: string) => set({ hostIdentity: name }),
+  setError: (error: string | null) => set({ error }),
+  setLoading: (loading: boolean) => set({ loading }),
+  setPaymentResult: (result: 'success' | 'failed' | 'partial' | 'simulated' | null) =>
+    set({ paymentResult: result }),
+  setBookingCode: (code: string | null) => set({ bookingCode: code }),
+  setTransactionId: (id: string | null) => set({ transactionId: id }),
   reset: () =>
     set({
       currentScreen: 'search',

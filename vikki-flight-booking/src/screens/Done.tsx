@@ -21,7 +21,6 @@ function Done() {
 
   const isSuccess = result === 'success' || result === 'simulated';
   const isFailed = result === 'failed';
-  const isPartial = result === 'partial';
 
   return (
     <div className="p-4 max-w-2xl mx-auto text-center">

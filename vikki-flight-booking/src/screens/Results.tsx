@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useStore } from '../store';
 import { t } from '../i18n';
 import Text from '../components/Text';
@@ -27,7 +27,7 @@ function Results() {
         {t('results.title')}
       </Text>
       <div className="mt-4 space-y-4">
-        {session.offers.map((offer) => (
+        {session.offers.map((offer: any) => (
           <div
             key={offer.offer_id}
             className="p-3 border border-gray-200 rounded-lg bg-gray-50"

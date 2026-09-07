@@ -23,7 +23,7 @@ function ResultsReturn() {
         {t('results.title-return')}
       </Text>
       <div className="mt-4 space-y-4">
-        {session.offers.map((offer) => (
+        {session.offers.map((offer: any) => (
           <div
             key={offer.offer_id}
             className="p-3 border border-gray-200 rounded-lg bg-gray-50"

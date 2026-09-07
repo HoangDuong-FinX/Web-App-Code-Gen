@@ -48,8 +48,7 @@ function Passengers() {
     }
     setLoading(true);
     try {
-      const result = await submitPassengers(store.outboundSession?.session_id, passengers);
-      store.setPassengers(result.passengers);
+      await submitPassengers();
       store.setCurrentScreen('services');
     } catch (err) {
       setError('submit');

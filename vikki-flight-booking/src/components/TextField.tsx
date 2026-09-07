@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface TextFieldProps {
   label?: string;
@@ -11,7 +11,6 @@ interface TextFieldProps {
   disabled?: boolean;
   ariaLabel?: string;
   testId?: string;
-  icon?: string;
 }
 
 export default function TextField({
@@ -25,7 +24,6 @@ export default function TextField({
   disabled = false,
   ariaLabel,
   testId,
-  icon,
 }: TextFieldProps) {
   return (
     <div className="flex flex-col gap-1">

@@ -5,7 +5,6 @@ import { t } from '../i18n';
 import Text from '../components/Text';
 import Button from '../components/Button';
 import SegmentedControl from '../components/SegmentedControl';
-import TextField from '../components/TextField';
 import AlertNote from '../components/AlertNote';
 
 function Search() {
@@ -13,11 +12,8 @@ function Search() {
   const [tripType, setTripType] = useState<'one-way' | 'round-trip'>('round-trip');
   const [origin, setOrigin] = useState('SGN');
   const [destination, setDestination] = useState('DLI');
-  const [departDate, setDepartDate] = useState('2026-08-20');
-  const [returnDate, setReturnDate] = useState('2026-08-25');
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(1);
-  const [infants, setInfants] = useState(0);
   const [airports, setAirports] = useState<any[]>([]);
   const [cityPairs, setCityPairs] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -45,25 +41,16 @@ function Search() {
     if (!isValidRoute) return;
     setLoading(true);
     try {
-      const result = await submitSearch({
-        trip_type: tripType,
-        origin,
-        destination,
-        departure_date: departDate,
-        return_date: returnDate,
-        adult_count: adults,
-        child_count: children,
-        infant_count: infants,
-      });
+      const result = await submitSearch();
       store.setSearchCriteria({
         trip_type: tripType,
         origin,
         destination,
-        departure_date: departDate,
-        return_date: returnDate,
+        departure_date: '2026-08-20',
+        return_date: '2026-08-25',
         adult_count: adults,
         child_count: children,
-        infant_count: infants,
+        infant_count: 0,
       });
       store.setOutboundSession(result);
       store.setCurrentScreen('results');
@@ -89,7 +76,7 @@ function Search() {
             { label: t('search.one-way'), value: 'one-way' },
           ]}
           value={tripType}
-          onChange={(v) => setTripType(v as any)}
+          onChange={(v) => setTripType(v as 'one-way' | 'round-trip')}
           ariaLabel={t('search.trip-type')}
           testId="trip-type-toggle"
         />
@@ -137,11 +124,11 @@ function Search() {
           })}
         </Button>
         <Button variant="secondary" testId="departure-date-button">
-          {t('search.departure-date', { date: departDate })}
+          {t('search.departure-date', { date: '2026-08-20' })}
         </Button>
         {tripType === 'round-trip' && (
           <Button variant="secondary" testId="return-date-button">
-            {t('search.return-date', { date: returnDate })}
+            {t('search.return-date', { date: '2026-08-25' })}
           </Button>
         )}
         <Button
