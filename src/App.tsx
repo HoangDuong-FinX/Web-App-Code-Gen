@@ -1,4 +1,5 @@
-import React, { useState, useReducer } from 'react';
+import React, { useReducer } from 'react';
+import type { AppState, NavigationAction } from './types';
 import { Home } from './screens/Home';
 import { SearchResults } from './screens/SearchResults';
 import { VehicleDetail } from './screens/VehicleDetail';
@@ -25,7 +26,6 @@ import { EditVehicle } from './screens/EditVehicle';
 import { LeadsDashboard } from './screens/LeadsDashboard';
 import { LeadDetail } from './screens/LeadDetail';
 import { ReportsDashboard } from './screens/ReportsDashboard';
-import { AppState, ScreenId, NavigationAction } from './types';
 
 const initialState: AppState = {
   currentScreenId: 'home',
