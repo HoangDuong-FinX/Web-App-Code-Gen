@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+:root {
+  --accent-vikki-vkblue-6: rgb(0, 0, 255);
+  --font-body: 'Be Vietnam Pro', 'Pretendard JP', -apple-system, sans-serif;
+  --font-display: 'Pretendard JP', 'Pretendard JP Variable', 'Be Vietnam Pro', -apple-system, sans-serif;
+  --gray-50: rgb(247, 247, 248);
+  --gray-100: rgb(238, 238, 240);
+  --gray-200: rgb(218, 218, 221);
+  --gray-300: rgb(185, 186, 192);
+  --gray-400: rgb(147, 148, 157);
+  --gray-500: rgb(118, 119, 129);
+  --gray-600: rgb(95, 95, 106);
+  --gray-700: rgb(78, 78, 86);
+  --gray-800: rgb(67, 67, 73);
+  --gray-900: rgb(58, 58, 64);
+  --gray-950: rgb(23, 23, 25);
+  --green-600: rgb(11, 181, 96);
+  --text-body: 400 14px/1.45 var(--font-body);
+  --text-large-title: 700 36px/1.334 var(--font-display);
+  --text-title-1: 700 28px/1.35 var(--font-display);
+  --text-title-2: 700 24px/1.35 var(--font-display);
+  --text-headline: 600 17px/1.4 var(--font-display);
+  --text-body-semibold: 600 14px/1.45 var(--font-body);
+  --text-callout: 500 16px/1.4 var(--font-body);
+  --text-subheadline: 500 13px/1.4 var(--font-body);
+  --text-footnote: 400 12px/1.4 var(--font-body);
+  --text-caption-1: 400 11px/1.35 var(--font-body);
+  --text-caption-2: 500 10px/1.3 var(--font-body);
+  --vikki-vkblue-50: rgb(232, 241, 255);
+  --vikki-vkblue-100: rgb(213, 228, 255);
+  --vikki-vkblue-200: rgb(179, 204, 255);
+  --vikki-vkblue-300: rgb(133, 168, 255);
+  --vikki-vkblue-500: rgb(47, 69, 255);
+  --vikki-vkblue-700: rgb(0, 0, 255);
+  --vikki-vkblue-800: rgb(6, 9, 205);
+  --vikki-vkblue-900: rgb(16, 22, 159);
+  --vikki-vkfuchsia-50: rgb(255, 240, 252);
+  --vikki-vkfuchsia-100: rgb(255, 228, 250);
+  --vikki-vkfuchsia-200: rgb(255, 201, 247);
+  --vikki-vkfuchsia-300: rgb(255, 156, 238);
+  --vikki-vkfuchsia-500: rgb(255, 48, 205);
+  --vikki-vkfuchsia-700: rgb(210, 0, 140);
+}
+
+.gg-brand-vikki {
+  font-family: var(--font-body);
+  color: var(--gray-950);
+  background: var(--gray-50);
+}
+
+.app-container {
+  max-width: 100%;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+@media (max-width: 640px) {
+  .app-container {
+    padding: 12px;
+  }
+}
