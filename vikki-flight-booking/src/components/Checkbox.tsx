@@ -20,7 +20,7 @@ export default function Checkbox({
       <input
         type="checkbox"
         checked={checked}
-        onChange={(e) => onChange?.(e.target.checked)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.checked)}
         aria-label={ariaLabel}
         data-testid={testId}
         className="w-4 h-4 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"

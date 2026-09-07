@@ -7,7 +7,6 @@ interface ButtonProps {
   disabled?: boolean;
   ariaLabel?: string;
   testId?: string;
-  icon?: string;
   className?: string;
 }
 
@@ -25,7 +24,6 @@ export default function Button({
   disabled = false,
   ariaLabel,
   testId,
-  icon,
   className = '',
 }: ButtonProps) {
   const baseClass = variantStyles[variant] || variantStyles.primary;

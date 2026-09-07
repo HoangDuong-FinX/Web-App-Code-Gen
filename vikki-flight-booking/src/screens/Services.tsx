@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useStore } from '../store';
 import { t } from '../i18n';
 import Text from '../components/Text';
@@ -9,8 +9,8 @@ import PriceHoldCountdown from '../components/PriceHoldCountdown';
 
 function Services() {
   const store = useStore();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = async () => {
     setLoading(true);

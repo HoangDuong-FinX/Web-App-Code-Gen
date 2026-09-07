@@ -37,7 +37,7 @@ function Checkout() {
       if (result.simulated) {
         store.setPaymentResult('simulated');
       } else {
-        store.setTransactionId(result.transactionId);
+        store.setTransactionId(result.transactionId || null);
         store.setPaymentResult('success');
       }
       store.setCurrentScreen('done');

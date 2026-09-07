@@ -9,7 +9,7 @@ interface CalendarProps {
 export default function Calendar({ month = 8, year = 2026, testId }: CalendarProps) {
   const daysInMonth = new Date(year, month, 0).getDate();
   const firstDay = new Date(year, month - 1, 1).getDay();
-  const days = [];
+  const days: (number | null)[] = [];
 
   for (let i = 0; i < firstDay; i++) {
     days.push(null);

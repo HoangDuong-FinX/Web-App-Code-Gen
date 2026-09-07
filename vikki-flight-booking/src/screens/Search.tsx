@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useStore } from '../store';
 import { loadAirports, loadCityPairs, submitSearch } from '../fixtures';
 import { t } from '../i18n';
@@ -9,17 +9,17 @@ import AlertNote from '../components/AlertNote';
 
 function Search() {
   const store = useStore();
-  const [tripType, setTripType] = useState<'one-way' | 'round-trip'>('round-trip');
-  const [origin, setOrigin] = useState('SGN');
-  const [destination, setDestination] = useState('DLI');
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(1);
-  const [airports, setAirports] = useState<any[]>([]);
-  const [cityPairs, setCityPairs] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [tripType, setTripType] = React.useState<'one-way' | 'round-trip'>('round-trip');
+  const [origin, setOrigin] = React.useState('SGN');
+  const [destination, setDestination] = React.useState('DLI');
+  const [adults, setAdults] = React.useState(2);
+  const [children, setChildren] = React.useState(1);
+  const [airports, setAirports] = React.useState<any[]>([]);
+  const [cityPairs, setCityPairs] = React.useState<any[]>([]);
+  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const load = async () => {
       try {
         const ap = await loadAirports();

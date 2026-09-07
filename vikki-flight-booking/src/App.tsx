@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useStore } from './store';
 import Search from './screens/Search';
 import Results from './screens/Results';
@@ -14,11 +14,11 @@ interface AppProps {
   basename?: string;
 }
 
-function App({ hostRuntime, basename }: AppProps) {
+function App({ hostRuntime }: AppProps) {
   const currentScreen = useStore((s) => s.currentScreen);
   const setHostIdentity = useStore((s) => s.setHostIdentity);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (hostRuntime?.name) {
       setHostIdentity(hostRuntime.name);
     }
@@ -36,7 +36,6 @@ function App({ hostRuntime, basename }: AppProps) {
   };
 
   const theme = hostRuntime?.theme || 'light';
-  const locale = hostRuntime?.locale || 'vi';
 
   return (
     <div className={`gg-brand-vikki gg-theme-${theme} min-h-screen bg-white`}>

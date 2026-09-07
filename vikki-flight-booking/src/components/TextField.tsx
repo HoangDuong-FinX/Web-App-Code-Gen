@@ -37,7 +37,7 @@ export default function TextField({
         type={type}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange?.(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.value)}
         onBlur={onBlur}
         disabled={disabled}
         aria-label={ariaLabel}
