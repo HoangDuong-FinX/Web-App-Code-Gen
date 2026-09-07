@@ -1,41 +1,39 @@
 import React from 'react';
 
-interface CheckboxProps {
-  label: string;
+interface RadioProps {
+  label?: string;
   checked?: boolean;
   onChange?: (checked: boolean) => void;
   ariaLabel?: string;
   'data-testid'?: string;
-  disabled?: boolean;
+  name?: string;
+  value?: string;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({
+export const Radio: React.FC<RadioProps> = ({
   label,
   checked = false,
   onChange,
   ariaLabel,
   'data-testid': testId,
-  disabled = false,
+  name,
+  value,
 }) => {
   const id = React.useId();
   return (
-    <label
-      htmlFor={id}
-      className={`flex items-center gap-2 cursor-pointer select-none text-sm ${
-        disabled ? 'opacity-50 cursor-not-allowed' : ''
-      }`}
-    >
+    <label htmlFor={id} className="flex items-center gap-2 cursor-pointer text-sm">
       <input
         id={id}
-        type="checkbox"
+        type="radio"
         checked={checked}
         onChange={(e) => onChange?.(e.target.checked)}
         aria-label={ariaLabel ?? label}
         data-testid={testId}
-        disabled={disabled}
+        name={name}
+        value={value}
         className="w-4 h-4 accent-[var(--vikki-vkblue-700)] focus-visible:ring-2 focus-visible:ring-[var(--vikki-vkblue-700)]"
       />
-      <span>{label}</span>
+      {label && <span>{label}</span>}
     </label>
   );
 };

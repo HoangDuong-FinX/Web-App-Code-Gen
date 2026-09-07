@@ -1,4 +1,3 @@
-// src/components/ui/TextField.tsx
 import React from 'react';
 
 interface TextFieldProps {
@@ -12,9 +11,8 @@ interface TextFieldProps {
   disabled?: boolean;
   ariaLabel?: string;
   'data-testid'?: string;
-  icon?: string;
-  error?: boolean;
-  id?: string;
+  error?: string;
+  className?: string;
 }
 
 export const TextField: React.FC<TextFieldProps> = ({
@@ -28,31 +26,40 @@ export const TextField: React.FC<TextFieldProps> = ({
   disabled = false,
   ariaLabel,
   'data-testid': testId,
-  error = false,
-  id,
+  error,
+  className = '',
 }) => {
-  const fieldId = id ?? testId ?? `field-${label ?? 'input'}`;
+  const inputId = React.useId();
   return (
-    <div className="text-field">
+    <div className={`flex flex-col gap-1 ${className}`}>
       {label && (
-        <label htmlFor={fieldId} className="text-field__label">
-          {label}{required && <span className="text-field__required" aria-hidden="true"> *</span>}
+        <label htmlFor={inputId} className="text-sm font-medium text-[var(--color-text-primary)]">
+          {label}
+          {required && <span aria-hidden="true" className="text-red-500 ml-1">*</span>}
         </label>
       )}
       <input
-        id={fieldId}
-        className={`text-field__input${error ? ' text-field__input--error' : ''}`}
+        id={inputId}
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         onBlur={onBlur}
-        disabled={disabled}
         required={required}
-        aria-label={!label ? ariaLabel : undefined}
-        aria-describedby={error ? `${fieldId}-error` : undefined}
+        disabled={disabled}
+        aria-label={ariaLabel ?? label}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${inputId}-error` : undefined}
         data-testid={testId}
+        className={`border rounded-xl px-3 py-2 text-sm min-h-[44px] bg-white text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--vikki-vkblue-700)] disabled:bg-[var(--gray-50)] disabled:cursor-not-allowed ${
+          error ? 'border-red-500' : 'border-[var(--gray-200)]'
+        }`}
       />
+      {error && (
+        <span id={`${inputId}-error`} role="alert" className="text-xs text-red-600">
+          {error}
+        </span>
+      )}
     </div>
   );
 };

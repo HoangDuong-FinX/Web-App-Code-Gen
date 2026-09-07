@@ -1,10 +1,7 @@
-// src/components/ui/Button.tsx
 import React from 'react';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger';
-
 interface ButtonProps {
-  variant?: Variant;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
   children?: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
@@ -12,19 +9,11 @@ interface ButtonProps {
   'data-testid'?: string;
   type?: 'button' | 'submit' | 'reset';
   className?: string;
-  icon?: string;
+  fullWidth?: boolean;
 }
 
-const variantClass: Record<Variant, string> = {
-  primary: 'btn-primary',
-  secondary: 'btn-secondary',
-  ghost: 'btn-ghost',
-  outline: 'btn-outline',
-  danger: 'btn-danger',
-};
-
 export const Button: React.FC<ButtonProps> = ({
-  variant = 'secondary',
+  variant = 'primary',
   children,
   onClick,
   disabled = false,
@@ -32,18 +21,31 @@ export const Button: React.FC<ButtonProps> = ({
   'data-testid': testId,
   type = 'button',
   className = '',
-  icon,
+  fullWidth = false,
 }) => {
+  const base =
+    'inline-flex items-center justify-center rounded-xl font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-3 min-h-[44px]';
+
+  const variants: Record<string, string> = {
+    primary:
+      'bg-[var(--vikki-vkblue-700)] text-white hover:opacity-90 focus-visible:ring-[var(--vikki-vkblue-700)]',
+    secondary:
+      'bg-[var(--gray-100)] text-[var(--color-text-primary)] border border-[var(--gray-200)] hover:bg-[var(--gray-200)] focus-visible:ring-[var(--vikki-vkblue-700)]',
+    ghost:
+      'bg-transparent text-[var(--vikki-vkblue-700)] hover:bg-[var(--gray-50)] focus-visible:ring-[var(--vikki-vkblue-700)]',
+    outline:
+      'bg-white border border-[var(--gray-200)] text-[var(--color-text-primary)] hover:bg-[var(--gray-50)] focus-visible:ring-[var(--vikki-vkblue-700)]',
+  };
+
   return (
     <button
       type={type}
-      className={`btn ${variantClass[variant]} ${className}`.trim()}
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel}
       data-testid={testId}
+      className={`${base} ${variants[variant] ?? variants.primary} ${fullWidth ? 'w-full' : ''} ${className}`}
     >
-      {icon && <span className="btn-icon" aria-hidden="true">{icon}</span>}
       {children}
     </button>
   );

@@ -1,44 +1,44 @@
-// src/components/ui/PriceHoldCountdown.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { secondsRemaining, formatCountdown, isHoldExpired } from '../../utils/holdExpiry';
 import { vi } from '../../i18n/vi';
 
 interface PriceHoldCountdownProps {
-  expiresAt: string | null;
+  expiresAt: string;
   'data-testid'?: string;
 }
 
-function formatRemaining(ms: number): string {
-  if (ms <= 0) return vi.priceHold.expired;
-  const totalSec = Math.floor(ms / 1000);
-  const min = Math.floor(totalSec / 60);
-  const sec = totalSec % 60;
-  return `${vi.priceHold.label}: ${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-}
-
-export const PriceHoldCountdown: React.FC<PriceHoldCountdownProps> = ({ expiresAt, 'data-testid': testId }) => {
-  const [remaining, setRemaining] = useState<number>(() => {
-    if (!expiresAt) return 0;
-    return Math.max(0, new Date(expiresAt).getTime() - Date.now());
-  });
+export const PriceHoldCountdown: React.FC<PriceHoldCountdownProps> = ({
+  expiresAt,
+  'data-testid': testId,
+}) => {
+  const [secs, setSecs] = useState(() => secondsRemaining(expiresAt));
 
   useEffect(() => {
-    if (!expiresAt) return;
-    const tick = setInterval(() => {
-      const ms = Math.max(0, new Date(expiresAt).getTime() - Date.now());
-      setRemaining(ms);
+    const interval = setInterval(() => {
+      setSecs(secondsRemaining(expiresAt));
     }, 1000);
-    return () => clearInterval(tick);
+    return () => clearInterval(interval);
   }, [expiresAt]);
 
-  const expired = remaining <= 0;
+  const expired = isHoldExpired(expiresAt);
 
   return (
     <div
-      className={`price-hold-countdown${expired ? ' price-hold-countdown--expired' : ''}`}
       data-testid={testId}
+      className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium ${
+        expired
+          ? 'bg-red-50 text-red-700 border border-red-200'
+          : 'bg-amber-50 text-amber-700 border border-amber-200'
+      }`}
       aria-live="polite"
+      aria-atomic="true"
     >
-      {expiresAt ? formatRemaining(remaining) : vi.priceHold.expired}
+      <span aria-hidden="true">{expired ? '⏰' : '⏱️'}</span>
+      <span>
+        {expired
+          ? vi.common.priceHoldExpired
+          : `${vi.common.priceHold}: ${formatCountdown(secs)}`}
+      </span>
     </div>
   );
 };

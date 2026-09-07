@@ -1,4 +1,5 @@
-// src/components/ui/Divider.tsx
 import React from 'react';
 
-export const Divider: React.FC = () => <hr className="divider" aria-hidden="true" />;
+export const Divider: React.FC = () => (
+  <hr className="border-t border-[var(--gray-200)] my-1" aria-hidden="true" />
+);

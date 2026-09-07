@@ -1,4 +1,3 @@
-// src/components/ui/SegmentedControl.tsx
 import React from 'react';
 
 interface Option {
@@ -12,7 +11,7 @@ interface SegmentedControlProps {
   onChange?: (value: string) => void;
   ariaLabel?: string;
   'data-testid'?: string;
-  disabled?: boolean;
+  className?: string;
 }
 
 export const SegmentedControl: React.FC<SegmentedControlProps> = ({
@@ -21,23 +20,26 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
   onChange,
   ariaLabel,
   'data-testid': testId,
-  disabled = false,
+  className = '',
 }) => {
   return (
     <div
-      className="segmented-control"
       role="group"
       aria-label={ariaLabel}
       data-testid={testId}
+      className={`flex rounded-xl overflow-hidden border border-[var(--gray-200)] bg-[var(--gray-50)] p-1 gap-1 ${className}`}
     >
       {options.map((opt) => (
         <button
           key={opt.value}
           type="button"
-          className={`segmented-control__item${value === opt.value ? ' segmented-control__item--active' : ''}`}
+          onClick={() => onChange?.(opt.value)}
           aria-pressed={value === opt.value}
-          onClick={() => !disabled && onChange?.(opt.value)}
-          disabled={disabled}
+          className={`flex-1 text-sm font-medium rounded-lg px-3 py-2 min-h-[36px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--vikki-vkblue-700)] ${
+            value === opt.value
+              ? 'bg-white text-[var(--vikki-vkblue-700)] shadow-sm'
+              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+          }`}
         >
           {opt.label}
         </button>
