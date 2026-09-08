@@ -32,7 +32,6 @@ export function SearchScreen({
   criteria, onUpdateCriteria, onOpenAirportPicker,
   onOpenDatePicker, onOpenPassengerCount, onSearchSuccess,
 }: Props) {
-  const [airports, setAirports] = useState<Airport[]>([]);
   const [cityPairs, setCityPairs] = useState<CityPair[]>([]);
   const [masterDataLoaded, setMasterDataLoaded] = useState(false);
   const [masterDataError, setMasterDataError] = useState(false);
@@ -44,7 +43,6 @@ export function SearchScreen({
     setMasterDataError(false);
     const [airportRes, pairRes] = await Promise.all([loadAirports(), loadCityPairs()]);
     if (airportRes.isSuccess && pairRes.isSuccess && airportRes.data && pairRes.data) {
-      setAirports(airportRes.data);
       setCityPairs(pairRes.data);
       setMasterDataLoaded(true);
     } else {
@@ -112,13 +110,11 @@ export function SearchScreen({
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
       <header className="bg-[#F9FBF9] px-4 py-3 text-center">
         <h1 className="text-xl font-medium text-[#191919]">{t('search.title')}</h1>
       </header>
 
       <div className="px-4 flex flex-col gap-0">
-        {/* Trip type segmented control */}
         <div className="flex rounded-full border border-[#E6E8E7] overflow-hidden my-3">
           <button
             type="button"
@@ -146,12 +142,9 @@ export function SearchScreen({
           </button>
         </div>
 
-        {/* Search form card */}
         <div className="bg-white rounded-2xl p-4 shadow-[0_5px_10px_rgba(89,27,27,0.05)] flex flex-col gap-2">
-          {/* Origin / Destination + Swap */}
           <div className="relative">
             <div className="flex flex-col gap-2">
-              {/* Origin */}
               <div className="flex flex-col">
                 <label className="text-xs text-[#999999] px-2">{t('search.origin.label')}</label>
                 <button
@@ -171,7 +164,6 @@ export function SearchScreen({
                   )}
                 </button>
               </div>
-              {/* Destination */}
               <div className="flex flex-col">
                 <label className="text-xs text-[#999999] px-2">{t('search.destination.label')}</label>
                 <button
@@ -192,7 +184,6 @@ export function SearchScreen({
                 </button>
               </div>
             </div>
-            {/* Swap button */}
             <button
               type="button"
               data-testid="swap-button"
@@ -204,7 +195,6 @@ export function SearchScreen({
             </button>
           </div>
 
-          {/* Dates */}
           <div className="flex gap-4">
             <div className="flex-1 flex flex-col">
               <label className="text-xs text-[#999999] px-2">{t('search.departureDate.label')}</label>
@@ -234,7 +224,6 @@ export function SearchScreen({
             )}
           </div>
 
-          {/* Passengers */}
           <div className="flex flex-col">
             <label className="text-xs text-[#999999] px-2">{t('search.passengers.label')}</label>
             <button
@@ -248,7 +237,6 @@ export function SearchScreen({
             </button>
           </div>
 
-          {/* Search button */}
           <button
             type="button"
             data-testid="search-action"
@@ -261,7 +249,6 @@ export function SearchScreen({
           </button>
         </div>
 
-        {/* Master data error */}
         {masterDataError && (
           <div data-testid="master-data-error" aria-label={t('search.masterDataError.aria')} className="mt-3 p-3 bg-red-50 rounded-lg">
             <p className="text-sm text-[#555555]">{t('search.masterDataError')}</p>
@@ -271,7 +258,6 @@ export function SearchScreen({
           </div>
         )}
 
-        {/* Search error */}
         {searchError && (
           <div data-testid="search-error" aria-label={t('search.searchError.aria')} className="mt-3 p-3 bg-red-50 rounded-lg">
             <p className="text-sm text-[#555555]">{t('search.searchError')}</p>
@@ -282,10 +268,8 @@ export function SearchScreen({
         )}
       </div>
 
-      {/* Divider */}
       <hr className="border-[#E6E8E7] my-4" />
 
-      {/* Recent searches */}
       <div className="px-4 flex flex-col gap-3">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold text-[#191919]">{t('search.recentSearches.title')}</h2>

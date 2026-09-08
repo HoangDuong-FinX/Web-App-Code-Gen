@@ -3,8 +3,7 @@ import type { BookingState, PaymentPayload, PaymentResult } from '../types';
 import { t } from '../i18n';
 import { formatPrice } from '../formatPrice';
 import { useHoldTimer } from '../useHoldTimer';
-import { fetchPaymentPayload, startPayment } from '../sdk';
-import { getViaHost } from '../sdk';
+import { fetchPaymentPayload, startPayment, getViaHost } from '../sdk';
 
 interface Props {
   booking: BookingState;
@@ -21,6 +20,7 @@ export function CheckoutScreen({ booking, onUpdateBooking, onPayloadFetched, onP
   const [payloadError, setPayloadError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const isRoundTrip = booking.searchCriteria.tripType === 'round-trip';
+  const _viaHost = getViaHost();
 
   useEffect(() => {
     if (expired) onHoldExpired();
@@ -28,7 +28,7 @@ export function CheckoutScreen({ booking, onUpdateBooking, onPayloadFetched, onP
 
   useEffect(() => {
     if (booking.paymentPayload) return;
-    const fetchPayload = async () => {
+    const doFetch = async () => {
       setPayloadError(null);
       const outSession = booking.searchResult?.outbound?.sessionId;
       if (!outSession) return;
@@ -46,7 +46,7 @@ export function CheckoutScreen({ booking, onUpdateBooking, onPayloadFetched, onP
         setPayloadError(res.errorMessage ?? 'Error');
       }
     };
-    fetchPayload();
+    doFetch();
   }, [booking.paymentPayload, booking.searchResult, isRoundTrip, onPayloadFetched]);
 
   const outboundFare = booking.selectedOutboundFare;
@@ -101,7 +101,6 @@ export function CheckoutScreen({ booking, onUpdateBooking, onPayloadFetched, onP
       <p data-testid="hold-timer" aria-live="polite" className="text-sm text-[#E12127] text-center py-2">{timerDisplay}</p>
 
       <div className="px-4 flex flex-col gap-4 flex-1">
-        {/* Price breakdown */}
         <div className="bg-white rounded-2xl p-4 shadow-[0_5px_10px_rgba(89,27,27,0.05)] flex flex-col gap-2">
           <div className="flex justify-between">
             <span className="text-sm text-[#555555]">{t('checkout.ticketSubtotal')}</span>
@@ -134,19 +133,16 @@ export function CheckoutScreen({ booking, onUpdateBooking, onPayloadFetched, onP
           </div>
         </div>
 
-        {/* Merchant info */}
         <div className="bg-white rounded-2xl p-4 shadow-[0_5px_10px_rgba(89,27,27,0.05)] flex flex-col gap-1">
           <p className="text-sm font-semibold">{t('checkout.merchantName')}</p>
           <p className="text-sm text-[#555555]">{t('checkout.merchantDesc')}</p>
         </div>
 
-        {/* Payment source */}
         <div className="flex justify-between px-4">
           <span className="text-sm text-[#555555]">{t('checkout.paymentSource')}</span>
           <span className="text-sm" data-testid="payment-source-display">{t('checkout.paymentSourceValue')}</span>
         </div>
 
-        {/* VAT checkbox */}
         <label className="flex items-center gap-3 px-4 cursor-pointer" data-testid="vat-checkbox">
           <input
             type="checkbox"
@@ -158,7 +154,6 @@ export function CheckoutScreen({ booking, onUpdateBooking, onPayloadFetched, onP
           <span className="text-sm">{t('checkout.vatCheckbox')}</span>
         </label>
 
-        {/* Fine print */}
         <p className="text-xs text-[#999999] px-4" data-testid="fine-print">{t('checkout.finePrint')}</p>
 
         {payloadError && (

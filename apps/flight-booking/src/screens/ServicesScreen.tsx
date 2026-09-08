@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { SearchResult, PassengerForm, AncillaryOption, AncillarySelection, SeatSelection } from '../types';
+import type { SearchResult, AncillaryOption, AncillarySelection, SeatSelection } from '../types';
 import { t } from '../i18n';
 import { formatPrice } from '../formatPrice';
 import { useHoldTimer } from '../useHoldTimer';
@@ -8,7 +8,7 @@ import { loadAncillaryOptions, writeAncillarySelections, writeSeatSelections } f
 interface Props {
   expiresAt: string | null;
   searchResult: SearchResult | null;
-  passengerForms: PassengerForm[];
+  passengerForms: unknown[];
   onOpenSeatSelection: () => void;
   onServicesSaved: (ancillary: AncillarySelection[], seats: SeatSelection[], inboundSeats: SeatSelection[]) => void;
   onAncillaryLoaded: (options: AncillaryOption[]) => void;
@@ -17,7 +17,7 @@ interface Props {
 }
 
 export function ServicesScreen({
-  expiresAt, searchResult, passengerForms,
+  expiresAt, searchResult,
   onOpenSeatSelection, onServicesSaved, onAncillaryLoaded, onBack, onHoldExpired,
 }: Props) {
   const { display: timerDisplay, expired } = useHoldTimer(expiresAt);
@@ -91,7 +91,6 @@ export function ServicesScreen({
       <p data-testid="hold-timer" aria-live="polite" className="text-sm text-[#E12127] text-center py-2">{timerDisplay}</p>
 
       <div className="px-4 flex flex-col gap-4 flex-1">
-        {/* Service tiles grid */}
         <div className="grid grid-cols-3 gap-3">
           <button
             type="button"
@@ -125,7 +124,6 @@ export function ServicesScreen({
           </button>
         </div>
 
-        {/* Coming soon tiles */}
         <div className="grid grid-cols-3 gap-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="p-4 rounded-2xl bg-white opacity-50 text-center" aria-disabled="true">
@@ -134,7 +132,6 @@ export function ServicesScreen({
           ))}
         </div>
 
-        {/* Ancillary items */}
         {options.length > 0 && (
           <div className="flex flex-col gap-2">
             {options.map((opt) => (
@@ -143,7 +140,7 @@ export function ServicesScreen({
                   <span className="text-sm">{opt.name}</span>
                   <span className="text-sm text-[#E12127] ml-2">{formatPrice(opt.price)}</span>
                 </div>
-                <div className="flex items-center gap-2" aria-label={t('services.ancillaryQty.aria', { name: opt.name } as Record<string, string>)}>
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     aria-label={`${opt.name} - gi\u1EA3m`}
