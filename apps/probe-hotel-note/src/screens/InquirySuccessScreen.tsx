@@ -1,22 +1,41 @@
 import React from 'react';
 import { t } from '../i18n';
-import { useApp } from '../context/AppContext';
 
-export default function InquirySuccessScreen(): React.JSX.Element {
-  const { navigate, currentCarId } = useApp();
+interface InquirySuccessScreenProps {
+  onNavigate: (screen: string, params?: Record<string, unknown>) => void;
+  params: Record<string, unknown>;
+}
+
+export default function InquirySuccessScreen({ onNavigate, params }: InquirySuccessScreenProps): React.JSX.Element {
+  const carId = params.carId as string;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-6 p-8">
-      <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
-        <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-      </div>
-      <h1 className="text-xl font-bold text-center">{t('inquirySuccess.title')}</h1>
-      <p className="text-sm text-gray-500 text-center">{t('inquirySuccess.subtitle')}</p>
-      <button type="button" onClick={() => navigate('car-detail', { currentCarId })} aria-label={t('inquirySuccess.backToCarAria')} data-testid="back-to-car" className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium">
-        {t('inquirySuccess.backToCar')}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-8 gap-4">
+      <img
+        src="https://placehold.co/120x120/dcfce7/16a34a?text=%E2%9C%93"
+        alt={t('inquirySuccess.imageAlt')}
+        className="w-30 h-30"
+        data-testid="success-illustration"
+      />
+      <h1 className="text-2xl font-bold text-gray-900 text-center">{t('inquirySuccess.title')}</h1>
+      <p className="text-gray-600 text-center">{t('inquirySuccess.message')}</p>
+      <button
+        type="button"
+        aria-label={t('nav.backToHome')}
+        data-testid="back-to-home-action"
+        className="w-full max-w-xs py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+        onClick={() => onNavigate('home')}
+      >
+        {t('nav.backToHome')}
       </button>
-      <button type="button" onClick={() => navigate('home')} aria-label={t('inquirySuccess.backToHomeAria')} data-testid="back-to-home" className="w-full py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium">
-        {t('inquirySuccess.backToHome')}
+      <button
+        type="button"
+        aria-label={t('nav.backToCar')}
+        data-testid="back-to-car-action"
+        className="w-full max-w-xs py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-medium"
+        onClick={() => onNavigate('car-detail', { carId })}
+      >
+        {t('nav.backToCar')}
       </button>
     </div>
   );

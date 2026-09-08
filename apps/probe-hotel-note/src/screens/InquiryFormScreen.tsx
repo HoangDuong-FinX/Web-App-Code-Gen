@@ -1,58 +1,113 @@
-import { useState } from "react";
-import { t } from "../i18n";
-import { getCarById } from "../fixtures/cars";
-import type { ScreenProps } from "./types";
+import React, { useState, useCallback } from 'react';
+import { t } from '../i18n';
+import { submitInquiryFixture } from '../fixtures/cars';
 
-export default function InquiryFormScreen({ navigate, goBack, setInquiryForm, state }: ScreenProps) {
-  const car = state.currentCarId ? getCarById(state.currentCarId) : undefined;
-  const [contactMethod, setContactMethod] = useState("call");
-  const [preferredTime, setPreferredTime] = useState("");
-  const [message, setMessage] = useState("");
+interface InquiryFormScreenProps {
+  onNavigate: (screen: string, params?: Record<string, unknown>) => void;
+  params: Record<string, unknown>;
+}
 
-  const handleContinue = () => {
-    setInquiryForm({ contactMethod, preferredTime, message });
-    navigate("inquiry-confirm");
-  };
+export default function InquiryFormScreen({ onNavigate, params }: InquiryFormScreenProps): React.JSX.Element {
+  const carId = params.carId as string;
+  const carName = params.carName as string;
+  const carPrice = params.carPrice as string;
+  const carThumbnailUrl = params.carThumbnailUrl as string;
 
-  const contactOptions = [
-    { value: "call", label: t("inquiry.contactMethod.call") },
-    { value: "zalo", label: t("inquiry.contactMethod.zalo") },
-    { value: "email", label: t("inquiry.contactMethod.email") },
-  ];
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [preferredTime, setPreferredTime] = useState('');
+  const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const validate = useCallback((): boolean => {
+    const errs: Record<string, string> = {};
+    if (!fullName.trim()) errs.fullName = t('validation.nameRequired');
+    if (!phone.trim()) {
+      errs.phone = t('validation.phoneRequired');
+    } else if (!/^0\d{9}$/.test(phone.trim())) {
+      errs.phone = t('validation.phoneInvalid');
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  }, [fullName, phone]);
+
+  const handleSubmit = useCallback(() => {
+    setSubmitError('');
+    if (!validate()) return;
+    setSubmitting(true);
+    const result = submitInquiryFixture();
+    setSubmitting(false);
+    if (result.success) {
+      onNavigate('inquiry-success', { carId, carName, carThumbnailUrl });
+    } else {
+      setSubmitError(t('common.errorRetry'));
+    }
+  }, [validate, onNavigate, carId, carName, carThumbnailUrl]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex items-center p-4 gap-3">
-        <button data-testid="back-action" aria-label={t("common.back")} onClick={goBack} className="p-2 text-gray-600">{"\u2190"}</button>
-        <h1 className="text-xl font-bold">{t("inquiry.title")}</h1>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <header className="flex items-center gap-3 p-4 bg-white border-b border-gray-200">
+        <button type="button" aria-label={t('nav.back')} data-testid="back-action" className="p-2 text-lg text-gray-600 hover:bg-gray-100 rounded-full" onClick={() => onNavigate('car-detail', { carId })}>
+          \u2190
+        </button>
+        <h1 className="text-lg font-semibold text-gray-900">{t('inquiry.title')}</h1>
+      </header>
+
+      <div className="flex gap-3 items-center p-4 border-b border-gray-200 bg-white">
+        <img src={carThumbnailUrl} alt={carName} className="w-16 h-12 object-cover rounded-lg" data-testid="car-thumbnail-small" />
+        <div>
+          <p className="font-semibold text-gray-900">{carName}</p>
+          <p className="text-gray-600">{carPrice}</p>
+        </div>
       </div>
-      {car && (
-        <div className="flex items-center gap-3 px-4 py-3">
-          <img src={car.thumbnailUrl} alt={car.name} className="w-20 aspect-[4/3] object-cover rounded-lg" />
-          <div><span className="font-semibold text-sm block">{car.name}</span><span className="text-sm text-blue-600">{car.formattedPrice}</span></div>
-        </div>
-      )}
+
       <div className="flex flex-col gap-4 p-4">
-        <fieldset>
-          <legend className="text-sm font-medium text-gray-700 mb-2">{t("inquiry.contactMethod.label")}</legend>
-          <div className="flex flex-col gap-2" data-testid="contact-method">
-            {contactOptions.map((opt) => (
-              <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="contactMethod" value={opt.value} checked={contactMethod === opt.value} onChange={() => setContactMethod(opt.value)} className="accent-blue-600" />
-                <span className="text-sm">{opt.label}</span>
-              </label>
-            ))}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="inquiry-fullname" className="text-sm font-medium text-gray-700">{t('inquiry.fullName')} *</label>
+          <input id="inquiry-fullname" type="text" placeholder={t('inquiry.fullNamePlaceholder')} aria-label={t('inquiry.fullName')} data-testid="full-name-input" className={`px-4 py-3 rounded-lg border ${errors.fullName ? 'border-red-500' : 'border-gray-300'} bg-white focus:ring-2 focus:ring-blue-500 outline-none`} value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+          {errors.fullName && <p className="text-sm text-red-500">{errors.fullName}</p>}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="inquiry-phone" className="text-sm font-medium text-gray-700">{t('inquiry.phone')} *</label>
+          <input id="inquiry-phone" type="tel" placeholder={t('inquiry.phonePlaceholder')} aria-label={t('inquiry.phone')} data-testid="phone-input" className={`px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-300'} bg-white focus:ring-2 focus:ring-blue-500 outline-none`} value={phone} onChange={(e) => setPhone(e.target.value)} required />
+          {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="inquiry-email" className="text-sm font-medium text-gray-700">{t('inquiry.emailHint')}</label>
+          <input id="inquiry-email" type="email" placeholder={t('inquiry.emailPlaceholder')} aria-label={t('inquiry.emailHint')} data-testid="email-input" className="px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 outline-none" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="inquiry-time" className="text-sm font-medium text-gray-700">{t('inquiry.preferredTime')}</label>
+          <input id="inquiry-time" type="text" placeholder={t('inquiry.preferredTimePlaceholder')} aria-label={t('inquiry.preferredTime')} data-testid="preferred-contact-time-input" className="px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 outline-none" value={preferredTime} onChange={(e) => setPreferredTime(e.target.value)} />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="inquiry-message" className="text-sm font-medium text-gray-700">{t('inquiry.message')}</label>
+          <textarea id="inquiry-message" placeholder={t('inquiry.messagePlaceholder')} aria-label={t('inquiry.message')} data-testid="message-input" rows={4} className="px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 outline-none resize-none" value={message} onChange={(e) => setMessage(e.target.value)} />
+        </div>
+
+        {submitError && (
+          <div className="p-3 rounded-lg bg-red-50 border border-red-200" data-testid="error-banner">
+            <p className="text-sm text-red-600">{submitError}</p>
           </div>
-        </fieldset>
-        <div>
-          <label htmlFor="preferred-time" className="block text-sm font-medium text-gray-700 mb-1">{t("inquiry.preferredTime.label")}</label>
-          <input id="preferred-time" data-testid="preferred-time" aria-label={t("inquiry.preferredTime.label")} type="text" placeholder={t("inquiry.preferredTime.placeholder")} value={preferredTime} onChange={(e) => setPreferredTime(e.target.value)} className="w-full bg-gray-100 rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label htmlFor="inquiry-message" className="block text-sm font-medium text-gray-700 mb-1">{t("inquiry.message.label")}</label>
-          <textarea id="inquiry-message" data-testid="inquiry-message" aria-label={t("inquiry.message.label")} placeholder={t("inquiry.message.placeholder")} value={message} onChange={(e) => setMessage(e.target.value)} rows={4} className="w-full bg-gray-100 rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
-        </div>
-        <button data-testid="inquiry-continue" aria-label={t("inquiry.continue")} onClick={handleContinue} className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium">{t("inquiry.continue")}</button>
+        )}
+
+        <button
+          type="button"
+          aria-label={t('inquiry.submitAria')}
+          data-testid="submit-action"
+          className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50"
+          onClick={handleSubmit}
+          disabled={submitting}
+        >
+          {submitting ? t('common.loading') : t('inquiry.submit')}
+        </button>
       </div>
     </div>
   );
