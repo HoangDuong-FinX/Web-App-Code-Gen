@@ -6,6 +6,7 @@ import { setSubmitTestDriveOutcome, setSubmitInquiryOutcome } from "./fixtures/c
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.useRealTimers();
   setSubmitTestDriveOutcome("success");
   setSubmitInquiryOutcome("success");
 });
@@ -106,10 +107,10 @@ describe("Test drive flow", () => {
     fireEvent.click(confirmBtn);
     await act(async () => { vi.advanceTimersByTime(600); });
     expect(screen.getByRole("heading", { level: 1, name: /th\u00e0nh c\u00f4ng|confirmed/i })).toBeTruthy();
-    vi.useRealTimers();
   });
 
-  it("shows error screen on failure", () => {
+  it("shows error screen on failure", async () => {
+    vi.useFakeTimers();
     setSubmitTestDriveOutcome("fail");
     goToTestDrive();
     const dateInput = screen.getByLabelText(/ch\u1ecdn ng\u00e0y|select test drive date/i);
@@ -118,6 +119,7 @@ describe("Test drive flow", () => {
     fireEvent.change(timeSelect, { target: { value: "09:00" } });
     const confirmBtn = screen.getByRole("button", { name: /x\u00e1c nh\u1eadn \u0111\u1eb7t|confirm test drive/i });
     fireEvent.click(confirmBtn);
+    await act(async () => { vi.advanceTimersByTime(600); });
     expect(screen.getByRole("heading", { level: 1, name: /th\u1ea5t b\u1ea1i|failed/i })).toBeTruthy();
   });
 
