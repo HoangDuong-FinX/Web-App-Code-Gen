@@ -1,47 +1,51 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Car } from '../types';
 import { t } from '../i18n';
-import { loadCatalogCars, fixtureCategories } from '../fixtures/cars';
+import { searchCars } from '../fixtures/cars';
 import { toggleFavorite, getFavoriteIds } from '../state/favorites';
 import { toggleCompare, getCompareIds } from '../state/compare';
 import { formatPrice } from '../utils/format';
 import Toast from '../components/Toast';
 
-interface CatalogScreenProps {
+interface SearchResultsScreenProps {
   onNavigate: (screen: string, params?: Record<string, unknown>) => void;
   params: Record<string, unknown>;
 }
 
-export default function CatalogScreen({ onNavigate, params }: CatalogScreenProps): React.JSX.Element {
-  const initialBrand = (params.brand as string) || '';
+export default function SearchResultsScreen({ onNavigate, params }: SearchResultsScreenProps): React.JSX.Element {
+  const initialKeyword = (params.keyword as string) || '';
+  const [keyword, setKeyword] = useState(initialKeyword);
   const [cars, setCars] = useState<Car[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
-  const [brandFilter, setBrandFilter] = useState(initialBrand);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [toastMsg, setToastMsg] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
 
-  const loadData = useCallback((brand: string, pg: number, append: boolean) => {
-    const result = loadCatalogCars({ brand: brand || undefined }, pg);
+  const doSearch = useCallback((kw: string, pg: number, append: boolean) => {
+    if (!kw.trim()) {
+      if (!append) { setCars([]); setTotalCount(0); setHasMore(false); }
+      return;
+    }
+    const result = searchCars(kw, pg);
     setCars((prev) => (append ? [...prev, ...result.cars] : result.cars));
     setTotalCount(result.totalCount);
     setHasMore(result.hasMore);
   }, []);
 
   useEffect(() => {
-    loadData(brandFilter, 1, false);
+    doSearch(keyword, 1, false);
     setFavoriteIds(getFavoriteIds());
     setCompareIds(getCompareIds());
-  }, [brandFilter, loadData]);
+  }, [keyword, doSearch]);
 
   const handleLoadMore = useCallback(() => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    loadData(brandFilter, nextPage, true);
-  }, [page, brandFilter, loadData]);
+    const next = page + 1;
+    setPage(next);
+    doSearch(keyword, next, true);
+  }, [page, keyword, doSearch]);
 
   const handleToggleFavorite = useCallback((carId: string) => {
     const result = toggleFavorite(carId);
@@ -57,46 +61,26 @@ export default function CatalogScreen({ onNavigate, params }: CatalogScreenProps
     }
   }, []);
 
-  const filters = fixtureCategories.filter((c) => c.type === 'brand');
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <header className="flex items-center gap-3 p-4 bg-white border-b border-gray-200">
         <button type="button" aria-label={t('nav.back')} data-testid="back-action" className="p-2 text-lg text-gray-600 hover:bg-gray-100 rounded-full" onClick={() => onNavigate('home')}>
           \u2190
         </button>
-        <h1 className="text-lg font-semibold text-gray-900 flex-1">{t('catalog.title')}</h1>
-        <button type="button" aria-label={t('catalog.search')} data-testid="search-action" className="p-2 text-lg text-gray-600 hover:bg-gray-100 rounded-full" onClick={() => onNavigate('search-results', { keyword: '' })}>
-          \ud83d\udd0d
-        </button>
+        <input
+          type="search"
+          placeholder={t('search.placeholder')}
+          aria-label={t('search.placeholder')}
+          data-testid="search-input"
+          className="flex-1 px-4 py-2 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          value={keyword}
+          onChange={(e) => { setKeyword(e.target.value); setPage(1); }}
+        />
       </header>
 
-      <div className="flex gap-2 overflow-x-auto px-4 py-3 bg-white border-b border-gray-100">
-        <button
-          type="button"
-          className={`shrink-0 px-4 py-1.5 rounded-full text-sm border transition-colors ${!brandFilter ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
-          onClick={() => { setBrandFilter(''); setPage(1); }}
-          aria-label={t('catalog.filterBy', { name: t('adminListings.filterAll') })}
-        >
-          {t('adminListings.filterAll')}
-        </button>
-        {filters.map((f) => (
-          <button
-            key={f.id}
-            type="button"
-            data-testid="filter-chip"
-            className={`shrink-0 px-4 py-1.5 rounded-full text-sm border transition-colors ${brandFilter === f.name ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
-            onClick={() => { setBrandFilter(f.name); setPage(1); }}
-            aria-label={t('catalog.filterBy', { name: f.name })}
-          >
-            {f.name}
-          </button>
-        ))}
-      </div>
-
-      {totalCount > 0 && (
+      {keyword.trim() && (
         <p className="px-4 py-2 text-sm text-gray-500" data-testid="results-count">
-          {t('catalog.resultsCount', { count: totalCount })}
+          {t('search.resultsCount', { count: totalCount, keyword })}
         </p>
       )}
 
@@ -133,28 +117,20 @@ export default function CatalogScreen({ onNavigate, params }: CatalogScreenProps
             </div>
           ))}
         </div>
-      ) : (
+      ) : keyword.trim() ? (
         <div className="flex flex-col items-center gap-3 p-8" data-testid="empty-state">
-          <img src="https://placehold.co/200x150/f1f5f9/94a3b8?text=No+Results" alt={t('catalog.emptyAlt')} data-testid="empty-state-illustration" className="w-48 h-36 object-contain" />
-          <p className="text-gray-600">{t('catalog.emptyTitle')}</p>
-          <button type="button" aria-label={t('catalog.adjustFilters')} data-testid="adjust-filters-action" className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100" onClick={() => { setBrandFilter(''); setPage(1); }}>
-            {t('catalog.adjustFilters')}
-          </button>
+          <img src="https://placehold.co/200x150/f1f5f9/94a3b8?text=No+Results" alt={t('search.emptyAlt')} data-testid="empty-state-illustration" className="w-48 h-36 object-contain" />
+          <p className="text-gray-600">{t('search.emptyTitle')}</p>
+          <p className="text-sm text-gray-400" data-testid="search-suggestion">{t('search.emptySuggestion')}</p>
         </div>
-      )}
+      ) : null}
 
       {hasMore && cars.length > 0 && (
         <div className="px-4 pb-4">
-          <button type="button" aria-label={t('catalog.loadMore')} data-testid="load-more-trigger" className="w-full py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100" onClick={handleLoadMore}>
-            {t('catalog.loadMore')}
+          <button type="button" aria-label={t('search.loadMore')} data-testid="load-more-trigger" className="w-full py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100" onClick={handleLoadMore}>
+            {t('search.loadMore')}
           </button>
         </div>
-      )}
-
-      {compareIds.length > 0 && (
-        <button type="button" aria-label={t('carDetail.compare')} className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-blue-700 z-40" onClick={() => onNavigate('compare')}>
-          \u21d4 {compareIds.length}
-        </button>
       )}
 
       <Toast message={toastMsg} visible={toastVisible} onClose={() => setToastVisible(false)} />
