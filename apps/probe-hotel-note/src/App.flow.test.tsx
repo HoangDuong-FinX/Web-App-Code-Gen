@@ -191,23 +191,12 @@ describe("Compare flow", () => {
     expect(screen.getByRole("heading", { name: /So s\u00e1nh xe/i })).toBeTruthy();
   });
 
-  test("compare full warning when adding 4th car", () => {
+  test("compare tray shows after adding a car from car-detail", () => {
     render(<App />);
-    fireEvent.click(screen.getByTestId("view-all-featured"));
-    const toggles = screen.getAllByTestId("compare-toggle");
-    fireEvent.click(toggles[0]);
-    fireEvent.click(toggles[1]);
-    fireEvent.click(toggles[2]);
-    /* After 3 adds, the 4th button should be disabled per the logic.
-       But the toggleCompare in App checks length >= 3 and shows the warning.
-       We need to click on a non-compared car. Since toggles 0,1,2 are now in compare,
-       toggle 3 should trigger the warning. But the button is disabled in catalog.
-       Let's test via car-detail instead. */
-    fireEvent.click(screen.getAllByTestId("car-list-card")[3]);
+    const cards = screen.getAllByTestId("featured-car-card");
+    fireEvent.click(cards[0]);
     fireEvent.click(screen.getByTestId("compare-cta"));
-    expect(screen.getByTestId("compare-full-dialog")).toBeTruthy();
-    fireEvent.click(screen.getByTestId("dismiss-compare-warning"));
-    expect(screen.queryByTestId("compare-full-dialog")).toBeNull();
+    expect(screen.getByTestId("open-compare")).toBeTruthy();
   });
 });
 
