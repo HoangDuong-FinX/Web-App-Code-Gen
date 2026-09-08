@@ -10,17 +10,14 @@ interface CompareScreenProps {
 
 export default function CompareScreen({ onNavigate }: CompareScreenProps): React.JSX.Element {
   const [cars, setCars] = useState<Car[]>([]);
-  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   useEffect(() => {
     const ids = getCompareIds();
-    setCompareIds(ids);
     setCars(getCarsByIds(ids));
   }, []);
 
   const handleRemove = useCallback((carId: string) => {
     const newIds = removeFromCompare(carId);
-    setCompareIds(newIds);
     setCars(getCarsByIds(newIds));
   }, []);
 

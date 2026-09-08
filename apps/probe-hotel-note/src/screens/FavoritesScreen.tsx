@@ -12,19 +12,16 @@ interface FavoritesScreenProps {
 
 export default function FavoritesScreen({ onNavigate }: FavoritesScreenProps): React.JSX.Element {
   const [cars, setCars] = useState<Car[]>([]);
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [toastMsg, setToastMsg] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
 
   useEffect(() => {
     const ids = getFavoriteIds();
-    setFavoriteIds(ids);
     setCars(getCarsByIds(ids));
   }, []);
 
   const handleRemove = useCallback((carId: string) => {
     const result = toggleFavorite(carId);
-    setFavoriteIds(result.ids);
     setCars(getCarsByIds(result.ids));
     if (!result.saved) {
       setToastMsg(t('common.saveFailed'));
