@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import type { ScreenId, Car, Favorite, TestDriveBooking, FilterCriteria } from "./types";
 import { t } from "./i18n/index";
-import { sampleCars, getCarById, toFavorite, sampleAvailableSlots, sampleInventory, getLoadCatalogOutcome, getSaveFavoriteOutcome, getRemoveFavoriteOutcome, getSubmitTestDriveOutcome, getSubmitInquiryOutcome, getSubmitCarChangesOutcome, getDeleteCarOutcome, getSubmitResponseOutcome } from "./fixtures/cars";
+import { sampleCars, getCarById, toFavorite, sampleAvailableSlots, sampleInventory, getSaveFavoriteOutcome, getRemoveFavoriteOutcome, getSubmitTestDriveOutcome, getSubmitInquiryOutcome, getSubmitCarChangesOutcome, getDeleteCarOutcome, getSubmitResponseOutcome } from "./fixtures/cars";
 import { sampleUser, sampleStaff } from "./fixtures/user";
 import { sampleTestDrives, samplePurchaseInquiries, sampleAdminInquiries, getInquiryById, getAdminInquiryById } from "./fixtures/inquiries";
 import CatalogScreen from "./screens/CatalogScreen";
@@ -33,9 +33,6 @@ export default function App() {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [isStaff, setIsStaff] = useState(false);
-  const [userName] = useState(sampleUser.name);
-  const [userEmail] = useState(sampleUser.email);
-  const [userPhone] = useState(sampleUser.phone);
   const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>(emptyFilter);
   const [searchResults, setSearchResults] = useState<Car[]>([]);
   const [selectedInquiryId, setSelectedInquiryId] = useState<string | null>(null);
@@ -45,6 +42,10 @@ export default function App() {
   const [inquiryResult, setInquiryResult] = useState<{ referenceNumber: string; carMakeModel: string; offerPrice: string; financing: string } | null>(null);
   const [errorContext, setErrorContext] = useState<{ message: string; details: string } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  const userName = sampleUser.name;
+  const userEmail = sampleUser.email;
+  const userPhone = sampleUser.phone;
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -133,7 +134,7 @@ export default function App() {
       return;
     }
     const car = selectedCarId ? getCarById(selectedCarId) : null;
-    const financingStr = data.needsFinancing ? `${data.loanTerm} ${t("inquiry.loanTerm.12").split(" ")[1] ?? "months"}, ${data.downPaymentPercent}% ${t("inquiry.downPayment")}` : "";
+    const financingStr = data.needsFinancing ? `${data.loanTerm} months, ${data.downPaymentPercent}% down` : "";
     setInquiryResult({
       referenceNumber: `PI-${Date.now()}`,
       carMakeModel: car ? `${car.make} ${car.model} ${car.year}` : "",

@@ -1,5 +1,3 @@
-import type { PurchaseInquiry, TestDriveBooking } from "../types";
-
 export const sampleUser = {
   userId: "user-001",
   name: "Nguyen Van A",
