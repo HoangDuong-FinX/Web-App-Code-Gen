@@ -2,16 +2,23 @@ export interface Car {
   id: string;
   name: string;
   thumbnailUrl: string;
+  photos: { url: string; label: string }[];
   formattedPrice: string;
+  price: number;
   condition: string;
   specsSummary: string;
-  status: 'available' | 'reserved' | 'sold';
-  hasActivePromo: boolean;
-  promoLabel: string;
+  specs: { label: string; value: string }[];
+  bodyType: string;
+  make: string;
+  fuelType: string;
+  transmission: string;
+  year: number;
   monthlyInstallment: string;
-  photos: Array<{ url: string; label: string }>;
-  specs: Array<{ label: string; value: string }>;
+  promoLabel: string;
+  hasActivePromo: boolean;
+  status: "available" | "reserved" | "sold";
   dealer: Dealer;
+  isInCompare: boolean;
 }
 
 export interface Dealer {
@@ -25,9 +32,9 @@ export interface Promotion {
   title: string;
   bannerUrl: string;
   validity: string;
-  applicableModelsPreview: string;
   termsAndConditions: string;
-  eligibleCars: Array<{ id: string; name: string; thumbnailUrl: string; formattedPrice: string; promoDiscountTag: string }>;
+  applicableModelsPreview: string;
+  eligibleCars: Car[];
 }
 
 export interface Showroom {
@@ -41,6 +48,7 @@ export interface Showroom {
 export interface TimeSlot {
   time: string;
   isUnavailable: boolean;
+  isSelected: boolean;
 }
 
 export interface Buyer {
@@ -50,8 +58,8 @@ export interface Buyer {
   email: string;
 }
 
-export interface InquiryData {
-  contactMethod: 'call' | 'zalo' | 'email';
+export interface InquiryFormData {
+  contactMethod: string;
   preferredTime: string;
   message: string;
 }
@@ -74,34 +82,74 @@ export interface ReservationTerms {
 
 export interface ReservationResult {
   code: string;
-  holdUntilDate: string;
   depositAmountPaid: string;
+  holdUntilDate: string;
   nextStepsMessage: string;
 }
 
 export interface ActivityItem {
   id: string;
-  type: 'inquiry' | 'test-drive' | 'reservation';
+  type: "inquiry" | "test-drive" | "reservation";
   carId: string;
   carName: string;
+  carThumbnailUrl: string;
+  carFormattedPrice: string;
   statusLabel: string;
-  statusVariant: 'success' | 'warning' | 'neutral' | 'error';
-  date: string;
+  statusVariant: "success" | "warning" | "neutral" | "error";
+  inquiryDate?: string;
+  bookingDatetime?: string;
   showroomName?: string;
+  reservationDate?: string;
   depositAmount?: string;
-}
-
-export interface ActivityDetail {
-  car: { name: string; thumbnailUrl: string; formattedPrice: string; id: string };
-  activity: { statusLabel: string; statusVariant: string; typeSpecificDetails: string };
-  timeline: Array<{ date: string; description: string }>;
+  typeSpecificDetails: string;
+  timeline: { date: string; description: string }[];
 }
 
 export type ScreenId =
-  | 'home' | 'catalog' | 'car-detail' | 'search' | 'compare'
-  | 'login' | 'register'
-  | 'inquiry-form' | 'inquiry-confirm' | 'inquiry-success'
-  | 'td-select-showroom' | 'td-select-datetime' | 'td-confirm' | 'td-success'
-  | 'reservation-terms' | 'reservation-payment' | 'reservation-success'
-  | 'my-activity' | 'activity-detail'
-  | 'promotions' | 'promo-detail';
+  | "home"
+  | "catalog"
+  | "car-detail"
+  | "search"
+  | "compare"
+  | "login"
+  | "register"
+  | "inquiry-form"
+  | "inquiry-confirm"
+  | "inquiry-success"
+  | "td-select-showroom"
+  | "td-select-datetime"
+  | "td-confirm"
+  | "td-success"
+  | "reservation-terms"
+  | "reservation-payment"
+  | "reservation-success"
+  | "my-activity"
+  | "activity-detail"
+  | "promotions"
+  | "promo-detail";
+
+export type ModalId =
+  | "compare-tray"
+  | "compare-full-warning"
+  | "login-prompt"
+  | "network-error"
+  | null;
+
+export interface AppState {
+  currentScreen: ScreenId;
+  previousScreen: ScreenId | null;
+  isLoggedIn: boolean;
+  buyer: Buyer | null;
+  currentCarId: string | null;
+  currentPromoId: string | null;
+  currentActivityId: string | null;
+  compareList: string[];
+  catalogFilter: string | null;
+  activeModal: ModalId;
+  loginReturnScreen: ScreenId | null;
+  loginReturnAction: string | null;
+  inquiryForm: InquiryFormData | null;
+  testDriveBooking: Partial<TestDriveBooking>;
+  loginAttempts: number;
+  lockUntil: number | null;
+}
