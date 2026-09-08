@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, act } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
 import App from "./App";
 import { setSubmitTestDriveOutcome, setSubmitInquiryOutcome } from "./fixtures/cars";
@@ -109,8 +109,7 @@ describe("Test drive flow", () => {
     vi.useRealTimers();
   });
 
-  it("shows error screen on failure", async () => {
-    vi.useFakeTimers();
+  it("shows error screen on failure", () => {
     setSubmitTestDriveOutcome("fail");
     goToTestDrive();
     const dateInput = screen.getByLabelText(/ch\u1ecdn ng\u00e0y|select test drive date/i);
@@ -120,7 +119,6 @@ describe("Test drive flow", () => {
     const confirmBtn = screen.getByRole("button", { name: /x\u00e1c nh\u1eadn \u0111\u1eb7t|confirm test drive/i });
     fireEvent.click(confirmBtn);
     expect(screen.getByText(/th\u1ea5t b\u1ea1i|failed/i)).toBeTruthy();
-    vi.useRealTimers();
   });
 
   it("cancel returns to car detail", () => {
