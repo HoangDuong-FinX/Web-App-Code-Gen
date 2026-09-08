@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Car, Favorite } from "../types";
 import { t, formatPrice } from "../i18n/index";
 
@@ -26,7 +27,7 @@ export default function CarDetailScreen({ car, isAuthenticated, compareList, fav
     <div className="flex flex-col gap-4 pb-4">
       <div className="p-4">
         <button onClick={onBack} className="text-sm text-blue-600 hover:underline" aria-label={t("detail.back.aria")}>
-          ← {t("detail.back")}
+          \u2190 {t("detail.back")}
         </button>
       </div>
       <div className="relative">
@@ -48,11 +49,11 @@ export default function CarDetailScreen({ car, isAuthenticated, compareList, fav
         <div className="flex gap-2">
           {isAuthenticated && (
             <button onClick={() => isFavorite ? onGoToFavorites() : favoriteFull ? undefined : onSaveFavorite(car.id)} disabled={favoriteFull && !isFavorite} className={`flex-1 py-2 text-sm font-medium rounded-lg border ${isFavorite ? "bg-red-50 text-red-600 border-red-200" : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"} disabled:opacity-50`} aria-label={t("detail.save.aria")}>
-              {isFavorite ? "♥" : "♡"} {t("detail.save")}
+              {isFavorite ? "\u2665" : "\u2661"} {t("detail.save")}
             </button>
           )}
           <button onClick={() => isInCompare ? onGoToComparison() : onAddToCompare(car.id)} disabled={compareFull && !isInCompare} className="flex-1 py-2 text-sm font-medium rounded-lg border bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 disabled:opacity-50" aria-label={t("detail.compare.aria")}>
-            {t("detail.compare")} {isInCompare ? "✓" : ""}
+            {t("detail.compare")} {isInCompare ? "\u2713" : ""}
           </button>
         </div>
         <div>
@@ -77,7 +78,7 @@ export default function CarDetailScreen({ car, isAuthenticated, compareList, fav
           <h2 className="text-lg font-semibold text-gray-900 mb-2">{t("detail.features")}</h2>
           <div className="flex flex-wrap gap-2">
             {car.features.map(f => (
-              <span key={f} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full">✓ {f}</span>
+              <span key={f} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full">\u2713 {f}</span>
             ))}
           </div>
         </div>
