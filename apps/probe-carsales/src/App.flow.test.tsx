@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, waitFor, act } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
 import App from "./App";
 import { setSubmitTestDriveOutcome, setSubmitInquiryOutcome } from "./fixtures/cars";
@@ -19,7 +19,7 @@ describe("Catalog screen", () => {
 
   it("navigates to filter when filter button clicked", () => {
     render(<App />);
-    const filterBtn = screen.getByRole("button", { name: /b\u1ed9 l\u1ecdc|filter/i });
+    const filterBtn = screen.getByRole("button", { name: /b\u1ed9 l\u1ecdc|open filter/i });
     fireEvent.click(filterBtn);
     expect(screen.getByText(/l\u1ecdc xe|filter cars/i)).toBeTruthy();
   });
@@ -91,11 +91,12 @@ describe("Test drive flow", () => {
 
   it("shows booking form with pre-filled user info", () => {
     goToTestDrive();
-    const nameInput = screen.getByRole("textbox", { name: /h\u1ecd v\u00e0 t\u00ean|your full name/i });
+    const nameInput = screen.getByLabelText(/h\u1ecd v\u00e0 t\u00ean c\u1ee7a b\u1ea1n|your full name/i);
     expect((nameInput as HTMLInputElement).value).toBe("Nguyen Van A");
   });
 
-  it("submits and shows success screen", () => {
+  it("submits and shows success screen", async () => {
+    vi.useFakeTimers();
     goToTestDrive();
     const dateInput = screen.getByLabelText(/ch\u1ecdn ng\u00e0y|select test drive date/i);
     fireEvent.change(dateInput, { target: { value: "2026-01-15" } });
@@ -103,12 +104,13 @@ describe("Test drive flow", () => {
     fireEvent.change(timeSelect, { target: { value: "09:00" } });
     const confirmBtn = screen.getByRole("button", { name: /x\u00e1c nh\u1eadn \u0111\u1eb7t|confirm test drive/i });
     fireEvent.click(confirmBtn);
-    setTimeout(() => {
-      expect(screen.getByText(/th\u00e0nh c\u00f4ng|confirmed/i)).toBeTruthy();
-    }, 600);
+    await act(async () => { vi.advanceTimersByTime(600); });
+    expect(screen.getByText(/th\u00e0nh c\u00f4ng|confirmed/i)).toBeTruthy();
+    vi.useRealTimers();
   });
 
-  it("shows error screen on failure", () => {
+  it("shows error screen on failure", async () => {
+    vi.useFakeTimers();
     setSubmitTestDriveOutcome("fail");
     goToTestDrive();
     const dateInput = screen.getByLabelText(/ch\u1ecdn ng\u00e0y|select test drive date/i);
@@ -117,15 +119,14 @@ describe("Test drive flow", () => {
     fireEvent.change(timeSelect, { target: { value: "09:00" } });
     const confirmBtn = screen.getByRole("button", { name: /x\u00e1c nh\u1eadn \u0111\u1eb7t|confirm test drive/i });
     fireEvent.click(confirmBtn);
-    setTimeout(() => {
-      expect(screen.getByText(/th\u1ea5t b\u1ea1i|failed/i)).toBeTruthy();
-    }, 600);
+    expect(screen.getByText(/th\u1ea5t b\u1ea1i|failed/i)).toBeTruthy();
+    vi.useRealTimers();
   });
 
   it("cancel returns to car detail", () => {
     goToTestDrive();
-    const cancelBtn = screen.getByRole("button", { name: /h\u1ee7y \u0111\u1eb7t l\u00e1i th\u1eed|cancel test drive/i });
-    fireEvent.click(cancelBtn);
+    const cancelBtns = screen.getAllByRole("button", { name: /h\u1ee7y \u0111\u1eb7t l\u00e1i th\u1eed|cancel test drive/i });
+    fireEvent.click(cancelBtns[cancelBtns.length - 1]);
     expect(screen.getByText(/th\u00f4ng s\u1ed1 k\u1ef9 thu\u1eadt|specifications/i)).toBeTruthy();
   });
 });
@@ -148,8 +149,8 @@ describe("Purchase inquiry flow", () => {
 
   it("cancel returns to car detail", () => {
     goToInquiry();
-    const cancelBtn = screen.getByRole("button", { name: /h\u1ee7y y\u00eau c\u1ea7u|cancel purchase/i });
-    fireEvent.click(cancelBtn);
+    const cancelBtns = screen.getAllByRole("button", { name: /h\u1ee7y y\u00eau c\u1ea7u|cancel purchase/i });
+    fireEvent.click(cancelBtns[cancelBtns.length - 1]);
     expect(screen.getByText(/th\u00f4ng s\u1ed1 k\u1ef9 thu\u1eadt|specifications/i)).toBeTruthy();
   });
 });
