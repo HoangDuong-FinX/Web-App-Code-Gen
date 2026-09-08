@@ -1,39 +1,48 @@
-import type { Promotion } from "../types";
-import { featuredCars } from "./cars";
+import type { Promotion } from '../types';
 
-export const promotions: Promotion[] = [
+let promoListOutcome: 'success' | 'fail' = 'success';
+export function setPromoListOutcome(v: 'success' | 'fail'): void { promoListOutcome = v; }
+
+let promoDetailOutcome: 'success' | 'fail' = 'success';
+export function setPromoDetailOutcome(v: 'success' | 'fail'): void { promoDetailOutcome = v; }
+
+const samplePromotions: Promotion[] = [
   {
-    id: "promo-001",
-    title: "Giảm đến 50 triệu cho dòng SUV",
-    bannerUrl: "https://placehold.co/800x450/fef3c7/92400e?text=SUV+Sale",
-    validity: "01/01/2024 - 31/03/2024",
-    termsAndConditions:
-      "Áp dụng cho tất cả xe SUV mới. Không áp dụng cùng các chương trình khuyến mãi khác. Liên hệ đại lý để biết thêm chi tiết.",
-    applicableModelsPreview: "CX-5, Tucson, VF 8",
-    eligibleCars: featuredCars.filter((c) => c.bodyType === "SUV"),
+    id: 'promo-1', title: 'Giảm 30 triệu cho Toyota Camry', bannerUrl: 'https://placehold.co/800x450/3b82f6/ffffff?text=Giam+30+Trieu',
+    validity: '01/01/2024 - 31/03/2024', applicableModelsPreview: 'Toyota Camry 2024',
+    termsAndConditions: 'Áp dụng cho khách hàng mua xe Toyota Camry 2024 phiên bản 2.5Q trở lên. Giảm trực tiếp vào giá bán. Không áp dụng đồng thời với các chương trình khuyến mãi khác.',
+    eligibleCars: [{ id: 'car-1', name: 'Toyota Camry 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Camry', formattedPrice: '1.050.000.000 ₫', promoDiscountTag: '-30 triệu' }],
   },
   {
-    id: "promo-002",
-    title: "Tặng phụ kiện 20 triệu khi mua Sedan",
-    bannerUrl: "https://placehold.co/800x450/dbeafe/1e40af?text=Sedan+Promo",
-    validity: "15/01/2024 - 28/02/2024",
-    termsAndConditions:
-      "Áp dụng cho Civic RS và Camry 2.5Q. Phụ kiện bao gồm: phim cách nhiệt, thảm lót sàn, camera hành trình.",
-    applicableModelsPreview: "Civic RS, Camry 2.5Q",
-    eligibleCars: featuredCars.filter((c) => c.bodyType === "Sedan"),
+    id: 'promo-2', title: 'Tặng bảo hiểm 1 năm cho Mazda CX-5', bannerUrl: 'https://placehold.co/800x450/10b981/ffffff?text=Tang+Bao+Hiem',
+    validity: '15/01/2024 - 28/02/2024', applicableModelsPreview: 'Mazda CX-5 2024',
+    termsAndConditions: 'Tặng gói bảo hiểm thân vỏ 1 năm trị giá 15 triệu đồng cho khách hàng mua Mazda CX-5 2024 tất cả phiên bản.',
+    eligibleCars: [{ id: 'car-3', name: 'Mazda CX-5 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=CX-5', formattedPrice: '839.000.000 ₫', promoDiscountTag: 'Tặng BH 1 năm' }],
   },
   {
-    id: "promo-003",
-    title: "Ưu đãi trả góp 0% lãi suất 12 tháng",
-    bannerUrl: "https://placehold.co/800x450/dcfce7/166534?text=0%25+Interest",
-    validity: "01/02/2024 - 30/04/2024",
-    termsAndConditions:
-      "Áp dụng cho tất cả xe mới. Thời hạn vay từ 12 đến 60 tháng. Trả trước tối thiểu 30%. Liên hệ đại lý để được tư vấn.",
-    applicableModelsPreview: "Tất cả xe mới",
-    eligibleCars: featuredCars.filter((c) => c.condition === "Mới"),
+    id: 'promo-3', title: 'Ưu đãi pin trọn đời VinFast VF 8', bannerUrl: 'https://placehold.co/800x450/8b5cf6/ffffff?text=Pin+Tron+Doi',
+    validity: '01/01/2024 - 30/06/2024', applicableModelsPreview: 'VinFast VF 8 2024',
+    termsAndConditions: 'Chương trình ưu đãi pin trọn đời cho khách hàng mua VinFast VF 8 trong giai đoạn khuyến mãi. Bảo hành pin 10 năm.',
+    eligibleCars: [{ id: 'car-5', name: 'VinFast VF 8 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=VF8', formattedPrice: '1.129.000.000 ₫', promoDiscountTag: 'Pin trọn đời' }],
   },
 ];
 
-export function getPromoById(id: string): Promotion | undefined {
-  return promotions.find((p) => p.id === id);
+export async function loadHomePromotions(): Promise<Promotion[]> {
+  await new Promise(r => setTimeout(r, 200));
+  if (promoListOutcome === 'fail') throw new Error('Network error');
+  return samplePromotions;
 }
+
+export async function loadPromotionsList(): Promise<Promotion[]> {
+  await new Promise(r => setTimeout(r, 300));
+  if (promoListOutcome === 'fail') throw new Error('Network error');
+  return samplePromotions;
+}
+
+export async function loadPromoDetail(promoId: string): Promise<Promotion | null> {
+  await new Promise(r => setTimeout(r, 200));
+  if (promoDetailOutcome === 'fail') throw new Error('Network error');
+  return samplePromotions.find(p => p.id === promoId) ?? null;
+}
+
+export { samplePromotions };

@@ -1,39 +1,38 @@
-import type { Showroom, TimeSlot } from "../types";
+import type { Showroom, TimeSlot } from '../types';
 
-export const showrooms: Showroom[] = [
-  {
-    id: "sr-001",
-    name: "Vikki Auto Quận 1",
-    address: "123 Nguyễn Huệ, Quận 1, TP.HCM",
-    distance: "2.3 km",
-    hours: "8:00 - 20:00",
-  },
-  {
-    id: "sr-002",
-    name: "Vikki Auto Quận 7",
-    address: "456 Nguyễn Văn Linh, Quận 7, TP.HCM",
-    distance: "5.1 km",
-    hours: "8:00 - 20:00",
-  },
-  {
-    id: "sr-003",
-    name: "Vikki Auto Thủ Đức",
-    address: "789 Võ Văn Ngân, TP. Thủ Đức, TP.HCM",
-    distance: "8.7 km",
-    hours: "8:30 - 19:30",
-  },
+let showroomOutcome: 'success' | 'fail' = 'success';
+export function setShowroomOutcome(v: 'success' | 'fail'): void { showroomOutcome = v; }
+
+let timeSlotsOutcome: 'success' | 'fail' = 'success';
+export function setTimeSlotsOutcome(v: 'success' | 'fail'): void { timeSlotsOutcome = v; }
+
+const sampleShowrooms: Showroom[] = [
+  { id: 'sr-1', name: 'Showroom Thủ Đức', address: '123 Võ Văn Ngân, Thủ Đức, TP.HCM', distance: '3.2 km', hours: '8:00 - 18:00' },
+  { id: 'sr-2', name: 'Showroom Quận 7', address: '456 Nguyễn Thị Thập, Quận 7, TP.HCM', distance: '7.5 km', hours: '8:00 - 19:00' },
+  { id: 'sr-3', name: 'Showroom Bình Tân', address: '789 Kinh Dương Vương, Bình Tân, TP.HCM', distance: '12.1 km', hours: '8:30 - 18:30' },
 ];
 
-export function getTimeSlotsForDate(_showroomId: string, _date: string): TimeSlot[] {
-  return [
-    { time: "08:00", isUnavailable: false, isSelected: false },
-    { time: "09:00", isUnavailable: false, isSelected: false },
-    { time: "10:00", isUnavailable: true, isSelected: false },
-    { time: "11:00", isUnavailable: false, isSelected: false },
-    { time: "13:00", isUnavailable: false, isSelected: false },
-    { time: "14:00", isUnavailable: false, isSelected: false },
-    { time: "15:00", isUnavailable: true, isSelected: false },
-    { time: "16:00", isUnavailable: false, isSelected: false },
-    { time: "17:00", isUnavailable: false, isSelected: false },
-  ];
+const sampleTimeSlots: TimeSlot[] = [
+  { time: '08:00', isUnavailable: false },
+  { time: '09:00', isUnavailable: false },
+  { time: '10:00', isUnavailable: true },
+  { time: '11:00', isUnavailable: false },
+  { time: '13:00', isUnavailable: false },
+  { time: '14:00', isUnavailable: false },
+  { time: '15:00', isUnavailable: true },
+  { time: '16:00', isUnavailable: false },
+];
+
+export async function loadShowrooms(): Promise<Showroom[]> {
+  await new Promise(r => setTimeout(r, 300));
+  if (showroomOutcome === 'fail') throw new Error('Network error');
+  return sampleShowrooms;
 }
+
+export async function loadTimeSlots(): Promise<TimeSlot[]> {
+  await new Promise(r => setTimeout(r, 200));
+  if (timeSlotsOutcome === 'fail') throw new Error('Network error');
+  return sampleTimeSlots;
+}
+
+export { sampleShowrooms };
