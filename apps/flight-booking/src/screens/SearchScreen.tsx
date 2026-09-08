@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { SearchCriteria, Airport, CityPair, SearchResult, RecentSearch } from '../types';
+import type { SearchCriteria, CityPair, SearchResult, RecentSearch } from '../types';
 import { t } from '../i18n';
 import { loadAirports, loadCityPairs, searchFlights } from '../sdk';
 

@@ -3,7 +3,7 @@ import type { BookingState, PaymentPayload, PaymentResult } from '../types';
 import { t } from '../i18n';
 import { formatPrice } from '../formatPrice';
 import { useHoldTimer } from '../useHoldTimer';
-import { fetchPaymentPayload, startPayment, getViaHost } from '../sdk';
+import { fetchPaymentPayload, startPayment } from '../sdk';
 
 interface Props {
   booking: BookingState;
@@ -20,7 +20,6 @@ export function CheckoutScreen({ booking, onUpdateBooking, onPayloadFetched, onP
   const [payloadError, setPayloadError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const isRoundTrip = booking.searchCriteria.tripType === 'round-trip';
-  const _viaHost = getViaHost();
 
   useEffect(() => {
     if (expired) onHoldExpired();
