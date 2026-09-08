@@ -20,7 +20,7 @@ describe("Catalog screen", () => {
 
   it("navigates to filter when filter button clicked", () => {
     render(<App />);
-    const filterBtn = screen.getByRole("button", { name: /b\u1ed9 l\u1ecdc|open filter/i });
+    const filterBtn = screen.getByRole("button", { name: /m\u1edf b\u1ea3ng l\u1ecdc|open filter/i });
     fireEvent.click(filterBtn);
     expect(screen.getByRole("heading", { name: /l\u1ecdc xe|filter cars/i })).toBeTruthy();
   });
