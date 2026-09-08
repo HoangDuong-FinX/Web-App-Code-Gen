@@ -1,117 +1,99 @@
-import { useState } from "react";
-import { t } from "../i18n";
-import { getCarById } from "../fixtures/cars";
-import type { ScreenProps } from "./types";
+import React, { useState } from 'react';
+import { t } from '../i18n';
+import { useApp } from '../context/AppContext';
 
-export default function InquiryFormScreen({ navigate, goBack, setInquiryForm, state }: ScreenProps) {
-  const car = state.currentCarId ? getCarById(state.currentCarId) : undefined;
-  const [contactMethod, setContactMethod] = useState("call");
-  const [preferredTime, setPreferredTime] = useState("");
-  const [message, setMessage] = useState("");
+export default function InquiryFormScreen(): React.JSX.Element {
+  const { navigate, selectedCar, currentCarId } = useApp();
+  const [contactMethod, setContactMethod] = useState<'call' | 'zalo' | 'email'>('call');
+  const [preferredTime, setPreferredTime] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleContinue = () => {
-    setInquiryForm({ contactMethod, preferredTime, message });
-    navigate("inquiry-confirm");
-  };
-
-  const contactOptions = [
-    { value: "call", label: t("inquiry.contactMethod.call") },
-    { value: "zalo", label: t("inquiry.contactMethod.zalo") },
-    { value: "email", label: t("inquiry.contactMethod.email") },
-  ];
+  function handleContinue(): void {
+    navigate('inquiry-confirm', {
+      currentCarId,
+      selectedCar,
+      inquiryData: { contactMethod, preferredTime, message },
+    });
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <div className="flex items-center p-4 gap-3">
-        <button
-          data-testid="back-action"
-          aria-label={t("common.back")}
-          onClick={goBack}
-          className="p-2 text-gray-600"
-        >
-          \u2190
+      <header className="flex items-center gap-3 p-4">
+        <button type="button" onClick={() => navigate('car-detail', { currentCarId })} aria-label={t('inquiry.back')} data-testid="back-action" className="p-2 rounded-full hover:bg-gray-100">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
         </button>
-        <h1 className="text-xl font-bold">{t("inquiry.title")}</h1>
-      </div>
+        <h1 className="text-xl font-bold">{t('inquiry.title')}</h1>
+      </header>
 
-      {/* Car Summary */}
-      {car && (
-        <div className="flex items-center gap-3 px-4 py-3">
-          <img
-            src={car.thumbnailUrl}
-            alt={car.name}
-            className="w-20 aspect-[4/3] object-cover rounded-lg"
-          />
-          <div>
-            <span className="font-semibold text-sm block">{car.name}</span>
-            <span className="text-sm text-blue-600">{car.formattedPrice}</span>
+      {/* Car summary */}
+      {selectedCar && (
+        <div className="flex gap-3 px-4 py-3 items-center">
+          <img src={selectedCar.thumbnailUrl} alt={selectedCar.name} className="w-20 aspect-[4/3] object-cover rounded-lg" />
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-bold">{selectedCar.name}</span>
+            <span className="text-sm text-blue-600">{selectedCar.formattedPrice}</span>
           </div>
         </div>
       )}
 
-      {/* Form */}
       <div className="flex flex-col gap-4 p-4">
+        {/* Contact method */}
         <fieldset>
-          <legend className="text-sm font-medium text-gray-700 mb-2">
-            {t("inquiry.contactMethod.label")}
-          </legend>
-          <div className="flex flex-col gap-2" data-testid="contact-method">
-            {contactOptions.map((opt) => (
-              <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="contactMethod"
-                  value={opt.value}
-                  checked={contactMethod === opt.value}
-                  onChange={() => setContactMethod(opt.value)}
-                  className="accent-blue-600"
-                />
-                <span className="text-sm">{opt.label}</span>
-              </label>
-            ))}
-          </div>
+          <legend className="text-sm font-medium mb-2">{t('inquiry.contactMethod')}</legend>
+          {(['call', 'zalo', 'email'] as const).map(method => (
+            <label key={method} className="flex items-center gap-3 py-2 cursor-pointer">
+              <input
+                type="radio"
+                name="contactMethod"
+                value={method}
+                checked={contactMethod === method}
+                onChange={() => setContactMethod(method)}
+                aria-label={t(`inquiry.${method}`)}
+                className="w-4 h-4 text-blue-600"
+              />
+              <span className="text-sm">{t(`inquiry.${method}`)}</span>
+            </label>
+          ))}
         </fieldset>
 
-        <div>
-          <label htmlFor="preferred-time" className="block text-sm font-medium text-gray-700 mb-1">
-            {t("inquiry.preferredTime.label")}
-          </label>
+        {/* Preferred time */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="preferred-time" className="text-sm font-medium">{t('inquiry.preferredTime')}</label>
           <input
             id="preferred-time"
-            data-testid="preferred-time"
-            aria-label={t("inquiry.preferredTime.label")}
             type="text"
-            placeholder={t("inquiry.preferredTime.placeholder")}
             value={preferredTime}
-            onChange={(e) => setPreferredTime(e.target.value)}
-            className="w-full bg-gray-100 rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={e => setPreferredTime(e.target.value)}
+            placeholder={t('inquiry.preferredTimePlaceholder')}
+            aria-label={t('inquiry.preferredTimeAria')}
+            data-testid="preferred-time"
+            className="w-full px-4 py-3 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        <div>
-          <label htmlFor="inquiry-message" className="block text-sm font-medium text-gray-700 mb-1">
-            {t("inquiry.message.label")}
-          </label>
+        {/* Message */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="inquiry-msg" className="text-sm font-medium">{t('inquiry.message')}</label>
           <textarea
-            id="inquiry-message"
-            data-testid="inquiry-message"
-            aria-label={t("inquiry.message.label")}
-            placeholder={t("inquiry.message.placeholder")}
+            id="inquiry-msg"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={e => setMessage(e.target.value)}
+            placeholder={t('inquiry.messagePlaceholder')}
+            aria-label={t('inquiry.messageAria')}
+            data-testid="inquiry-message"
             rows={4}
-            className="w-full bg-gray-100 rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full px-4 py-3 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none"
           />
         </div>
 
         <button
-          data-testid="inquiry-continue"
-          aria-label={t("inquiry.continue")}
+          type="button"
           onClick={handleContinue}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium"
+          aria-label={t('inquiry.continueAria')}
+          data-testid="inquiry-continue"
+          className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
         >
-          {t("inquiry.continue")}
+          {t('inquiry.continue')}
         </button>
       </div>
     </div>
