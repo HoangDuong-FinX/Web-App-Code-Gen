@@ -1,36 +1,33 @@
-import { t } from "../i18n";
-import { getCarById } from "../fixtures/cars";
-import type { ScreenProps } from "./types";
+import React from 'react';
+import { t } from '../i18n';
+import { useApp } from '../context/AppContext';
 
-export default function ReservationSuccessScreen({ navigate, state }: ScreenProps) {
-  const car = state.currentCarId ? getCarById(state.currentCarId) : undefined;
+export default function ReservationSuccessScreen(): React.JSX.Element {
+  const { navigate, selectedCar, reservationResult } = useApp();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-6 p-8">
-      <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-4xl">
-        {"\u2713"}
+      <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
+        <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
       </div>
-      <h1 className="text-2xl font-bold text-center">{t("reservationSuccess.title")}</h1>
-      <p className="font-semibold text-center">{t("reservationSuccess.code", { code: "RES-20240118-003" })}</p>
+      <h1 className="text-xl font-bold text-center">{t('resSuccess.title')}</h1>
+      <p className="text-sm font-bold text-center">{t('resSuccess.code')} {reservationResult?.code}</p>
+
       <div className="w-full bg-gray-50 rounded-lg p-4 flex flex-col gap-2">
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500">{t("reservationSuccess.car")}</span>
-          <span className="text-sm font-semibold">{car?.name}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500">{t("reservationSuccess.paid")}</span>
-          <span className="text-sm font-semibold">{"50.000.000 \u20ab"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500">{t("reservationSuccess.holdUntil")}</span>
-          <span className="text-sm font-semibold">18/02/2024</span>
-        </div>
+        <div className="flex justify-between"><span className="text-sm text-gray-500">{t('resSuccess.car')}</span><span className="text-sm font-medium">{selectedCar?.name}</span></div>
+        <div className="flex justify-between"><span className="text-sm text-gray-500">{t('resSuccess.paid')}</span><span className="text-sm font-medium">{reservationResult?.depositAmountPaid}</span></div>
+        <div className="flex justify-between"><span className="text-sm text-gray-500">{t('resSuccess.holdUntil')}</span><span className="text-sm font-medium">{reservationResult?.holdUntilDate}</span></div>
       </div>
-      <button data-testid="view-activity" aria-label={t("reservationSuccess.viewActivity")} onClick={() => navigate("my-activity")} className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium">
-        {t("reservationSuccess.viewActivity")}
+
+      {reservationResult?.nextStepsMessage && (
+        <p className="text-sm text-gray-500 text-center">{reservationResult.nextStepsMessage}</p>
+      )}
+
+      <button type="button" onClick={() => navigate('my-activity')} aria-label={t('resSuccess.viewActivityAria')} data-testid="view-activity" className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium">
+        {t('resSuccess.viewActivity')}
       </button>
-      <button data-testid="back-to-home" aria-label={t("reservationSuccess.backToHome")} onClick={() => navigate("home")} className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-medium">
-        {t("reservationSuccess.backToHome")}
+      <button type="button" onClick={() => navigate('home')} aria-label={t('resSuccess.backToHomeAria')} data-testid="back-to-home" className="w-full py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium">
+        {t('resSuccess.backToHome')}
       </button>
     </div>
   );

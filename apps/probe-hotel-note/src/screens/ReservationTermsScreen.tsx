@@ -1,86 +1,103 @@
-import { useState } from "react";
-import { t } from "../i18n";
-import { getCarById } from "../fixtures/cars";
-import { reservationTermsData } from "../fixtures/reservation";
-import type { ScreenProps } from "./types";
+import React, { useEffect, useState } from 'react';
+import { t } from '../i18n';
+import { useApp } from '../context/AppContext';
+import { loadReservationTerms } from '../fixtures/payment';
+import type { ReservationTerms } from '../types';
 
-export default function ReservationTermsScreen({ navigate, goBack, state }: ScreenProps) {
-  const car = state.currentCarId ? getCarById(state.currentCarId) : undefined;
+export default function ReservationTermsScreen(): React.JSX.Element {
+  const { navigate, selectedCar, currentCarId } = useApp();
+  const [terms, setTerms] = useState<ReservationTerms | null>(null);
+  const [loading, setLoading] = useState(true);
   const [agreed, setAgreed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const data = await loadReservationTerms();
+        if (!cancelled) setTerms(data);
+      } catch {
+        // error
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  function handleConfirmPay(): void {
+    if (!terms) return;
+    navigate('reservation-payment', { currentCarId, selectedCar, reservationTerms: terms });
+  }
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen"><div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" aria-label={t('resPayment.processing')} /></div>;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <div className="flex items-center p-4 gap-3">
-        <button
-          data-testid="back-action"
-          aria-label={t("common.back")}
-          onClick={goBack}
-          className="p-2 text-gray-600"
-        >
-          \u2190
+      <header className="flex items-center gap-3 p-4">
+        <button type="button" onClick={() => navigate('car-detail', { currentCarId })} aria-label={t('resTerms.back')} data-testid="back-action" className="p-2 rounded-full hover:bg-gray-100">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
         </button>
-        <h1 className="text-xl font-bold">{t("reservationTerms.title")}</h1>
-      </div>
+        <h1 className="text-xl font-bold">{t('resTerms.title')}</h1>
+      </header>
 
-      {/* Car Summary */}
-      {car && (
-        <div className="flex items-center gap-3 px-4 py-3">
-          <img
-            src={car.thumbnailUrl}
-            alt={car.name}
-            className="w-20 aspect-[4/3] object-cover rounded-lg"
-          />
-          <div>
-            <span className="font-semibold text-sm block">{car.name}</span>
-            <span className="text-sm text-blue-600">{car.formattedPrice}</span>
+      {/* Car summary */}
+      {selectedCar && (
+        <div className="flex gap-3 px-4 py-3 items-center">
+          <img src={selectedCar.thumbnailUrl} alt={selectedCar.name} className="w-20 aspect-[4/3] object-cover rounded-lg" />
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-bold">{selectedCar.name}</span>
+            <span className="text-sm text-blue-600">{selectedCar.formattedPrice}</span>
           </div>
         </div>
       )}
 
-      {/* Deposit Info */}
-      <section className="p-4">
-        <h3 className="text-lg font-bold">{t("reservationTerms.depositInfo")}</h3>
-        <div className="mt-2 flex flex-col gap-3">
-          <div className="flex justify-between">
-            <span className="text-sm text-gray-500">{t("reservationTerms.depositAmount")}</span>
-            <span className="text-xl font-bold text-blue-600">{reservationTermsData.depositAmount}</span>
+      {/* Deposit info */}
+      {terms && (
+        <section className="p-4">
+          <h3 className="text-sm font-bold text-gray-500 mb-3">{t('resTerms.depositInfo')}</h3>
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-500">{t('resTerms.depositAmount')}</span>
+              <span className="text-lg font-bold text-blue-600">{terms.depositAmount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-500">{t('resTerms.holdPeriod')}</span>
+              <span className="text-sm font-medium">{terms.holdPeriod}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-gray-500">{t('resTerms.cancellation')}</span>
+              <span className="text-sm">{terms.cancellationPolicy}</span>
+            </div>
           </div>
-          <div className="flex justify-between">
-            <span className="text-sm text-gray-500">{t("reservationTerms.holdPeriod")}</span>
-            <span className="text-sm font-semibold">{reservationTermsData.holdPeriod}</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-sm text-gray-500">{t("reservationTerms.cancellation")}</span>
-            <span className="text-sm">{reservationTermsData.cancellationPolicy}</span>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Terms Checkbox */}
-      <div className="px-4">
+      <div className="p-4 flex flex-col gap-4 mt-auto">
         <label className="flex items-start gap-3 cursor-pointer">
           <input
-            data-testid="terms-agree"
             type="checkbox"
             checked={agreed}
-            onChange={() => setAgreed(!agreed)}
-            aria-label={t("reservationTerms.agree")}
-            className="accent-blue-600 mt-1"
+            onChange={e => setAgreed(e.target.checked)}
+            aria-label={t('resTerms.agreeAria')}
+            data-testid="terms-agree"
+            className="mt-0.5 w-5 h-5 text-blue-600 rounded"
           />
-          <span className="text-sm">{t("reservationTerms.agree")}</span>
+          <span className="text-sm">{t('resTerms.agree')}</span>
         </label>
-      </div>
 
-      <div className="p-4 mt-auto">
         <button
-          data-testid="confirm-pay"
-          aria-label={t("reservationTerms.confirmPay")}
-          onClick={() => navigate("reservation-payment")}
+          type="button"
+          onClick={handleConfirmPay}
           disabled={!agreed}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium disabled:opacity-50"
+          aria-label={t('resTerms.confirmPayAria')}
+          data-testid="confirm-pay"
+          className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
         >
-          {t("reservationTerms.confirmPay")}
+          {t('resTerms.confirmPay')}
         </button>
       </div>
     </div>
