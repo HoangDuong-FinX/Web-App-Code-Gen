@@ -21,7 +21,7 @@ export default function SearchResultsScreen({
   onSelectCar,
   keyword,
   onKeywordChange,
-  isAuthenticated,
+  isAuthenticated: _isAuthenticated,
   wishlistIds,
   onToggleWishlist,
   compareList,
@@ -44,6 +44,8 @@ export default function SearchResultsScreen({
     setFilters((prev) => ({ ...prev, sort }));
     setShowSort(false);
   };
+
+  void _isAuthenticated;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">

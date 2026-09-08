@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { t } from '../i18n';
-import type { ScreenId } from '../types';
+import type { ScreenId, TimeSlot } from '../types';
 import { getCarById } from '../fixtures/cars';
 import { testDriveSlots, dealerLocations, getSubmitTestDriveOutcome } from '../fixtures/dealer';
 
@@ -8,7 +8,7 @@ interface TestDriveBookingScreenProps {
   carId: string | null;
   onNavigate: (screen: ScreenId) => void;
   onSuccess: (refNumber: string) => void;
-  onFailed: (altSlots: { slotId: string; startTime: string; endTime: string }[]) => void;
+  onFailed: (altSlots: TimeSlot[]) => void;
   userName?: string;
   userPhone?: string;
 }
@@ -47,7 +47,7 @@ export default function TestDriveBookingScreen({
       if (outcome === 'success') {
         onSuccess('TD-' + Date.now().toString(36).toUpperCase());
       } else {
-        onFailed(availableSlots.map((s) => ({ slotId: s.slotId, startTime: s.startTime, endTime: s.endTime })));
+        onFailed(availableSlots);
       }
     }, 800);
   };
