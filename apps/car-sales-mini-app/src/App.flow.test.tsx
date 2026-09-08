@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import App from './App';
 
@@ -19,7 +19,6 @@ describe('Home screen', () => {
     const searchInput = screen.getByPlaceholderText('T\u00ecm xe theo t\u00ean, h\u00e3ng, m\u1eabu...');
     fireEvent.change(searchInput, { target: { value: 'Toyota' } });
     fireEvent.keyDown(searchInput, { key: 'Enter' });
-    // search-results has the title in the header section
     expect(screen.getByText(/xe \u0111\u01b0\u1ee3c t\u00ecm th\u1ea5y/)).toBeTruthy();
   });
 
@@ -55,7 +54,6 @@ describe('Car detail screen', () => {
     goToCarDetail();
     const buyBtn = screen.getByTestId('buy-button');
     fireEvent.click(buyBtn);
-    // Login screen has the login-submit button
     expect(screen.getByTestId('login-submit')).toBeTruthy();
   });
 
@@ -73,7 +71,6 @@ describe('Login flow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Toyota Camry 2024' }));
     fireEvent.click(screen.getByTestId('buy-button'));
     expect(screen.getByTestId('login-submit')).toBeTruthy();
-    // Navigate to register
     fireEvent.click(screen.getByRole('button', { name: /Ch\u01b0a c\u00f3 t\u00e0i kho\u1ea3n/ }));
     expect(screen.getByTestId('register-submit')).toBeTruthy();
   });
@@ -90,10 +87,8 @@ describe('Login flow', () => {
 describe('Compare flow', () => {
   it('adds cars to compare and navigates to compare screen', () => {
     render(<App />);
-    // Find compare toggle buttons by data-testid
     const compareBtn = screen.getByTestId('compare-toggle-car-001');
     fireEvent.click(compareBtn);
-    // Compare bar should appear with "So s\u00e1nh ngay" button
     const compareNowBtn = screen.getByRole('button', { name: /So s\u00e1nh ngay/ });
     expect(compareNowBtn).toBeTruthy();
     fireEvent.click(compareNowBtn);
@@ -112,7 +107,6 @@ describe('Navigation', () => {
   it('guest tapping profile redirects to login', () => {
     render(<App />);
     fireEvent.click(screen.getByTestId('nav-profile'));
-    // Should show login form
     expect(screen.getByTestId('login-submit')).toBeTruthy();
   });
 });
