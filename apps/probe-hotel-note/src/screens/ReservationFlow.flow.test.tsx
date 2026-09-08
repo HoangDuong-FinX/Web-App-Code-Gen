@@ -25,7 +25,9 @@ describe('Reservation flow', () => {
     fireEvent.change(screen.getByTestId('phone-input'), { target: { value: '0912345678' } });
     fireEvent.change(screen.getByTestId('preferred-visit-date-input'), { target: { value: '2025-01-15' } });
     fireEvent.click(screen.getByTestId('review-action'));
-    expect(screen.getByText('X\u00e1c nh\u1eadn \u0111\u1eb7t l\u1ecbch')).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 1 })).toBeTruthy();
+    expect(screen.getByTestId('confirm-action')).toBeTruthy();
+    expect(screen.getByTestId('edit-action')).toBeTruthy();
   });
 
   it('navigates to success on confirmed reservation', () => {
