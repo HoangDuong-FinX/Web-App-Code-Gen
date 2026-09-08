@@ -26,13 +26,9 @@ export default function App(): React.JSX.Element {
     screen: 'home',
     params: {},
   });
-  const [history, setHistory] = useState<NavState[]>([]);
 
   const navigate = useCallback((screen: string, params?: Record<string, unknown>) => {
-    setNavState((prev) => {
-      setHistory((h) => [...h, prev]);
-      return { screen: screen as ScreenId, params: params ?? {} };
-    });
+    setNavState({ screen: screen as ScreenId, params: params ?? {} });
   }, []);
 
   const { screen, params } = navState;
@@ -68,9 +64,5 @@ export default function App(): React.JSX.Element {
       return <AdminInquiriesScreen onNavigate={navigate} />;
     case 'admin-inquiry-detail':
       return <AdminInquiryDetailScreen onNavigate={navigate} params={params} />;
-    default: {
-      const _exhaustive: never = screen;
-      return <HomeScreen onNavigate={navigate} />;
-    }
   }
 }
