@@ -16,17 +16,13 @@ export default function CompareTray({ compareList, onOpen, onRemove }: CompareTr
           if (!car) return null;
           return (
             <div key={carId} className="flex flex-col items-center gap-1">
-              <img
-                src={car.thumbnailUrl}
-                alt={car.name}
-                className="w-12 h-9 object-cover rounded"
-              />
+              <img src={car.thumbnailUrl} alt={car.name} className="w-12 h-9 object-cover rounded" />
               <button
                 aria-label={t("compare.remove", { name: car.name })}
                 onClick={() => onRemove(carId)}
                 className="text-xs text-gray-400 hover:text-red-500"
               >
-                \u2715
+                {"\u2715"}
               </button>
             </div>
           );

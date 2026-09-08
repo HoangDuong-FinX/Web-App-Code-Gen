@@ -8,9 +8,9 @@ interface BottomNavProps {
 
 const navItems: { icon: string; labelKey: string; screen: ScreenId; testId: string }[] = [
   { icon: "\u2302", labelKey: "nav.home", screen: "home", testId: "nav-home" },
-  { icon: "\u{1F697}", labelKey: "nav.catalog", screen: "catalog", testId: "nav-catalog" },
-  { icon: "\u{1F3F7}", labelKey: "nav.promotions", screen: "promotions", testId: "nav-promotions" },
-  { icon: "\u{1F4CB}", labelKey: "nav.activity", screen: "my-activity", testId: "nav-activity" },
+  { icon: "\uD83D\uDE97", labelKey: "nav.catalog", screen: "catalog", testId: "nav-catalog" },
+  { icon: "\uD83C\uDFF7", labelKey: "nav.promotions", screen: "promotions", testId: "nav-promotions" },
+  { icon: "\uD83D\uDCCB", labelKey: "nav.activity", screen: "my-activity", testId: "nav-activity" },
 ];
 
 export default function BottomNav({ activeScreen, onNavigate }: BottomNavProps) {
@@ -28,9 +28,7 @@ export default function BottomNav({ activeScreen, onNavigate }: BottomNavProps) 
             aria-label={t(item.labelKey)}
             aria-current={isActive ? "page" : undefined}
             onClick={() => onNavigate(item.screen)}
-            className={`flex-1 flex flex-col items-center py-2 text-xs ${
-              isActive ? "text-blue-600 font-semibold" : "text-gray-500"
-            }`}
+            className={`flex-1 flex flex-col items-center py-2 text-xs ${isActive ? "text-blue-600 font-semibold" : "text-gray-500"}`}
           >
             <span className="text-lg" aria-hidden="true">{item.icon}</span>
             <span>{t(item.labelKey)}</span>
