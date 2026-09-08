@@ -84,7 +84,7 @@ export default function ActivityDetailScreen(): React.JSX.Element {
       <section className="p-4">
         <h3 className="text-sm font-bold text-gray-500 mb-2">{t('activityDetail.history')}</h3>
         <div className="divide-y">
-          {detail.timeline.map((event, i) => (
+          {detail.timeline.map((event: { date: string; description: string }, i: number) => (
             <div key={i} className="flex gap-3 py-2">
               <span className="text-xs text-gray-500 w-20 flex-shrink-0">{event.date}</span>
               <span className="text-sm flex-1">{event.description}</span>
