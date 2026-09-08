@@ -1,64 +1,94 @@
-export type CarCondition = 'new' | 'used';
-export type FuelType = 'gasoline' | 'diesel' | 'electric' | 'hybrid';
-export type Transmission = 'automatic' | 'manual';
-export type ListingStatus = 'active' | 'sold' | 'reserved' | 'draft';
-export type InquiryStatus = 'new' | 'contacted' | 'closed';
-export type InquiryType = 'contact' | 'reservation';
-
 export interface Car {
   id: string;
+  name: string;
   brand: string;
   model: string;
-  name: string;
   year: number;
-  condition: CarCondition;
+  price: number;
+  promoPrice?: number;
+  installment?: string;
+  mileage: number;
+  fuelType: string;
+  transmission: string;
+  engineCapacity: string;
   color: string;
   seats: number;
-  mileage: number;
-  fuelType: FuelType;
-  transmission: Transmission;
-  engineCapacity: string;
-  price: number;
-  promoPrice: number | null;
+  condition: string;
   description: string;
   photos: string[];
-  status: ListingStatus;
-  featured: boolean;
-  createdAt: string;
+  thumbnailUrl: string;
+  keySpecs: string;
+  specs: { label: string; value: string }[];
+  status: CarStatus;
 }
+
+export type CarStatus = 'active' | 'sold' | 'reserved' | 'draft';
 
 export interface Category {
   id: string;
   name: string;
-  filterKey: string;
-  filterValue: string;
+  type: string;
 }
 
 export interface Inquiry {
   id: string;
-  type: InquiryType;
+  buyerName: string;
+  phone: string;
+  email?: string;
+  preferredContactTime?: string;
+  message?: string;
   carId: string;
   carName: string;
-  carPrice: number;
-  carPhoto: string;
-  buyerName: string;
-  buyerPhone: string;
-  buyerEmail: string;
-  message: string;
-  preferredContactTime: string;
-  preferredVisitDate: string;
-  preferredVisitTime: string;
+  carPrice: string;
+  carThumbnailUrl: string;
   status: InquiryStatus;
-  createdAt: string;
+  date: string;
 }
 
+export type InquiryStatus = 'new' | 'contacted' | 'closed';
+
 export interface CatalogFilters {
+  brand?: string;
+  priceRange?: string;
+  bodyType?: string;
+  fuelType?: string;
+  transmission?: string;
+  year?: string;
+}
+
+export interface ReservationFormData {
+  fullName: string;
+  phone: string;
+  email: string;
+  preferredVisitDate: string;
+  preferredVisitTime: string;
+}
+
+export interface InquiryFormData {
+  fullName: string;
+  phone: string;
+  email: string;
+  preferredContactTime: string;
+  message: string;
+}
+
+export interface CarFormData {
+  carId?: string;
   brand: string;
-  bodyType: string;
+  model: string;
+  year: string;
+  condition: string;
+  color: string;
+  seats: string;
+  mileage: string;
   fuelType: string;
   transmission: string;
-  priceRange: string;
-  year: string;
+  engineCapacity: string;
+  price: string;
+  promoPrice: string;
+  description: string;
+  photos: string[];
+  status: 'active' | 'draft';
 }
 
 export type ScreenId =
@@ -80,6 +110,5 @@ export type ScreenId =
 
 export interface NavigationState {
   screen: ScreenId;
-  params: Record<string, string>;
-  history: Array<{ screen: ScreenId; params: Record<string, string> }>;
+  params: Record<string, unknown>;
 }

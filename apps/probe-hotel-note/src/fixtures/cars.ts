@@ -1,179 +1,172 @@
-import type { Car } from '../types';
-
-let saveOutcome: 'success' | 'fail' = 'success';
-export function setSaveOutcome(o: 'success' | 'fail'): void { saveOutcome = o; }
-export function getSaveOutcome(): 'success' | 'fail' { return saveOutcome; }
+import type { Car, Category } from '../types';
 
 let submitInquiryOutcome: 'success' | 'fail' = 'success';
-export function setSubmitInquiryOutcome(o: 'success' | 'fail'): void { submitInquiryOutcome = o; }
-export function getSubmitInquiryOutcome(): 'success' | 'fail' { return submitInquiryOutcome; }
+export function setSubmitInquiryOutcome(o: 'success' | 'fail'): void {
+  submitInquiryOutcome = o;
+}
 
 let submitReservationOutcome: 'success' | 'fail' = 'success';
-export function setSubmitReservationOutcome(o: 'success' | 'fail'): void { submitReservationOutcome = o; }
-export function getSubmitReservationOutcome(): 'success' | 'fail' { return submitReservationOutcome; }
+export function setSubmitReservationOutcome(o: 'success' | 'fail'): void {
+  submitReservationOutcome = o;
+}
 
-export const FIXTURE_CARS: Car[] = [
+let saveListingOutcome: 'success' | 'fail' = 'success';
+export function setSaveListingOutcome(o: 'success' | 'fail'): void {
+  saveListingOutcome = o;
+}
+
+let markSoldOutcome: 'success' | 'fail' = 'success';
+export function setMarkSoldOutcome(o: 'success' | 'fail'): void {
+  markSoldOutcome = o;
+}
+
+let deleteListingOutcome: 'success' | 'fail' = 'success';
+export function setDeleteListingOutcome(o: 'success' | 'fail'): void {
+  deleteListingOutcome = o;
+}
+
+export const fixtureCategories: Category[] = [
+  { id: 'cat-1', name: 'Toyota', type: 'brand' },
+  { id: 'cat-2', name: 'Honda', type: 'brand' },
+  { id: 'cat-3', name: 'SUV', type: 'bodyType' },
+  { id: 'cat-4', name: 'Sedan', type: 'bodyType' },
+  { id: 'cat-5', name: 'D\u01b0\u1edbi 500 tri\u1ec7u', type: 'priceRange' },
+  { id: 'cat-6', name: 'Tr\u00ean 1 t\u1ef7', type: 'priceRange' },
+];
+
+const baseCars: Car[] = [
   {
-    id: 'car-001',
-    brand: 'Toyota',
-    model: 'Camry',
-    name: 'Toyota Camry 2.5Q',
-    year: 2024,
-    condition: 'new',
-    color: 'Tr\u1eafng',
-    seats: 5,
-    mileage: 0,
-    fuelType: 'gasoline',
-    transmission: 'automatic',
-    engineCapacity: '2.5L',
-    price: 1405000000,
-    promoPrice: 1350000000,
-    description: 'Toyota Camry 2.5Q 2024 - Sedan h\u1ea1ng D h\u00e0ng \u0111\u1ea7u v\u1edbi n\u1ed9i th\u1ea5t sang tr\u1ecdng, \u0111\u1ed9ng c\u01a1 m\u1ea1nh m\u1ebd v\u00e0 h\u1ec7 th\u1ed1ng an to\u00e0n Toyota Safety Sense.',
-    photos: ['https://placehold.co/800x600/e2e8f0/475569?text=Camry+Front', 'https://placehold.co/800x600/e2e8f0/475569?text=Camry+Side', 'https://placehold.co/800x600/e2e8f0/475569?text=Camry+Interior'],
+    id: 'car-1', name: 'Toyota Camry 2024', brand: 'Toyota', model: 'Camry', year: 2024,
+    price: 1050000000, promoPrice: 999000000, installment: '15.500.000', mileage: 0,
+    fuelType: 'X\u0103ng', transmission: 'T\u1ef1 \u0111\u1ed9ng', engineCapacity: '2.5L',
+    color: 'Tr\u1eafng Ng\u1ecdc Trai', seats: 5, condition: 'M\u1edbi',
+    description: 'Toyota Camry 2024 ho\u00e0n to\u00e0n m\u1edbi v\u1edbi thi\u1ebft k\u1ebf sang tr\u1ecdng, \u0111\u1ed9ng c\u01a1 2.5L m\u1ea1nh m\u1ebd v\u00e0 ti\u1ebft ki\u1ec7m nhi\u00ean li\u1ec7u.',
+    photos: ['https://placehold.co/800x450/e2e8f0/475569?text=Camry+Front', 'https://placehold.co/800x450/e2e8f0/475569?text=Camry+Side', 'https://placehold.co/800x450/e2e8f0/475569?text=Camry+Interior'],
+    thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Camry',
+    keySpecs: '2024 \u00b7 M\u1edbi \u00b7 2.5L \u00b7 T\u1ef1 \u0111\u1ed9ng',
+    specs: [{ label: 'N\u0103m', value: '2024' }, { label: 'S\u1ed1 km', value: '0 km' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'X\u0103ng' }, { label: 'H\u1ed9p s\u1ed1', value: 'T\u1ef1 \u0111\u1ed9ng' }, { label: '\u0110\u1ed9ng c\u01a1', value: '2.5L' }, { label: 'M\u00e0u', value: 'Tr\u1eafng Ng\u1ecdc Trai' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' }],
     status: 'active',
-    featured: true,
-    createdAt: '2024-12-01T10:00:00Z',
   },
   {
-    id: 'car-002',
-    brand: 'Honda',
-    model: 'Civic',
-    name: 'Honda Civic RS',
-    year: 2024,
-    condition: 'new',
-    color: '\u0110\u1ecf',
-    seats: 5,
-    mileage: 0,
-    fuelType: 'gasoline',
-    transmission: 'automatic',
-    engineCapacity: '1.5L Turbo',
-    price: 870000000,
-    promoPrice: null,
-    description: 'Honda Civic RS 2024 - Sedan th\u1ec3 thao v\u1edbi \u0111\u1ed9ng c\u01a1 1.5L VTEC Turbo, thi\u1ebft k\u1ebf hi\u1ec7n \u0111\u1ea1i v\u00e0 c\u00f4ng ngh\u1ec7 Honda SENSING.',
-    photos: ['https://placehold.co/800x600/fee2e2/991b1b?text=Civic+Front', 'https://placehold.co/800x600/fee2e2/991b1b?text=Civic+Interior'],
+    id: 'car-2', name: 'Honda Civic RS 2023', brand: 'Honda', model: 'Civic', year: 2023,
+    price: 870000000, mileage: 12000, fuelType: 'X\u0103ng', transmission: 'T\u1ef1 \u0111\u1ed9ng',
+    engineCapacity: '1.5L Turbo', color: '\u0110\u1ecf', seats: 5, condition: '\u0110\u00e3 s\u1eed d\u1ee5ng',
+    description: 'Honda Civic RS 2023 phi\u00ean b\u1ea3n th\u1ec3 thao v\u1edbi \u0111\u1ed9ng c\u01a1 1.5L Turbo m\u1ea1nh m\u1ebd.',
+    photos: ['https://placehold.co/800x450/fce4ec/c62828?text=Civic+Front', 'https://placehold.co/800x450/fce4ec/c62828?text=Civic+Side'],
+    thumbnailUrl: 'https://placehold.co/400x300/fce4ec/c62828?text=Civic',
+    keySpecs: '2023 \u00b7 12.000 km \u00b7 1.5L Turbo',
+    specs: [{ label: 'N\u0103m', value: '2023' }, { label: 'S\u1ed1 km', value: '12.000 km' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'X\u0103ng' }, { label: 'H\u1ed9p s\u1ed1', value: 'T\u1ef1 \u0111\u1ed9ng' }, { label: '\u0110\u1ed9ng c\u01a1', value: '1.5L Turbo' }, { label: 'M\u00e0u', value: '\u0110\u1ecf' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' }],
     status: 'active',
-    featured: true,
-    createdAt: '2024-11-28T08:00:00Z',
   },
   {
-    id: 'car-003',
-    brand: 'Hyundai',
-    model: 'Tucson',
-    name: 'Hyundai Tucson 2.0 \u0110\u1eb7c bi\u1ec7t',
-    year: 2023,
-    condition: 'used',
-    color: 'X\u00e1m',
-    seats: 5,
-    mileage: 15000,
-    fuelType: 'gasoline',
-    transmission: 'automatic',
-    engineCapacity: '2.0L',
-    price: 920000000,
-    promoPrice: 880000000,
-    description: 'Hyundai Tucson 2023 - SUV \u0111\u00f4 th\u1ecb v\u1edbi thi\u1ebft k\u1ebf \u1ea5n t\u01b0\u1ee3ng, n\u1ed9i th\u1ea5t r\u1ed9ng r\u00e3i. Xe \u0111\u00e3 qua s\u1eed d\u1ee5ng, t\u00ecnh tr\u1ea1ng t\u1ed1t.',
-    photos: ['https://placehold.co/800x600/e0e7ff/3730a3?text=Tucson+Front', 'https://placehold.co/800x600/e0e7ff/3730a3?text=Tucson+Rear'],
+    id: 'car-3', name: 'Hyundai Tucson 2024', brand: 'Hyundai', model: 'Tucson', year: 2024,
+    price: 920000000, promoPrice: 879000000, installment: '13.800.000', mileage: 0,
+    fuelType: 'X\u0103ng', transmission: 'T\u1ef1 \u0111\u1ed9ng', engineCapacity: '2.0L',
+    color: 'Xanh \u0110en', seats: 5, condition: 'M\u1edbi',
+    description: 'Hyundai Tucson 2024 SUV c\u1ee1 trung v\u1edbi thi\u1ebft k\u1ebf hi\u1ec7n \u0111\u1ea1i.',
+    photos: ['https://placehold.co/800x450/e8eaf6/283593?text=Tucson+Front', 'https://placehold.co/800x450/e8eaf6/283593?text=Tucson+Side'],
+    thumbnailUrl: 'https://placehold.co/400x300/e8eaf6/283593?text=Tucson',
+    keySpecs: '2024 \u00b7 M\u1edbi \u00b7 2.0L \u00b7 SUV',
+    specs: [{ label: 'N\u0103m', value: '2024' }, { label: 'S\u1ed1 km', value: '0 km' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'X\u0103ng' }, { label: 'H\u1ed9p s\u1ed1', value: 'T\u1ef1 \u0111\u1ed9ng' }, { label: '\u0110\u1ed9ng c\u01a1', value: '2.0L' }, { label: 'M\u00e0u', value: 'Xanh \u0110en' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' }],
     status: 'active',
-    featured: true,
-    createdAt: '2024-11-25T14:00:00Z',
   },
   {
-    id: 'car-004',
-    brand: 'Mazda',
-    model: 'CX-5',
-    name: 'Mazda CX-5 Premium',
-    year: 2024,
-    condition: 'new',
-    color: '\u0110en',
-    seats: 5,
-    mileage: 0,
-    fuelType: 'gasoline',
-    transmission: 'automatic',
-    engineCapacity: '2.0L',
-    price: 979000000,
-    promoPrice: null,
-    description: 'Mazda CX-5 Premium 2024 - SUV sang tr\u1ecdng v\u1edbi tri\u1ebft l\u00fd thi\u1ebft k\u1ebf KODO, n\u1ed9i th\u1ea5t tinh t\u1ebf v\u00e0 kh\u1ea3 n\u0103ng v\u1eadn h\u00e0nh \u00eam \u00e1i.',
-    photos: ['https://placehold.co/800x600/fef3c7/92400e?text=CX5+Front'],
+    id: 'car-4', name: 'Mazda CX-5 2023', brand: 'Mazda', model: 'CX-5', year: 2023,
+    price: 749000000, mileage: 25000, fuelType: 'X\u0103ng', transmission: 'T\u1ef1 \u0111\u1ed9ng',
+    engineCapacity: '2.0L', color: 'Xanh D\u01b0\u01a1ng', seats: 5, condition: '\u0110\u00e3 s\u1eed d\u1ee5ng',
+    description: 'Mazda CX-5 2023 thi\u1ebft k\u1ebf KODO, n\u1ed9i th\u1ea5t sang tr\u1ecdng.',
+    photos: ['https://placehold.co/800x450/e3f2fd/1565c0?text=CX5+Front'],
+    thumbnailUrl: 'https://placehold.co/400x300/e3f2fd/1565c0?text=CX5',
+    keySpecs: '2023 \u00b7 25.000 km \u00b7 2.0L',
+    specs: [{ label: 'N\u0103m', value: '2023' }, { label: 'S\u1ed1 km', value: '25.000 km' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'X\u0103ng' }, { label: 'H\u1ed9p s\u1ed1', value: 'T\u1ef1 \u0111\u1ed9ng' }, { label: '\u0110\u1ed9ng c\u01a1', value: '2.0L' }, { label: 'M\u00e0u', value: 'Xanh D\u01b0\u01a1ng' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' }],
     status: 'active',
-    featured: false,
-    createdAt: '2024-12-05T09:00:00Z',
   },
   {
-    id: 'car-005',
-    brand: 'VinFast',
-    model: 'VF 8',
-    name: 'VinFast VF 8 Plus',
-    year: 2024,
-    condition: 'new',
-    color: 'Xanh',
-    seats: 5,
-    mileage: 0,
-    fuelType: 'electric',
-    transmission: 'automatic',
-    engineCapacity: 'N/A',
-    price: 1259000000,
-    promoPrice: 1159000000,
-    description: 'VinFast VF 8 Plus 2024 - SUV \u0111i\u1ec7n th\u00f4ng minh v\u1edbi t\u1ea7m ho\u1ea1t \u0111\u1ed9ng l\u00ean \u0111\u1ebfn 471 km, c\u00f4ng su\u1ea5t 402 m\u00e3 l\u1ef1c.',
-    photos: ['https://placehold.co/800x600/d1fae5/065f46?text=VF8+Front', 'https://placehold.co/800x600/d1fae5/065f46?text=VF8+Side'],
+    id: 'car-5', name: 'VinFast VF 8 2024', brand: 'VinFast', model: 'VF 8', year: 2024,
+    price: 1129000000, promoPrice: 1059000000, installment: '16.200.000', mileage: 0,
+    fuelType: '\u0110i\u1ec7n', transmission: 'T\u1ef1 \u0111\u1ed9ng', engineCapacity: 'Electric',
+    color: '\u0110en', seats: 5, condition: 'M\u1edbi',
+    description: 'VinFast VF 8 2024 SUV \u0111i\u1ec7n th\u00f4ng minh, c\u00f4ng ngh\u1ec7 t\u1ef1 l\u00e1i h\u1ed7 tr\u1ee3 ADAS.',
+    photos: ['https://placehold.co/800x450/e8f5e9/2e7d32?text=VF8+Front', 'https://placehold.co/800x450/e8f5e9/2e7d32?text=VF8+Side'],
+    thumbnailUrl: 'https://placehold.co/400x300/e8f5e9/2e7d32?text=VF8',
+    keySpecs: '2024 \u00b7 M\u1edbi \u00b7 \u0110i\u1ec7n \u00b7 SUV',
+    specs: [{ label: 'N\u0103m', value: '2024' }, { label: 'S\u1ed1 km', value: '0 km' }, { label: 'Nhi\u00ean li\u1ec7u', value: '\u0110i\u1ec7n' }, { label: 'H\u1ed9p s\u1ed1', value: 'T\u1ef1 \u0111\u1ed9ng' }, { label: '\u0110\u1ed9ng c\u01a1', value: 'Electric' }, { label: 'M\u00e0u', value: '\u0110en' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' }],
     status: 'active',
-    featured: true,
-    createdAt: '2024-12-10T11:00:00Z',
   },
   {
-    id: 'car-006',
-    brand: 'Kia',
-    model: 'Seltos',
-    name: 'Kia Seltos 1.6 Luxury',
-    year: 2023,
-    condition: 'used',
-    color: 'Tr\u1eafng',
-    seats: 5,
-    mileage: 22000,
-    fuelType: 'gasoline',
-    transmission: 'automatic',
-    engineCapacity: '1.6L',
-    price: 650000000,
-    promoPrice: null,
-    description: 'Kia Seltos 2023 - SUV c\u1ee1 nh\u1ecf ti\u1ebft ki\u1ec7m nhi\u00ean li\u1ec7u, ph\u00f9 h\u1ee3p di chuy\u1ec3n \u0111\u00f4 th\u1ecb. \u0110\u00e3 qua s\u1eed d\u1ee5ng, b\u1ea3o d\u01b0\u1ee1ng \u0111\u1ea7y \u0111\u1ee7.',
-    photos: ['https://placehold.co/800x600/fce7f3/9d174d?text=Seltos+Front'],
-    status: 'sold',
-    featured: false,
-    createdAt: '2024-10-15T07:00:00Z',
-  },
-  {
-    id: 'car-007',
-    brand: 'Ford',
-    model: 'Ranger',
-    name: 'Ford Ranger Wildtrak 2.0L',
-    year: 2024,
-    condition: 'new',
-    color: 'Cam',
-    seats: 5,
-    mileage: 0,
-    fuelType: 'diesel',
-    transmission: 'automatic',
-    engineCapacity: '2.0L Bi-Turbo',
-    price: 1069000000,
-    promoPrice: null,
-    description: 'Ford Ranger Wildtrak 2024 - B\u00e1n t\u1ea3i m\u1ea1nh m\u1ebd v\u1edbi \u0111\u1ed9ng c\u01a1 Bi-Turbo, h\u1ec7 th\u1ed1ng treo \u0111\u1ed9c l\u1eadp v\u00e0 trang b\u1ecb off-road chuy\u00ean nghi\u1ec7p.',
-    photos: ['https://placehold.co/800x600/fff7ed/9a3412?text=Ranger+Front'],
-    status: 'draft',
-    featured: false,
-    createdAt: '2024-12-12T15:00:00Z',
+    id: 'car-6', name: 'Kia Morning 2022', brand: 'Kia', model: 'Morning', year: 2022,
+    price: 349000000, mileage: 35000, fuelType: 'X\u0103ng', transmission: 'T\u1ef1 \u0111\u1ed9ng',
+    engineCapacity: '1.25L', color: 'B\u1ea1c', seats: 4, condition: '\u0110\u00e3 s\u1eed d\u1ee5ng',
+    description: 'Kia Morning 2022 xe nh\u1ecf g\u1ecdn, ti\u1ebft ki\u1ec7m nhi\u00ean li\u1ec7u.',
+    photos: ['https://placehold.co/800x450/fff3e0/e65100?text=Morning+Front'],
+    thumbnailUrl: 'https://placehold.co/400x300/fff3e0/e65100?text=Morning',
+    keySpecs: '2022 \u00b7 35.000 km \u00b7 1.25L',
+    specs: [{ label: 'N\u0103m', value: '2022' }, { label: 'S\u1ed1 km', value: '35.000 km' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'X\u0103ng' }, { label: 'H\u1ed9p s\u1ed1', value: 'T\u1ef1 \u0111\u1ed9ng' }, { label: '\u0110\u1ed9ng c\u01a1', value: '1.25L' }, { label: 'M\u00e0u', value: 'B\u1ea1c' }, { label: 'S\u1ed1 ch\u1ed7', value: '4' }],
+    status: 'active',
   },
 ];
 
-export function formatPrice(price: number): string {
-  if (price >= 1000000000) {
-    const billions = price / 1000000000;
-    return `${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(3)} t\u1ef7 VN\u0110`;
-  }
-  if (price >= 1000000) {
-    const millions = price / 1000000;
-    return `${millions.toFixed(0)} tri\u1ec7u VN\u0110`;
-  }
-  return `${price.toLocaleString('vi-VN')} VN\u0110`;
+const HERO_BANNER_URL = 'https://placehold.co/800x450/1e293b/f8fafc?text=AutoMini+-+Mua+Ban+Oto';
+
+export function loadFeaturedCars(): { featuredCars: Car[]; categories: Category[]; heroBannerUrl: string } {
+  return { featuredCars: baseCars.filter((c) => c.status === 'active').slice(0, 4), categories: fixtureCategories, heroBannerUrl: HERO_BANNER_URL };
 }
 
-export function formatMileage(km: number): string {
-  return km.toLocaleString('vi-VN');
+export function loadCatalogCars(filters: { brand?: string; fuelType?: string }, page: number, pageSize: number = 12): { cars: Car[]; totalCount: number; hasMore: boolean } {
+  let filtered = baseCars.filter((c) => c.status === 'active');
+  if (filters.brand) filtered = filtered.filter((c) => c.brand.toLowerCase() === filters.brand!.toLowerCase());
+  if (filters.fuelType) filtered = filtered.filter((c) => c.fuelType === filters.fuelType);
+  const start = (page - 1) * pageSize;
+  const paged = filtered.slice(start, start + pageSize);
+  return { cars: paged, totalCount: filtered.length, hasMore: start + pageSize < filtered.length };
+}
+
+export function loadCarDetail(carId: string): Car | null {
+  return baseCars.find((c) => c.id === carId) ?? null;
+}
+
+export function searchCars(keyword: string, page: number, pageSize: number = 12): { cars: Car[]; totalCount: number; hasMore: boolean } {
+  const kw = keyword.toLowerCase();
+  const matched = baseCars.filter((c) => c.status === 'active' && (c.name.toLowerCase().includes(kw) || c.brand.toLowerCase().includes(kw) || c.model.toLowerCase().includes(kw)));
+  const start = (page - 1) * pageSize;
+  const paged = matched.slice(start, start + pageSize);
+  return { cars: paged, totalCount: matched.length, hasMore: start + pageSize < matched.length };
+}
+
+export function submitInquiryFixture(): { success: boolean; inquiryId: string } {
+  if (submitInquiryOutcome === 'fail') return { success: false, inquiryId: '' };
+  return { success: true, inquiryId: 'inq-' + Date.now() };
+}
+
+export function submitReservationFixture(): { success: boolean; reservationId: string } {
+  if (submitReservationOutcome === 'fail') return { success: false, reservationId: '' };
+  return { success: true, reservationId: 'res-' + Date.now() };
+}
+
+export function getAdminListings(statusFilter?: string): Car[] {
+  if (!statusFilter || statusFilter === 'all') return [...baseCars];
+  return baseCars.filter((c) => c.status === statusFilter);
+}
+
+export function saveCarListingFixture(): { success: boolean; carId: string } {
+  if (saveListingOutcome === 'fail') return { success: false, carId: '' };
+  return { success: true, carId: 'car-' + Date.now() };
+}
+
+export function markCarSoldFixture(): { success: boolean } {
+  if (markSoldOutcome === 'fail') return { success: false };
+  return { success: true };
+}
+
+export function deleteCarListingFixture(): { success: boolean } {
+  if (deleteListingOutcome === 'fail') return { success: false };
+  return { success: true };
+}
+
+export function uploadCarPhotoFixture(): { success: boolean; photoUrl: string; photoId: string } {
+  return { success: true, photoUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Uploaded', photoId: 'photo-' + Date.now() };
+}
+
+export function getCarsByIds(ids: string[]): Car[] {
+  return ids.map((id) => baseCars.find((c) => c.id === id)).filter((c): c is Car => c !== undefined);
 }
