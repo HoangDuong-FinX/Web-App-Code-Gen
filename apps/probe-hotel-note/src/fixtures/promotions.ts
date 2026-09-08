@@ -1,48 +1,36 @@
-import type { Promotion } from '../types';
+import type { Promotion } from "../types";
+import { featuredCars } from "./cars";
 
-let promoListOutcome: 'success' | 'fail' = 'success';
-export function setPromoListOutcome(v: 'success' | 'fail'): void { promoListOutcome = v; }
-
-let promoDetailOutcome: 'success' | 'fail' = 'success';
-export function setPromoDetailOutcome(v: 'success' | 'fail'): void { promoDetailOutcome = v; }
-
-const samplePromotions: Promotion[] = [
+export const promotions: Promotion[] = [
   {
-    id: 'promo-1', title: 'Giảm 30 triệu cho Toyota Camry', bannerUrl: 'https://placehold.co/800x450/3b82f6/ffffff?text=Giam+30+Trieu',
-    validity: '01/01/2024 - 31/03/2024', applicableModelsPreview: 'Toyota Camry 2024',
-    termsAndConditions: 'Áp dụng cho khách hàng mua xe Toyota Camry 2024 phiên bản 2.5Q trở lên. Giảm trực tiếp vào giá bán. Không áp dụng đồng thời với các chương trình khuyến mãi khác.',
-    eligibleCars: [{ id: 'car-1', name: 'Toyota Camry 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Camry', formattedPrice: '1.050.000.000 ₫', promoDiscountTag: '-30 triệu' }],
+    id: "promo-001",
+    title: "Gi\u1ea3m \u0111\u1ebfn 50 tri\u1ec7u cho d\u00f2ng SUV",
+    bannerUrl: "https://placehold.co/800x450/fef3c7/92400e?text=SUV+Sale",
+    validity: "01/01/2024 - 31/03/2024",
+    termsAndConditions: "\u00c1p d\u1ee5ng cho t\u1ea5t c\u1ea3 xe SUV m\u1edbi. Kh\u00f4ng \u00e1p d\u1ee5ng c\u00f9ng c\u00e1c ch\u01b0\u01a1ng tr\u00ecnh khuy\u1ebfn m\u00e3i kh\u00e1c.",
+    applicableModelsPreview: "CX-5, Tucson, VF 8",
+    eligibleCars: featuredCars.filter((c) => c.bodyType === "SUV"),
   },
   {
-    id: 'promo-2', title: 'Tặng bảo hiểm 1 năm cho Mazda CX-5', bannerUrl: 'https://placehold.co/800x450/10b981/ffffff?text=Tang+Bao+Hiem',
-    validity: '15/01/2024 - 28/02/2024', applicableModelsPreview: 'Mazda CX-5 2024',
-    termsAndConditions: 'Tặng gói bảo hiểm thân vỏ 1 năm trị giá 15 triệu đồng cho khách hàng mua Mazda CX-5 2024 tất cả phiên bản.',
-    eligibleCars: [{ id: 'car-3', name: 'Mazda CX-5 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=CX-5', formattedPrice: '839.000.000 ₫', promoDiscountTag: 'Tặng BH 1 năm' }],
+    id: "promo-002",
+    title: "T\u1eb7ng ph\u1ee5 ki\u1ec7n 20 tri\u1ec7u khi mua Sedan",
+    bannerUrl: "https://placehold.co/800x450/dbeafe/1e40af?text=Sedan+Promo",
+    validity: "15/01/2024 - 28/02/2024",
+    termsAndConditions: "\u00c1p d\u1ee5ng cho Civic RS v\u00e0 Camry 2.5Q. Ph\u1ee5 ki\u1ec7n bao g\u1ed3m: phim c\u00e1ch nhi\u1ec7t, th\u1ea3m l\u00f3t s\u00e0n, camera h\u00e0nh tr\u00ecnh.",
+    applicableModelsPreview: "Civic RS, Camry 2.5Q",
+    eligibleCars: featuredCars.filter((c) => c.bodyType === "Sedan"),
   },
   {
-    id: 'promo-3', title: 'Ưu đãi pin trọn đời VinFast VF 8', bannerUrl: 'https://placehold.co/800x450/8b5cf6/ffffff?text=Pin+Tron+Doi',
-    validity: '01/01/2024 - 30/06/2024', applicableModelsPreview: 'VinFast VF 8 2024',
-    termsAndConditions: 'Chương trình ưu đãi pin trọn đời cho khách hàng mua VinFast VF 8 trong giai đoạn khuyến mãi. Bảo hành pin 10 năm.',
-    eligibleCars: [{ id: 'car-5', name: 'VinFast VF 8 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=VF8', formattedPrice: '1.129.000.000 ₫', promoDiscountTag: 'Pin trọn đời' }],
+    id: "promo-003",
+    title: "\u01afu \u0111\u00e3i tr\u1ea3 g\u00f3p 0% l\u00e3i su\u1ea5t 12 th\u00e1ng",
+    bannerUrl: "https://placehold.co/800x450/dcfce7/166534?text=0%25+Interest",
+    validity: "01/02/2024 - 30/04/2024",
+    termsAndConditions: "\u00c1p d\u1ee5ng cho t\u1ea5t c\u1ea3 xe m\u1edbi. Th\u1eddi h\u1ea1n vay t\u1eeb 12 \u0111\u1ebfn 60 th\u00e1ng.",
+    applicableModelsPreview: "T\u1ea5t c\u1ea3 xe m\u1edbi",
+    eligibleCars: featuredCars.filter((c) => c.condition === "M\u1edbi"),
   },
 ];
 
-export async function loadHomePromotions(): Promise<Promotion[]> {
-  await new Promise(r => setTimeout(r, 200));
-  if (promoListOutcome === 'fail') throw new Error('Network error');
-  return samplePromotions;
+export function getPromoById(id: string): Promotion | undefined {
+  return promotions.find((p) => p.id === id);
 }
-
-export async function loadPromotionsList(): Promise<Promotion[]> {
-  await new Promise(r => setTimeout(r, 300));
-  if (promoListOutcome === 'fail') throw new Error('Network error');
-  return samplePromotions;
-}
-
-export async function loadPromoDetail(promoId: string): Promise<Promotion | null> {
-  await new Promise(r => setTimeout(r, 200));
-  if (promoDetailOutcome === 'fail') throw new Error('Network error');
-  return samplePromotions.find(p => p.id === promoId) ?? null;
-}
-
-export { samplePromotions };

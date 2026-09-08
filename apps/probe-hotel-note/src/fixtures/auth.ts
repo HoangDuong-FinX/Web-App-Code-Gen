@@ -1,30 +1,54 @@
-import type { Buyer } from '../types';
+import type { Buyer } from "../types";
 
-let loginOutcome: 'success' | 'fail' | 'locked' = 'success';
-export function setLoginOutcome(v: 'success' | 'fail' | 'locked'): void { loginOutcome = v; }
+type LoginOutcome = "success" | "fail" | "locked";
+let loginOutcome: LoginOutcome = "success";
 
-let registerOutcome: 'success' | 'fail' | 'duplicate' = 'success';
-export function setRegisterOutcome(v: 'success' | 'fail' | 'duplicate'): void { registerOutcome = v; }
-
-const sampleBuyer: Buyer = {
-  id: 'buyer-1',
-  name: 'Nguyễn Văn A',
-  phone: '0901234567',
-  email: 'nguyenvana@email.com',
-};
-
-export async function submitLogin(_identity: string, _password: string): Promise<Buyer> {
-  await new Promise(r => setTimeout(r, 500));
-  if (loginOutcome === 'fail') throw new Error('WRONG_CREDENTIALS');
-  if (loginOutcome === 'locked') throw new Error('ACCOUNT_LOCKED');
-  return sampleBuyer;
+export function setLoginOutcome(outcome: LoginOutcome): void {
+  loginOutcome = outcome;
 }
 
-export async function submitRegister(_name: string, _phone: string, _email: string, _password: string): Promise<Buyer> {
-  await new Promise(r => setTimeout(r, 500));
-  if (registerOutcome === 'fail') throw new Error('NETWORK_ERROR');
-  if (registerOutcome === 'duplicate') throw new Error('DUPLICATE');
-  return sampleBuyer;
+type RegisterOutcome = "success" | "fail";
+let registerOutcome: RegisterOutcome = "success";
+
+export function setRegisterOutcome(outcome: RegisterOutcome): void {
+  registerOutcome = outcome;
 }
 
-export { sampleBuyer };
+export function simulateLogin(
+  _identity: string,
+  _password: string,
+): Promise<{ success: boolean; locked: boolean; buyer: Buyer | null }> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (loginOutcome === "locked") {
+        resolve({ success: false, locked: true, buyer: null });
+      } else if (loginOutcome === "fail") {
+        resolve({ success: false, locked: false, buyer: null });
+      } else {
+        resolve({
+          success: true,
+          locked: false,
+          buyer: {
+            id: "buyer-001",
+            name: "Nguy\u1ec5n V\u0103n An",
+            phone: "0901234567",
+            email: "an.nguyen@email.com",
+          },
+        });
+      }
+    }, 800);
+  });
+}
+
+export function simulateRegister(
+  _name: string,
+  _phone: string,
+  _email: string,
+  _password: string,
+): Promise<{ success: boolean }> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ success: registerOutcome === "success" });
+    }, 800);
+  });
+}

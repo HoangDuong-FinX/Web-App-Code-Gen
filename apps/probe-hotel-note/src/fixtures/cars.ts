@@ -1,118 +1,222 @@
-import type { Car, Promotion } from '../types';
+import type { Car } from "../types";
 
-let featuredOutcome: 'success' | 'fail' = 'success';
-export function setFeaturedCarsOutcome(v: 'success' | 'fail'): void { featuredOutcome = v; }
+const dealer1 = {
+  name: "Vikki Auto Qu\u1eadn 1",
+  address: "123 Nguy\u1ec5n Hu\u1ec7, Qu\u1eadn 1, TP.HCM",
+  phone: "028-1234-5678",
+};
 
-let catalogOutcome: 'success' | 'fail' = 'success';
-export function setCatalogOutcome(v: 'success' | 'fail'): void { catalogOutcome = v; }
+const dealer2 = {
+  name: "Vikki Auto Qu\u1eadn 7",
+  address: "456 Nguy\u1ec5n V\u0103n Linh, Qu\u1eadn 7, TP.HCM",
+  phone: "028-8765-4321",
+};
 
-let carDetailOutcome: 'success' | 'fail' = 'success';
-export function setCarDetailOutcome(v: 'success' | 'fail'): void { carDetailOutcome = v; }
-
-let searchOutcome: 'success' | 'fail' = 'success';
-export function setSearchOutcome(v: 'success' | 'fail'): void { searchOutcome = v; }
-
-const sampleCars: Car[] = [
+export const featuredCars: Car[] = [
   {
-    id: 'car-1', name: 'Toyota Camry 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Camry',
-    formattedPrice: '1.050.000.000 ₫', condition: 'Mới', specsSummary: '2.5L, Tự động, Xăng',
-    status: 'available', hasActivePromo: true, promoLabel: 'Giảm 30 triệu', monthlyInstallment: '12.500.000 ₫',
+    id: "car-001",
+    name: "Honda Civic RS 2024",
+    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=Civic+RS",
     photos: [
-      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=Camry+Front', label: 'Mặt trước' },
-      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=Camry+Side', label: 'Mặt bên' },
-      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=Camry+Interior', label: 'Nội thất' },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Civic+RS+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Civic+RS+2", label: "M\u1eb7t b\u00ean" },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Civic+RS+3", label: "N\u1ed9i th\u1ea5t" },
     ],
+    formattedPrice: "870.000.000 \u20ab",
+    price: 870000000,
+    condition: "M\u1edbi",
+    specsSummary: "1.5L Turbo | CVT | X\u0103ng",
     specs: [
-      { label: 'Động cơ', value: '2.5L 4 xi-lanh' }, { label: 'Công suất', value: '203 mã lực' },
-      { label: 'Hộp số', value: '8 cấp tự động' }, { label: 'Nhiên liệu', value: 'Xăng' },
-      { label: 'Tiêu hao', value: '7.8L/100km' }, { label: 'Số chỗ', value: '5' },
+      { label: "\u0110\u1ed9ng c\u01a1", value: "1.5L Turbo" },
+      { label: "C\u00f4ng su\u1ea5t", value: "170 m\u00e3 l\u1ef1c" },
+      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng CVT" },
+      { label: "Nhi\u00ean li\u1ec7u", value: "X\u0103ng" },
+      { label: "S\u1ed1 ch\u1ed7", value: "5" },
     ],
-    dealer: { name: 'Toyota Thủ Đức', address: '123 Võ Văn Ngân, TP.HCM', phone: '028 1234 5678' },
+    bodyType: "Sedan",
+    make: "Honda",
+    fuelType: "X\u0103ng",
+    transmission: "T\u1ef1 \u0111\u1ed9ng",
+    year: 2024,
+    monthlyInstallment: "12.500.000 \u20ab",
+    promoLabel: "Gi\u1ea3m 30 tri\u1ec7u",
+    hasActivePromo: true,
+    status: "available",
+    dealer: dealer1,
+    isInCompare: false,
   },
   {
-    id: 'car-2', name: 'Honda CR-V 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=CR-V',
-    formattedPrice: '1.130.000.000 ₫', condition: 'Mới', specsSummary: '1.5L Turbo, Tự động, Xăng',
-    status: 'available', hasActivePromo: false, promoLabel: '', monthlyInstallment: '13.800.000 ₫',
+    id: "car-002",
+    name: "Toyota Camry 2.5Q 2024",
+    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=Camry+2.5Q",
     photos: [
-      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=CRV+Front', label: 'Mặt trước' },
-      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=CRV+Interior', label: 'Nội thất' },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Camry+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Camry+2", label: "M\u1eb7t b\u00ean" },
     ],
+    formattedPrice: "1.310.000.000 \u20ab",
+    price: 1310000000,
+    condition: "M\u1edbi",
+    specsSummary: "2.5L | 8AT | X\u0103ng",
     specs: [
-      { label: 'Động cơ', value: '1.5L Turbo' }, { label: 'Công suất', value: '188 mã lực' },
-      { label: 'Hộp số', value: 'CVT' }, { label: 'Nhiên liệu', value: 'Xăng' },
-      { label: 'Tiêu hao', value: '7.5L/100km' }, { label: 'Số chỗ', value: '5+2' },
+      { label: "\u0110\u1ed9ng c\u01a1", value: "2.5L" },
+      { label: "C\u00f4ng su\u1ea5t", value: "207 m\u00e3 l\u1ef1c" },
+      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng 8 c\u1ea5p" },
+      { label: "Nhi\u00ean li\u1ec7u", value: "X\u0103ng" },
+      { label: "S\u1ed1 ch\u1ed7", value: "5" },
     ],
-    dealer: { name: 'Honda Phước Thành', address: '456 Điện Biên Phủ, TP.HCM', phone: '028 9876 5432' },
+    bodyType: "Sedan",
+    make: "Toyota",
+    fuelType: "X\u0103ng",
+    transmission: "T\u1ef1 \u0111\u1ed9ng",
+    year: 2024,
+    monthlyInstallment: "18.800.000 \u20ab",
+    promoLabel: "",
+    hasActivePromo: false,
+    status: "available",
+    dealer: dealer2,
+    isInCompare: false,
   },
   {
-    id: 'car-3', name: 'Mazda CX-5 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=CX-5',
-    formattedPrice: '839.000.000 ₫', condition: 'Mới', specsSummary: '2.0L, Tự động, Xăng',
-    status: 'available', hasActivePromo: true, promoLabel: 'Tặng bảo hiểm 1 năm', monthlyInstallment: '10.200.000 ₫',
+    id: "car-003",
+    name: "Mazda CX-5 Premium 2024",
+    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=CX-5+Premium",
     photos: [
-      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=CX5', label: 'Mặt trước' },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=CX5+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=CX5+2", label: "M\u1eb7t b\u00ean" },
     ],
+    formattedPrice: "979.000.000 \u20ab",
+    price: 979000000,
+    condition: "M\u1edbi",
+    specsSummary: "2.0L | 6AT | X\u0103ng",
     specs: [
-      { label: 'Động cơ', value: '2.0L SkyActiv-G' }, { label: 'Công suất', value: '154 mã lực' },
-      { label: 'Hộp số', value: '6 cấp tự động' }, { label: 'Nhiên liệu', value: 'Xăng' },
-      { label: 'Tiêu hao', value: '7.0L/100km' }, { label: 'Số chỗ', value: '5' },
+      { label: "\u0110\u1ed9ng c\u01a1", value: "2.0L Skyactiv-G" },
+      { label: "C\u00f4ng su\u1ea5t", value: "154 m\u00e3 l\u1ef1c" },
+      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng 6 c\u1ea5p" },
+      { label: "Nhi\u00ean li\u1ec7u", value: "X\u0103ng" },
+      { label: "S\u1ed1 ch\u1ed7", value: "5" },
     ],
-    dealer: { name: 'Mazda Bình Triệu', address: '789 Kha Vạn Cân, TP.HCM', phone: '028 5555 6666' },
+    bodyType: "SUV",
+    make: "Mazda",
+    fuelType: "X\u0103ng",
+    transmission: "T\u1ef1 \u0111\u1ed9ng",
+    year: 2024,
+    monthlyInstallment: "14.000.000 \u20ab",
+    promoLabel: "T\u1eb7ng ph\u1ee5 ki\u1ec7n 20 tri\u1ec7u",
+    hasActivePromo: true,
+    status: "available",
+    dealer: dealer1,
+    isInCompare: false,
   },
   {
-    id: 'car-4', name: 'Ford Ranger 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Ranger',
-    formattedPrice: '925.000.000 ₫', condition: 'Mới', specsSummary: '2.0L Turbo, Tự động, Dầu',
-    status: 'reserved', hasActivePromo: false, promoLabel: '', monthlyInstallment: '11.300.000 ₫',
+    id: "car-004",
+    name: "Ford Ranger Wildtrak 2024",
+    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=Ranger+Wildtrak",
     photos: [
-      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=Ranger', label: 'Mặt trước' },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Ranger+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
     ],
+    formattedPrice: "1.049.000.000 \u20ab",
+    price: 1049000000,
+    condition: "M\u1edbi",
+    specsSummary: "2.0L Bi-Turbo | 10AT | Diesel",
     specs: [
-      { label: 'Động cơ', value: '2.0L Bi-Turbo' }, { label: 'Công suất', value: '210 mã lực' },
-      { label: 'Hộp số', value: '10 cấp tự động' }, { label: 'Nhiên liệu', value: 'Dầu Diesel' },
-      { label: 'Tiêu hao', value: '8.5L/100km' }, { label: 'Số chỗ', value: '5' },
+      { label: "\u0110\u1ed9ng c\u01a1", value: "2.0L Bi-Turbo" },
+      { label: "C\u00f4ng su\u1ea5t", value: "210 m\u00e3 l\u1ef1c" },
+      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng 10 c\u1ea5p" },
+      { label: "Nhi\u00ean li\u1ec7u", value: "Diesel" },
+      { label: "S\u1ed1 ch\u1ed7", value: "5" },
     ],
-    dealer: { name: 'Ford An Lạc', address: '101 Kinh Dương Vương, TP.HCM', phone: '028 7777 8888' },
+    bodyType: "Truck",
+    make: "Ford",
+    fuelType: "Diesel",
+    transmission: "T\u1ef1 \u0111\u1ed9ng",
+    year: 2024,
+    monthlyInstallment: "15.200.000 \u20ab",
+    promoLabel: "",
+    hasActivePromo: false,
+    status: "available",
+    dealer: dealer2,
+    isInCompare: false,
   },
   {
-    id: 'car-5', name: 'VinFast VF 8 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=VF8',
-    formattedPrice: '1.129.000.000 ₫', condition: 'Mới', specsSummary: 'Điện, 402km, AWD',
-    status: 'available', hasActivePromo: true, promoLabel: 'Ưu đãi pin trọn đời', monthlyInstallment: '13.700.000 ₫',
+    id: "car-005",
+    name: "VinFast VF 8 Plus 2024",
+    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=VF8+Plus",
     photos: [
-      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=VF8', label: 'Mặt trước' },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=VF8+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=VF8+2", label: "N\u1ed9i th\u1ea5t" },
     ],
+    formattedPrice: "1.199.000.000 \u20ab",
+    price: 1199000000,
+    condition: "M\u1edbi",
+    specsSummary: "\u0110i\u1ec7n | 1 c\u1ea5p | 402 m\u00e3 l\u1ef1c",
     specs: [
-      { label: 'Động cơ', value: 'Điện 2 motor' }, { label: 'Công suất', value: '402 mã lực' },
-      { label: 'Hộp số', value: '1 cấp' }, { label: 'Nhiên liệu', value: 'Điện' },
-      { label: 'Phạm vi', value: '402 km' }, { label: 'Số chỗ', value: '5' },
+      { label: "\u0110\u1ed9ng c\u01a1", value: "\u0110i\u1ec7n" },
+      { label: "C\u00f4ng su\u1ea5t", value: "402 m\u00e3 l\u1ef1c" },
+      { label: "H\u1ed9p s\u1ed1", value: "1 c\u1ea5p" },
+      { label: "Nhi\u00ean li\u1ec7u", value: "\u0110i\u1ec7n" },
+      { label: "S\u1ed1 ch\u1ed7", value: "5" },
     ],
-    dealer: { name: 'VinFast Thảo Điền', address: '200 Xa lộ Hà Nội, TP.HCM', phone: '028 3333 4444' },
+    bodyType: "SUV",
+    make: "VinFast",
+    fuelType: "\u0110i\u1ec7n",
+    transmission: "T\u1ef1 \u0111\u1ed9ng",
+    year: 2024,
+    monthlyInstallment: "17.500.000 \u20ab",
+    promoLabel: "",
+    hasActivePromo: false,
+    status: "reserved",
+    dealer: dealer1,
+    isInCompare: false,
+  },
+  {
+    id: "car-006",
+    name: "Hyundai Tucson 2.0 \u0110\u1eb7c bi\u1ec7t 2024",
+    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=Tucson+2.0",
+    photos: [
+      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Tucson+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
+    ],
+    formattedPrice: "920.000.000 \u20ab",
+    price: 920000000,
+    condition: "M\u1edbi",
+    specsSummary: "2.0L | 6AT | X\u0103ng",
+    specs: [
+      { label: "\u0110\u1ed9ng c\u01a1", value: "2.0L" },
+      { label: "C\u00f4ng su\u1ea5t", value: "156 m\u00e3 l\u1ef1c" },
+      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng 6 c\u1ea5p" },
+      { label: "Nhi\u00ean li\u1ec7u", value: "X\u0103ng" },
+      { label: "S\u1ed1 ch\u1ed7", value: "5" },
+    ],
+    bodyType: "SUV",
+    make: "Hyundai",
+    fuelType: "X\u0103ng",
+    transmission: "T\u1ef1 \u0111\u1ed9ng",
+    year: 2024,
+    monthlyInstallment: "13.200.000 \u20ab",
+    promoLabel: "Gi\u1ea3m 50 tri\u1ec7u",
+    hasActivePromo: true,
+    status: "available",
+    dealer: dealer2,
+    isInCompare: false,
   },
 ];
 
-export async function loadFeaturedCars(): Promise<Car[]> {
-  await new Promise(r => setTimeout(r, 300));
-  if (featuredOutcome === 'fail') throw new Error('Network error');
-  return sampleCars.slice(0, 4);
+export function getCarById(id: string): Car | undefined {
+  return featuredCars.find((c) => c.id === id);
 }
 
-export async function loadCatalog(_filters?: Record<string, string>, _sort?: string): Promise<{ cars: Car[]; resultsCount: number }> {
-  await new Promise(r => setTimeout(r, 300));
-  if (catalogOutcome === 'fail') throw new Error('Network error');
-  return { cars: sampleCars, resultsCount: sampleCars.length };
-}
-
-export async function loadCarDetail(carId: string): Promise<Car | null> {
-  await new Promise(r => setTimeout(r, 200));
-  if (carDetailOutcome === 'fail') throw new Error('Network error');
-  return sampleCars.find(c => c.id === carId) ?? null;
-}
-
-export async function searchCars(query: string): Promise<{ suggestions: Array<{ text: string }>; results: Car[] }> {
-  await new Promise(r => setTimeout(r, 200));
-  if (searchOutcome === 'fail') throw new Error('Network error');
+export function searchCars(query: string): Car[] {
   const q = query.toLowerCase();
-  const results = sampleCars.filter(c => c.name.toLowerCase().includes(q));
-  const suggestions = results.map(c => ({ text: c.name }));
-  return { suggestions, results };
+  return featuredCars.filter(
+    (c) =>
+      c.name.toLowerCase().includes(q) ||
+      c.make.toLowerCase().includes(q) ||
+      c.bodyType.toLowerCase().includes(q),
+  );
 }
 
-export { sampleCars };
+export function filterCars(bodyType?: string | null): Car[] {
+  if (!bodyType) return [...featuredCars];
+  return featuredCars.filter(
+    (c) => c.bodyType.toLowerCase() === bodyType.toLowerCase(),
+  );
+}

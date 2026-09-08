@@ -1,10 +1,10 @@
 import type { ReservationTerms, ReservationResult } from "../types";
 
 export const reservationTermsData: ReservationTerms = {
-  depositAmount: "50.000.000 ₫",
-  holdPeriod: "30 ngày",
+  depositAmount: "50.000.000 \u20ab",
+  holdPeriod: "30 ng\u00e0y",
   cancellationPolicy:
-    "Hoàn 100% tiền cọc nếu hủy trong 48 giờ đầu. Sau 48 giờ, phí hủy 10% tiền cọc.",
+    "Ho\u00e0n 100% ti\u1ec1n c\u1ecdc n\u1ebfu h\u1ee7y trong 48 gi\u1edd \u0111\u1ea7u. Sau 48 gi\u1edd, ph\u00ed h\u1ee7y 10% ti\u1ec1n c\u1ecdc.",
 };
 
 type InquiryOutcome = "success" | "fail";
@@ -79,10 +79,10 @@ export function simulatePayment(): Promise<{
           carUnavailable: false,
           result: {
             code: "RES-20240118-003",
-            depositAmountPaid: "50.000.000 ₫",
+            depositAmountPaid: "50.000.000 \u20ab",
             holdUntilDate: "18/02/2024",
             nextStepsMessage:
-              "Đại lý sẽ liên hệ bạn trong 24 giờ để hoàn tất thủ tục mua xe.",
+              "\u0110\u1ea1i l\u00fd s\u1ebd li\u00ean h\u1ec7 b\u1ea1n trong 24 gi\u1edd \u0111\u1ec3 ho\u00e0n t\u1ea5t th\u1ee7 t\u1ee5c mua xe.",
           },
         });
       }
