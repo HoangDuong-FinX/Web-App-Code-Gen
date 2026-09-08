@@ -53,6 +53,7 @@ const initialState: AppState = {
 
 export default function App() {
   const [state, setState] = useState<AppState>(initialState);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
 
   const navigate = useCallback((screen: ScreenId) => {
     setState((prev) => ({
@@ -218,9 +219,6 @@ export default function App() {
       activeModal: null,
     }));
   }, []);
-
-  const showContactOptions = state.activeModal === 'compare-bar' || state.currentScreen === 'car-detail';
-  const [contactModalOpen, setContactModalOpen] = useState(false);
 
   const renderScreen = () => {
     switch (state.currentScreen) {
