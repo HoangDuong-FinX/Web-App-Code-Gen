@@ -1,222 +1,118 @@
-import type { Car } from "../types";
+import type { Car } from '../types';
 
-const dealer1 = {
-  name: "Vikki Auto Qu\u1eadn 1",
-  address: "123 Nguy\u1ec5n Hu\u1ec7, Qu\u1eadn 1, TP.HCM",
-  phone: "028-1234-5678",
-};
+let featuredOutcome: 'success' | 'fail' = 'success';
+export function setFeaturedCarsOutcome(v: 'success' | 'fail'): void { featuredOutcome = v; }
 
-const dealer2 = {
-  name: "Vikki Auto Qu\u1eadn 7",
-  address: "456 Nguy\u1ec5n V\u0103n Linh, Qu\u1eadn 7, TP.HCM",
-  phone: "028-8765-4321",
-};
+let catalogOutcome: 'success' | 'fail' = 'success';
+export function setCatalogOutcome(v: 'success' | 'fail'): void { catalogOutcome = v; }
 
-export const featuredCars: Car[] = [
+let carDetailOutcome: 'success' | 'fail' = 'success';
+export function setCarDetailOutcome(v: 'success' | 'fail'): void { carDetailOutcome = v; }
+
+let searchOutcome: 'success' | 'fail' = 'success';
+export function setSearchOutcome(v: 'success' | 'fail'): void { searchOutcome = v; }
+
+const sampleCars: Car[] = [
   {
-    id: "car-001",
-    name: "Honda Civic RS 2024",
-    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=Civic+RS",
+    id: 'car-1', name: 'Toyota Camry 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Camry',
+    formattedPrice: '1.050.000.000 \u20ab', condition: 'M\u1edbi', specsSummary: '2.5L, T\u1ef1 \u0111\u1ed9ng, X\u0103ng',
+    status: 'available', hasActivePromo: true, promoLabel: 'Gi\u1ea3m 30 tri\u1ec7u', monthlyInstallment: '12.500.000 \u20ab',
     photos: [
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Civic+RS+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Civic+RS+2", label: "M\u1eb7t b\u00ean" },
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Civic+RS+3", label: "N\u1ed9i th\u1ea5t" },
+      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=Camry+Front', label: 'M\u1eb7t tr\u01b0\u1edbc' },
+      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=Camry+Side', label: 'M\u1eb7t b\u00ean' },
+      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=Camry+Interior', label: 'N\u1ed9i th\u1ea5t' },
     ],
-    formattedPrice: "870.000.000 \u20ab",
-    price: 870000000,
-    condition: "M\u1edbi",
-    specsSummary: "1.5L Turbo | CVT | X\u0103ng",
     specs: [
-      { label: "\u0110\u1ed9ng c\u01a1", value: "1.5L Turbo" },
-      { label: "C\u00f4ng su\u1ea5t", value: "170 m\u00e3 l\u1ef1c" },
-      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng CVT" },
-      { label: "Nhi\u00ean li\u1ec7u", value: "X\u0103ng" },
-      { label: "S\u1ed1 ch\u1ed7", value: "5" },
+      { label: '\u0110\u1ed9ng c\u01a1', value: '2.5L 4 xi-lanh' }, { label: 'C\u00f4ng su\u1ea5t', value: '203 m\u00e3 l\u1ef1c' },
+      { label: 'H\u1ed9p s\u1ed1', value: '8 c\u1ea5p t\u1ef1 \u0111\u1ed9ng' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'X\u0103ng' },
+      { label: 'Ti\u00eau hao', value: '7.8L/100km' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' },
     ],
-    bodyType: "Sedan",
-    make: "Honda",
-    fuelType: "X\u0103ng",
-    transmission: "T\u1ef1 \u0111\u1ed9ng",
-    year: 2024,
-    monthlyInstallment: "12.500.000 \u20ab",
-    promoLabel: "Gi\u1ea3m 30 tri\u1ec7u",
-    hasActivePromo: true,
-    status: "available",
-    dealer: dealer1,
-    isInCompare: false,
+    dealer: { name: 'Toyota Th\u1ee7 \u0110\u1ee9c', address: '123 V\u00f5 V\u0103n Ng\u00e2n, TP.HCM', phone: '028 1234 5678' },
   },
   {
-    id: "car-002",
-    name: "Toyota Camry 2.5Q 2024",
-    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=Camry+2.5Q",
+    id: 'car-2', name: 'Honda CR-V 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=CR-V',
+    formattedPrice: '1.130.000.000 \u20ab', condition: 'M\u1edbi', specsSummary: '1.5L Turbo, T\u1ef1 \u0111\u1ed9ng, X\u0103ng',
+    status: 'available', hasActivePromo: false, promoLabel: '', monthlyInstallment: '13.800.000 \u20ab',
     photos: [
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Camry+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Camry+2", label: "M\u1eb7t b\u00ean" },
+      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=CRV+Front', label: 'M\u1eb7t tr\u01b0\u1edbc' },
+      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=CRV+Interior', label: 'N\u1ed9i th\u1ea5t' },
     ],
-    formattedPrice: "1.310.000.000 \u20ab",
-    price: 1310000000,
-    condition: "M\u1edbi",
-    specsSummary: "2.5L | 8AT | X\u0103ng",
     specs: [
-      { label: "\u0110\u1ed9ng c\u01a1", value: "2.5L" },
-      { label: "C\u00f4ng su\u1ea5t", value: "207 m\u00e3 l\u1ef1c" },
-      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng 8 c\u1ea5p" },
-      { label: "Nhi\u00ean li\u1ec7u", value: "X\u0103ng" },
-      { label: "S\u1ed1 ch\u1ed7", value: "5" },
+      { label: '\u0110\u1ed9ng c\u01a1', value: '1.5L Turbo' }, { label: 'C\u00f4ng su\u1ea5t', value: '188 m\u00e3 l\u1ef1c' },
+      { label: 'H\u1ed9p s\u1ed1', value: 'CVT' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'X\u0103ng' },
+      { label: 'Ti\u00eau hao', value: '7.5L/100km' }, { label: 'S\u1ed1 ch\u1ed7', value: '5+2' },
     ],
-    bodyType: "Sedan",
-    make: "Toyota",
-    fuelType: "X\u0103ng",
-    transmission: "T\u1ef1 \u0111\u1ed9ng",
-    year: 2024,
-    monthlyInstallment: "18.800.000 \u20ab",
-    promoLabel: "",
-    hasActivePromo: false,
-    status: "available",
-    dealer: dealer2,
-    isInCompare: false,
+    dealer: { name: 'Honda Ph\u01b0\u1edbc Th\u00e0nh', address: '456 \u0110i\u1ec7n Bi\u00ean Ph\u1ee7, TP.HCM', phone: '028 9876 5432' },
   },
   {
-    id: "car-003",
-    name: "Mazda CX-5 Premium 2024",
-    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=CX-5+Premium",
+    id: 'car-3', name: 'Mazda CX-5 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=CX-5',
+    formattedPrice: '839.000.000 \u20ab', condition: 'M\u1edbi', specsSummary: '2.0L, T\u1ef1 \u0111\u1ed9ng, X\u0103ng',
+    status: 'available', hasActivePromo: true, promoLabel: 'T\u1eb7ng b\u1ea3o hi\u1ec3m 1 n\u0103m', monthlyInstallment: '10.200.000 \u20ab',
     photos: [
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=CX5+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=CX5+2", label: "M\u1eb7t b\u00ean" },
+      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=CX5', label: 'M\u1eb7t tr\u01b0\u1edbc' },
     ],
-    formattedPrice: "979.000.000 \u20ab",
-    price: 979000000,
-    condition: "M\u1edbi",
-    specsSummary: "2.0L | 6AT | X\u0103ng",
     specs: [
-      { label: "\u0110\u1ed9ng c\u01a1", value: "2.0L Skyactiv-G" },
-      { label: "C\u00f4ng su\u1ea5t", value: "154 m\u00e3 l\u1ef1c" },
-      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng 6 c\u1ea5p" },
-      { label: "Nhi\u00ean li\u1ec7u", value: "X\u0103ng" },
-      { label: "S\u1ed1 ch\u1ed7", value: "5" },
+      { label: '\u0110\u1ed9ng c\u01a1', value: '2.0L SkyActiv-G' }, { label: 'C\u00f4ng su\u1ea5t', value: '154 m\u00e3 l\u1ef1c' },
+      { label: 'H\u1ed9p s\u1ed1', value: '6 c\u1ea5p t\u1ef1 \u0111\u1ed9ng' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'X\u0103ng' },
+      { label: 'Ti\u00eau hao', value: '7.0L/100km' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' },
     ],
-    bodyType: "SUV",
-    make: "Mazda",
-    fuelType: "X\u0103ng",
-    transmission: "T\u1ef1 \u0111\u1ed9ng",
-    year: 2024,
-    monthlyInstallment: "14.000.000 \u20ab",
-    promoLabel: "T\u1eb7ng ph\u1ee5 ki\u1ec7n 20 tri\u1ec7u",
-    hasActivePromo: true,
-    status: "available",
-    dealer: dealer1,
-    isInCompare: false,
+    dealer: { name: 'Mazda B\u00ecnh Tri\u1ec7u', address: '789 Kha V\u1ea1n C\u00e2n, TP.HCM', phone: '028 5555 6666' },
   },
   {
-    id: "car-004",
-    name: "Ford Ranger Wildtrak 2024",
-    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=Ranger+Wildtrak",
+    id: 'car-4', name: 'Ford Ranger 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Ranger',
+    formattedPrice: '925.000.000 \u20ab', condition: 'M\u1edbi', specsSummary: '2.0L Turbo, T\u1ef1 \u0111\u1ed9ng, D\u1ea7u',
+    status: 'reserved', hasActivePromo: false, promoLabel: '', monthlyInstallment: '11.300.000 \u20ab',
     photos: [
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Ranger+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
+      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=Ranger', label: 'M\u1eb7t tr\u01b0\u1edbc' },
     ],
-    formattedPrice: "1.049.000.000 \u20ab",
-    price: 1049000000,
-    condition: "M\u1edbi",
-    specsSummary: "2.0L Bi-Turbo | 10AT | Diesel",
     specs: [
-      { label: "\u0110\u1ed9ng c\u01a1", value: "2.0L Bi-Turbo" },
-      { label: "C\u00f4ng su\u1ea5t", value: "210 m\u00e3 l\u1ef1c" },
-      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng 10 c\u1ea5p" },
-      { label: "Nhi\u00ean li\u1ec7u", value: "Diesel" },
-      { label: "S\u1ed1 ch\u1ed7", value: "5" },
+      { label: '\u0110\u1ed9ng c\u01a1', value: '2.0L Bi-Turbo' }, { label: 'C\u00f4ng su\u1ea5t', value: '210 m\u00e3 l\u1ef1c' },
+      { label: 'H\u1ed9p s\u1ed1', value: '10 c\u1ea5p t\u1ef1 \u0111\u1ed9ng' }, { label: 'Nhi\u00ean li\u1ec7u', value: 'D\u1ea7u Diesel' },
+      { label: 'Ti\u00eau hao', value: '8.5L/100km' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' },
     ],
-    bodyType: "Truck",
-    make: "Ford",
-    fuelType: "Diesel",
-    transmission: "T\u1ef1 \u0111\u1ed9ng",
-    year: 2024,
-    monthlyInstallment: "15.200.000 \u20ab",
-    promoLabel: "",
-    hasActivePromo: false,
-    status: "available",
-    dealer: dealer2,
-    isInCompare: false,
+    dealer: { name: 'Ford An L\u1ea1c', address: '101 Kinh D\u01b0\u01a1ng V\u01b0\u01a1ng, TP.HCM', phone: '028 7777 8888' },
   },
   {
-    id: "car-005",
-    name: "VinFast VF 8 Plus 2024",
-    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=VF8+Plus",
+    id: 'car-5', name: 'VinFast VF 8 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=VF8',
+    formattedPrice: '1.129.000.000 \u20ab', condition: 'M\u1edbi', specsSummary: '\u0110i\u1ec7n, 402km, AWD',
+    status: 'available', hasActivePromo: true, promoLabel: '\u01afu \u0111\u00e3i pin tr\u1ecdn \u0111\u1eddi', monthlyInstallment: '13.700.000 \u20ab',
     photos: [
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=VF8+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=VF8+2", label: "N\u1ed9i th\u1ea5t" },
+      { url: 'https://placehold.co/800x450/e2e8f0/475569?text=VF8', label: 'M\u1eb7t tr\u01b0\u1edbc' },
     ],
-    formattedPrice: "1.199.000.000 \u20ab",
-    price: 1199000000,
-    condition: "M\u1edbi",
-    specsSummary: "\u0110i\u1ec7n | 1 c\u1ea5p | 402 m\u00e3 l\u1ef1c",
     specs: [
-      { label: "\u0110\u1ed9ng c\u01a1", value: "\u0110i\u1ec7n" },
-      { label: "C\u00f4ng su\u1ea5t", value: "402 m\u00e3 l\u1ef1c" },
-      { label: "H\u1ed9p s\u1ed1", value: "1 c\u1ea5p" },
-      { label: "Nhi\u00ean li\u1ec7u", value: "\u0110i\u1ec7n" },
-      { label: "S\u1ed1 ch\u1ed7", value: "5" },
+      { label: '\u0110\u1ed9ng c\u01a1', value: '\u0110i\u1ec7n 2 motor' }, { label: 'C\u00f4ng su\u1ea5t', value: '402 m\u00e3 l\u1ef1c' },
+      { label: 'H\u1ed9p s\u1ed1', value: '1 c\u1ea5p' }, { label: 'Nhi\u00ean li\u1ec7u', value: '\u0110i\u1ec7n' },
+      { label: 'Ph\u1ea1m vi', value: '402 km' }, { label: 'S\u1ed1 ch\u1ed7', value: '5' },
     ],
-    bodyType: "SUV",
-    make: "VinFast",
-    fuelType: "\u0110i\u1ec7n",
-    transmission: "T\u1ef1 \u0111\u1ed9ng",
-    year: 2024,
-    monthlyInstallment: "17.500.000 \u20ab",
-    promoLabel: "",
-    hasActivePromo: false,
-    status: "reserved",
-    dealer: dealer1,
-    isInCompare: false,
-  },
-  {
-    id: "car-006",
-    name: "Hyundai Tucson 2.0 \u0110\u1eb7c bi\u1ec7t 2024",
-    thumbnailUrl: "https://placehold.co/400x300/e2e8f0/475569?text=Tucson+2.0",
-    photos: [
-      { url: "https://placehold.co/800x450/e2e8f0/475569?text=Tucson+1", label: "M\u1eb7t tr\u01b0\u1edbc" },
-    ],
-    formattedPrice: "920.000.000 \u20ab",
-    price: 920000000,
-    condition: "M\u1edbi",
-    specsSummary: "2.0L | 6AT | X\u0103ng",
-    specs: [
-      { label: "\u0110\u1ed9ng c\u01a1", value: "2.0L" },
-      { label: "C\u00f4ng su\u1ea5t", value: "156 m\u00e3 l\u1ef1c" },
-      { label: "H\u1ed9p s\u1ed1", value: "T\u1ef1 \u0111\u1ed9ng 6 c\u1ea5p" },
-      { label: "Nhi\u00ean li\u1ec7u", value: "X\u0103ng" },
-      { label: "S\u1ed1 ch\u1ed7", value: "5" },
-    ],
-    bodyType: "SUV",
-    make: "Hyundai",
-    fuelType: "X\u0103ng",
-    transmission: "T\u1ef1 \u0111\u1ed9ng",
-    year: 2024,
-    monthlyInstallment: "13.200.000 \u20ab",
-    promoLabel: "Gi\u1ea3m 50 tri\u1ec7u",
-    hasActivePromo: true,
-    status: "available",
-    dealer: dealer2,
-    isInCompare: false,
+    dealer: { name: 'VinFast Th\u1ea3o \u0110i\u1ec1n', address: '200 Xa l\u1ed9 H\u00e0 N\u1ed9i, TP.HCM', phone: '028 3333 4444' },
   },
 ];
 
-export function getCarById(id: string): Car | undefined {
-  return featuredCars.find((c) => c.id === id);
+export async function loadFeaturedCars(): Promise<Car[]> {
+  await new Promise(r => setTimeout(r, 300));
+  if (featuredOutcome === 'fail') throw new Error('Network error');
+  return sampleCars.slice(0, 4);
 }
 
-export function searchCars(query: string): Car[] {
+export async function loadCatalog(): Promise<{ cars: Car[]; resultsCount: number }> {
+  await new Promise(r => setTimeout(r, 300));
+  if (catalogOutcome === 'fail') throw new Error('Network error');
+  return { cars: sampleCars, resultsCount: sampleCars.length };
+}
+
+export async function loadCarDetail(carId: string): Promise<Car | null> {
+  await new Promise(r => setTimeout(r, 200));
+  if (carDetailOutcome === 'fail') throw new Error('Network error');
+  return sampleCars.find(c => c.id === carId) ?? null;
+}
+
+export async function searchCars(query: string): Promise<{ suggestions: Array<{ text: string }>; results: Car[] }> {
+  await new Promise(r => setTimeout(r, 200));
+  if (searchOutcome === 'fail') throw new Error('Network error');
   const q = query.toLowerCase();
-  return featuredCars.filter(
-    (c) =>
-      c.name.toLowerCase().includes(q) ||
-      c.make.toLowerCase().includes(q) ||
-      c.bodyType.toLowerCase().includes(q),
-  );
+  const results = sampleCars.filter(c => c.name.toLowerCase().includes(q));
+  const suggestions = results.map(c => ({ text: c.name }));
+  return { suggestions, results };
 }
 
-export function filterCars(bodyType?: string | null): Car[] {
-  if (!bodyType) return [...featuredCars];
-  return featuredCars.filter(
-    (c) => c.bodyType.toLowerCase() === bodyType.toLowerCase(),
-  );
-}
+export { sampleCars };

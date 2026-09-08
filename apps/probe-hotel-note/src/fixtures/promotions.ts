@@ -1,36 +1,48 @@
-import type { Promotion } from "../types";
-import { featuredCars } from "./cars";
+import type { Promotion } from '../types';
 
-export const promotions: Promotion[] = [
+let promoListOutcome: 'success' | 'fail' = 'success';
+export function setPromoListOutcome(v: 'success' | 'fail'): void { promoListOutcome = v; }
+
+let promoDetailOutcome: 'success' | 'fail' = 'success';
+export function setPromoDetailOutcome(v: 'success' | 'fail'): void { promoDetailOutcome = v; }
+
+const samplePromotions: Promotion[] = [
   {
-    id: "promo-001",
-    title: "Gi\u1ea3m \u0111\u1ebfn 50 tri\u1ec7u cho d\u00f2ng SUV",
-    bannerUrl: "https://placehold.co/800x450/fef3c7/92400e?text=SUV+Sale",
-    validity: "01/01/2024 - 31/03/2024",
-    termsAndConditions: "\u00c1p d\u1ee5ng cho t\u1ea5t c\u1ea3 xe SUV m\u1edbi. Kh\u00f4ng \u00e1p d\u1ee5ng c\u00f9ng c\u00e1c ch\u01b0\u01a1ng tr\u00ecnh khuy\u1ebfn m\u00e3i kh\u00e1c.",
-    applicableModelsPreview: "CX-5, Tucson, VF 8",
-    eligibleCars: featuredCars.filter((c) => c.bodyType === "SUV"),
+    id: 'promo-1', title: 'Gi\u1ea3m 30 tri\u1ec7u cho Toyota Camry', bannerUrl: 'https://placehold.co/800x450/3b82f6/ffffff?text=Giam+30+Trieu',
+    validity: '01/01/2024 - 31/03/2024', applicableModelsPreview: 'Toyota Camry 2024',
+    termsAndConditions: '\u00c1p d\u1ee5ng cho kh\u00e1ch h\u00e0ng mua xe Toyota Camry 2024 phi\u00ean b\u1ea3n 2.5Q tr\u1edf l\u00ean.',
+    eligibleCars: [{ id: 'car-1', name: 'Toyota Camry 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=Camry', formattedPrice: '1.050.000.000 \u20ab', promoDiscountTag: '-30 tri\u1ec7u' }],
   },
   {
-    id: "promo-002",
-    title: "T\u1eb7ng ph\u1ee5 ki\u1ec7n 20 tri\u1ec7u khi mua Sedan",
-    bannerUrl: "https://placehold.co/800x450/dbeafe/1e40af?text=Sedan+Promo",
-    validity: "15/01/2024 - 28/02/2024",
-    termsAndConditions: "\u00c1p d\u1ee5ng cho Civic RS v\u00e0 Camry 2.5Q. Ph\u1ee5 ki\u1ec7n bao g\u1ed3m: phim c\u00e1ch nhi\u1ec7t, th\u1ea3m l\u00f3t s\u00e0n, camera h\u00e0nh tr\u00ecnh.",
-    applicableModelsPreview: "Civic RS, Camry 2.5Q",
-    eligibleCars: featuredCars.filter((c) => c.bodyType === "Sedan"),
+    id: 'promo-2', title: 'T\u1eb7ng b\u1ea3o hi\u1ec3m 1 n\u0103m cho Mazda CX-5', bannerUrl: 'https://placehold.co/800x450/10b981/ffffff?text=Tang+Bao+Hiem',
+    validity: '15/01/2024 - 28/02/2024', applicableModelsPreview: 'Mazda CX-5 2024',
+    termsAndConditions: 'T\u1eb7ng g\u00f3i b\u1ea3o hi\u1ec3m th\u00e2n v\u1ecf 1 n\u0103m tr\u1ecb gi\u00e1 15 tri\u1ec7u \u0111\u1ed3ng.',
+    eligibleCars: [{ id: 'car-3', name: 'Mazda CX-5 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=CX-5', formattedPrice: '839.000.000 \u20ab', promoDiscountTag: 'T\u1eb7ng BH 1 n\u0103m' }],
   },
   {
-    id: "promo-003",
-    title: "\u01afu \u0111\u00e3i tr\u1ea3 g\u00f3p 0% l\u00e3i su\u1ea5t 12 th\u00e1ng",
-    bannerUrl: "https://placehold.co/800x450/dcfce7/166534?text=0%25+Interest",
-    validity: "01/02/2024 - 30/04/2024",
-    termsAndConditions: "\u00c1p d\u1ee5ng cho t\u1ea5t c\u1ea3 xe m\u1edbi. Th\u1eddi h\u1ea1n vay t\u1eeb 12 \u0111\u1ebfn 60 th\u00e1ng.",
-    applicableModelsPreview: "T\u1ea5t c\u1ea3 xe m\u1edbi",
-    eligibleCars: featuredCars.filter((c) => c.condition === "M\u1edbi"),
+    id: 'promo-3', title: '\u01afu \u0111\u00e3i pin tr\u1ecdn \u0111\u1eddi VinFast VF 8', bannerUrl: 'https://placehold.co/800x450/8b5cf6/ffffff?text=Pin+Tron+Doi',
+    validity: '01/01/2024 - 30/06/2024', applicableModelsPreview: 'VinFast VF 8 2024',
+    termsAndConditions: 'Ch\u01b0\u01a1ng tr\u00ecnh \u01b0u \u0111\u00e3i pin tr\u1ecdn \u0111\u1eddi cho kh\u00e1ch h\u00e0ng mua VinFast VF 8.',
+    eligibleCars: [{ id: 'car-5', name: 'VinFast VF 8 2024', thumbnailUrl: 'https://placehold.co/400x300/e2e8f0/475569?text=VF8', formattedPrice: '1.129.000.000 \u20ab', promoDiscountTag: 'Pin tr\u1ecdn \u0111\u1eddi' }],
   },
 ];
 
-export function getPromoById(id: string): Promotion | undefined {
-  return promotions.find((p) => p.id === id);
+export async function loadHomePromotions(): Promise<Promotion[]> {
+  await new Promise(r => setTimeout(r, 200));
+  if (promoListOutcome === 'fail') throw new Error('Network error');
+  return samplePromotions;
 }
+
+export async function loadPromotionsList(): Promise<Promotion[]> {
+  await new Promise(r => setTimeout(r, 300));
+  if (promoListOutcome === 'fail') throw new Error('Network error');
+  return samplePromotions;
+}
+
+export async function loadPromoDetail(promoId: string): Promise<Promotion | null> {
+  await new Promise(r => setTimeout(r, 200));
+  if (promoDetailOutcome === 'fail') throw new Error('Network error');
+  return samplePromotions.find(p => p.id === promoId) ?? null;
+}
+
+export { samplePromotions };
