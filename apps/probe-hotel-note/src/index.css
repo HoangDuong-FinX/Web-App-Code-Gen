@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+/* Tailwind v4 needs no config file: this single import is the whole styling layer.
+   Add app-specific rules below it, and keep using utility classes in the screens -
+   they only become CSS because this file is imported. */
