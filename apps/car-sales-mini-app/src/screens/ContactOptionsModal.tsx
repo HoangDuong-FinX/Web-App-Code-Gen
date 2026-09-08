@@ -1,6 +1,5 @@
 import { t } from '../i18n';
-import type { ScreenId } from '../types';
-import type { Car } from '../types';
+import type { ScreenId, Car } from '../types';
 import { getCarById } from '../fixtures/cars';
 
 interface ContactOptionsModalProps {
@@ -40,7 +39,7 @@ export default function ContactOptionsModal({ carId, onNavigate, onClose }: Cont
             className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:bg-gray-50"
             aria-label={t('contact.chat')}
           >
-            <span className="text-xl">\u{1F4AC}</span>
+            <span className="text-xl">{"\uD83D\uDCAC"}</span>
             <span className="font-medium text-gray-900">{t('contact.chat')}</span>
           </button>
 
@@ -49,7 +48,7 @@ export default function ContactOptionsModal({ carId, onNavigate, onClose }: Cont
             className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:bg-gray-50"
             aria-label={t('contact.call')}
           >
-            <span className="text-xl">\u{1F4DE}</span>
+            <span className="text-xl">{"\uD83D\uDCDE"}</span>
             <span className="font-medium text-gray-900">{t('contact.call')}</span>
           </button>
 
