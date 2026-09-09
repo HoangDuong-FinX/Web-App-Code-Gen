@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppState, useAppDispatch } from '../store';
 import { useT } from '../i18n/index';
 import { formatTimer } from '../utils';

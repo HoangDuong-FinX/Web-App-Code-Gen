@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import App from './App';
@@ -15,30 +14,24 @@ async function navigateToPassengers() {
     expect(screen.getByTestId('search-submit')).toBeInTheDocument();
   });
 
-  // Select origin
   fireEvent.click(screen.getByTestId('origin-field'));
   await waitFor(() => { expect(screen.getByText('Chon san bay')).toBeInTheDocument(); });
   fireEvent.click(screen.getByText('Tan Son Nhat'));
 
-  // Select destination
   await waitFor(() => { expect(screen.getByTestId('destination-field')).toBeInTheDocument(); });
   fireEvent.click(screen.getByTestId('destination-field'));
   await waitFor(() => { expect(screen.getByText('Chon san bay')).toBeInTheDocument(); });
   fireEvent.click(screen.getByText('Noi Bai'));
 
-  // Search
   await waitFor(() => { expect(screen.getByTestId('search-submit')).not.toBeDisabled(); });
   fireEvent.click(screen.getByTestId('search-submit'));
 
-  // Wait for results
   await waitFor(() => { expect(screen.getByText('Chuyen bay di')).toBeInTheDocument(); });
 
-  // Select fare
   const fareButtons = screen.getAllByTestId('fare-class-option');
   const availableFare = fareButtons.find((btn) => !btn.hasAttribute('disabled'));
   if (availableFare) fireEvent.click(availableFare);
 
-  // Continue to passengers
   fireEvent.click(screen.getByTestId('results-continue'));
   await waitFor(() => { expect(screen.getByText('Thong tin hanh khach')).toBeInTheDocument(); });
 }
