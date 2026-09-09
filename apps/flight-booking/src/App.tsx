@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { I18nProvider } from './i18n/index';
 import { AppStateProvider } from './store';
 import type { ScreenId } from './types';
