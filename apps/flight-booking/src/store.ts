@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, type Dispatch } from 'react';
+import { createContext, useContext, type Dispatch } from 'react';
 import type {
   TripType, Airport, SearchSession, FlightOffer, FareClass,
   PassengerForm, AncillarySelection, SeatSelection, BookingResult,

@@ -4,21 +4,17 @@ import type { ScreenId } from '../types';
 import type { NavigationState } from '../App';
 import { formatPrice } from '../utils';
 
-interface DoneSuccessScreenProps {
-  navigate: (screen: ScreenId, extra?: Partial<NavigationState>) => void;
-}
+interface DoneSuccessScreenProps { navigate: (screen: ScreenId, extra?: Partial<NavigationState>) => void; }
 
 export function DoneSuccessScreen({ navigate }: DoneSuccessScreenProps) {
-  const t = useT();
-  const state = useAppState();
-  const dispatch = useAppDispatch();
+  const t = useT(); const state = useAppState(); const dispatch = useAppDispatch();
   const result = state.bookingResult;
   if (!result) { navigate('search'); return null; }
 
   function handleBookAnother() { dispatch({ type: 'RESET' }); navigate('search'); }
   function handleBackHome() { dispatch({ type: 'RESET' }); navigate('search'); }
   async function handleShare() {
-    if (typeof navigator !== 'undefined' && navigator.share) {
+    if (result && typeof navigator !== 'undefined' && navigator.share) {
       try { await navigator.share({ title: t.done.bookingCode, text: `${t.done.bookingCode}: ${result.bookingCode}\n${t.done.amountCharged}: ${formatPrice(result.amount)}` }); } catch { /* user cancelled */ }
     }
   }
