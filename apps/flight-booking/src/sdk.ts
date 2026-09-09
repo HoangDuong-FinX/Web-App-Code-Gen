@@ -1,4 +1,4 @@
-import type { AirportGroup, CityPair, FlightOffer } from './types';
+import type { FlightOffer } from './types';
 import { fixtureAirports } from './fixtures/airports';
 import { fixtureCityPairs } from './fixtures/cityPairs';
 import { generateFlightOffers, getSearchOutcome } from './fixtures/flights';
