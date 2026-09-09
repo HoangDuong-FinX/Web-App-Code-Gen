@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
-import { vi, afterEach, describe, it, expect } from 'vitest';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import App from './App';
 
 afterEach(() => {
@@ -10,65 +10,51 @@ afterEach(() => {
 
 async function navigateToPassengers() {
   render(<App />);
-  await waitFor(() => {
-    expect(screen.getByTestId('origin-selector')).toBeInTheDocument();
-  });
-
-  fireEvent.click(screen.getByTestId('origin-selector'));
-  await waitFor(() => {
-    expect(screen.getByTestId('search-input')).toBeInTheDocument();
-  });
-  fireEvent.click(screen.getAllByLabelText(/SGN/)[0]);
 
   await waitFor(() => {
-    expect(screen.getByTestId('destination-selector')).toBeInTheDocument();
-  });
-  fireEvent.click(screen.getByTestId('destination-selector'));
-  await waitFor(() => {
-    expect(screen.getByTestId('search-input')).toBeInTheDocument();
-  });
-  fireEvent.click(screen.getAllByLabelText(/HAN/)[0]);
-
-  await waitFor(() => {
-    expect(screen.getByTestId('search-submit-action')).not.toBeDisabled();
-  });
-  fireEvent.click(screen.getByTestId('search-submit-action'));
-
-  await waitFor(() => {
-    expect(screen.getByTestId('results-screen-title')).toBeInTheDocument();
+    expect(screen.getByTestId('search-submit')).toBeInTheDocument();
   });
 
-  fireEvent.click(screen.getAllByTestId('fare-class-name')[0].closest('button') as HTMLElement);
-  await waitFor(() => {
-    expect(screen.getByTestId('continue-action')).not.toBeDisabled();
-  });
-  fireEvent.click(screen.getByTestId('continue-action'));
+  // Select origin
+  fireEvent.click(screen.getByTestId('origin-field'));
+  await waitFor(() => { expect(screen.getByText('Chon san bay')).toBeInTheDocument(); });
+  fireEvent.click(screen.getByText('Tan Son Nhat'));
 
-  await waitFor(() => {
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Th\u00f4ng tin h\u00e0nh kh\u00e1ch');
-  });
+  // Select destination
+  await waitFor(() => { expect(screen.getByTestId('destination-field')).toBeInTheDocument(); });
+  fireEvent.click(screen.getByTestId('destination-field'));
+  await waitFor(() => { expect(screen.getByText('Chon san bay')).toBeInTheDocument(); });
+  fireEvent.click(screen.getByText('Noi Bai'));
+
+  // Search
+  await waitFor(() => { expect(screen.getByTestId('search-submit')).not.toBeDisabled(); });
+  fireEvent.click(screen.getByTestId('search-submit'));
+
+  // Wait for results
+  await waitFor(() => { expect(screen.getByText('Chuyen bay di')).toBeInTheDocument(); });
+
+  // Select fare
+  const fareButtons = screen.getAllByTestId('fare-class-option');
+  const availableFare = fareButtons.find((btn) => !btn.hasAttribute('disabled'));
+  if (availableFare) fireEvent.click(availableFare);
+
+  // Continue to passengers
+  fireEvent.click(screen.getByTestId('results-continue'));
+  await waitFor(() => { expect(screen.getByText('Thong tin hanh khach')).toBeInTheDocument(); });
 }
 
 describe('PassengersScreen flow', () => {
-  it('shows passenger cards', async () => {
+  it('shows passenger form after navigating from results', async () => {
     await navigateToPassengers();
-    expect(screen.getAllByTestId('traveller-label').length).toBeGreaterThan(0);
+    expect(screen.getByText('Thong tin hanh khach')).toBeInTheDocument();
+    expect(screen.getAllByTestId('passenger-form').length).toBeGreaterThan(0);
   });
 
-  it('opens traveller detail sheet on edit', async () => {
+  it('shows validation error when submitting empty form', async () => {
     await navigateToPassengers();
-    const editButtons = screen.getAllByTestId('traveller-edit-action');
-    fireEvent.click(editButtons[0]);
+    fireEvent.click(screen.getByTestId('passengers-continue'));
     await waitFor(() => {
-      expect(screen.getByTestId('last-name-input')).toBeInTheDocument();
-    });
-  });
-
-  it('validates required fields and opens sheet on invalid submit', async () => {
-    await navigateToPassengers();
-    fireEvent.click(screen.getByTestId('continue-action'));
-    await waitFor(() => {
-      expect(screen.getByTestId('last-name-input')).toBeInTheDocument();
+      expect(screen.getByTestId('validation-error-message')).toBeInTheDocument();
     });
   });
 });

@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
-import { vi, afterEach, describe, it, expect } from 'vitest';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import App from './App';
 
 afterEach(() => {
@@ -9,65 +9,42 @@ afterEach(() => {
 });
 
 describe('SearchScreen flow', () => {
-  it('renders search screen on mount', async () => {
+  it('renders the search heading', () => {
     render(<App />);
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('T\u00ecm chuy\u1ebfn bay');
-    });
+    expect(screen.getByText('Tim chuyen bay')).toBeInTheDocument();
   });
 
-  it('shows trip type toggle', async () => {
+  it('toggles trip type between one-way and round-trip', () => {
     render(<App />);
-    await waitFor(() => {
-      expect(screen.getByLabelText('M\u1ed9t chi\u1ec1u')).toBeInTheDocument();
-      expect(screen.getByLabelText('Kh\u1ee9 h\u1ed3i')).toBeInTheDocument();
-    });
+    const roundTripBtn = screen.getByRole('button', { name: /Khu hoi/i });
+    fireEvent.click(roundTripBtn);
+    expect(roundTripBtn).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('opens airport picker when origin is tapped', async () => {
+  it('opens airport picker when clicking departure field', () => {
     render(<App />);
-    await waitFor(() => {
-      expect(screen.getByTestId('origin-selector')).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByTestId('origin-selector'));
-    await waitFor(() => {
-      expect(screen.getByText('Ch\u1ecdn s\u00e2n bay')).toBeInTheDocument();
-    });
+    const originField = screen.getByTestId('origin-field');
+    fireEvent.click(originField);
+    expect(screen.getByText('Chon san bay')).toBeInTheDocument();
   });
 
-  it('navigates to results after search', async () => {
+  it('opens date picker when clicking departure date field', () => {
     render(<App />);
-    await waitFor(() => {
-      expect(screen.getByTestId('origin-selector')).toBeInTheDocument();
-    });
+    const dateField = screen.getByTestId('departure-date-field');
+    fireEvent.click(dateField);
+    expect(screen.getByText('Chon ngay')).toBeInTheDocument();
+  });
 
-    // Select origin
-    fireEvent.click(screen.getByTestId('origin-selector'));
-    await waitFor(() => {
-      expect(screen.getByTestId('search-input')).toBeInTheDocument();
-    });
-    const sgnButtons = screen.getAllByLabelText(/SGN/);
-    fireEvent.click(sgnButtons[0]);
+  it('opens passenger count when clicking passenger summary', () => {
+    render(<App />);
+    const paxField = screen.getByTestId('passenger-summary-field');
+    fireEvent.click(paxField);
+    expect(screen.getByText('Hanh khach')).toBeInTheDocument();
+  });
 
-    // Select destination
-    await waitFor(() => {
-      expect(screen.getByTestId('destination-selector')).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByTestId('destination-selector'));
-    await waitFor(() => {
-      expect(screen.getByTestId('search-input')).toBeInTheDocument();
-    });
-    const hanButtons = screen.getAllByLabelText(/HAN/);
-    fireEvent.click(hanButtons[0]);
-
-    // Search
-    await waitFor(() => {
-      expect(screen.getByTestId('search-submit-action')).not.toBeDisabled();
-    });
-    fireEvent.click(screen.getByTestId('search-submit-action'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('results-screen-title')).toHaveTextContent('Ch\u1ecdn chuy\u1ebfn bay');
-    });
+  it('search button is disabled when no airports selected', () => {
+    render(<App />);
+    const searchBtn = screen.getByTestId('search-submit');
+    expect(searchBtn).toBeDisabled();
   });
 });
