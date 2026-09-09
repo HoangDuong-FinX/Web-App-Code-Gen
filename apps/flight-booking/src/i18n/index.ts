@@ -1,2 +1,3 @@
-export { I18nProvider, useT, useLocale } from './index';
-export type { TranslationKeys } from './types';
+// This file intentionally left as a stub.
+// All i18n logic is in index.tsx.
+export {};

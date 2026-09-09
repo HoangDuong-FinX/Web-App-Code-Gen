@@ -1,21 +1,16 @@
 import { useState } from 'react';
 import { useT } from '../i18n/index';
 import { useAppState } from '../store';
-import type { ScreenId } from '../types';
+import type { ScreenId, AncillarySelection, SeatSelection } from '../types';
 import type { NavigationState } from '../App';
 import { HoldTimerBadge } from '../components/HoldTimerBadge';
 import { sdk } from '../sdk';
 
-interface ServicesScreenProps {
-  navigate: (screen: ScreenId, extra?: Partial<NavigationState>) => void;
-}
+interface ServicesScreenProps { navigate: (screen: ScreenId, extra?: Partial<NavigationState>) => void; }
 
 export function ServicesScreen({ navigate }: ServicesScreenProps) {
-  const t = useT();
-  const state = useAppState();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  const t = useT(); const state = useAppState();
+  const [loading, setLoading] = useState(false); const [error, setError] = useState<string | null>(null);
   if (!state.outboundSession) { navigate('search'); return null; }
 
   const activeTiles = [
@@ -24,12 +19,9 @@ export function ServicesScreen({ navigate }: ServicesScreenProps) {
     { key: 'baggage', label: t.services.baggageTransfer, testId: 'tile-baggage', onClick: () => navigate('meals-baggage', { mealsBaggageMode: 'baggage' }) },
   ];
   const disabledTiles = [
-    { key: 'insurance', label: t.services.insurance, testId: 'tile-insurance' },
-    { key: 'dutyFree', label: t.services.dutyFree, testId: 'tile-duty-free' },
-    { key: 'souvenirs', label: t.services.souvenirs, testId: 'tile-souvenirs' },
-    { key: 'hotel', label: t.services.hotel, testId: 'tile-hotel' },
-    { key: 'activities', label: t.services.activities, testId: 'tile-activities' },
-    { key: 'transfer', label: t.services.transfer, testId: 'tile-transfer' },
+    { key: 'insurance', label: t.services.insurance, testId: 'tile-insurance' }, { key: 'dutyFree', label: t.services.dutyFree, testId: 'tile-duty-free' },
+    { key: 'souvenirs', label: t.services.souvenirs, testId: 'tile-souvenirs' }, { key: 'hotel', label: t.services.hotel, testId: 'tile-hotel' },
+    { key: 'activities', label: t.services.activities, testId: 'tile-activities' }, { key: 'transfer', label: t.services.transfer, testId: 'tile-transfer' },
   ];
 
   async function handleContinue() {
@@ -37,25 +29,22 @@ export function ServicesScreen({ navigate }: ServicesScreenProps) {
     setLoading(true); setError(null);
     const promises: Promise<{ isSuccess: boolean }>[] = [];
     if (state.outboundAncillary.length > 0) {
-      const selections = state.outboundAncillary.flatMap((s) => Array.from({ length: s.quantity }, () => ({ passenger_id: state.passengerForms[0]?.passengerId ?? 'pax_1', option_id: s.optionId })));
+      const selections = state.outboundAncillary.flatMap((s: AncillarySelection) => Array.from({ length: s.quantity }, () => ({ passenger_id: state.passengerForms[0]?.passengerId ?? 'pax_1', option_id: s.optionId })));
       promises.push(sdk.http.post(`/sessions/${state.outboundSession!.sessionId}/ancillary-selections`, { selections }));
     }
     if (state.outboundSeats.length > 0) {
-      promises.push(sdk.http.post(`/sessions/${state.outboundSession!.sessionId}/seat-selections`, { selections: state.outboundSeats.map((s) => ({ passenger_index: s.passengerIndex, seatId: s.seatId })) }));
+      promises.push(sdk.http.post(`/sessions/${state.outboundSession!.sessionId}/seat-selections`, { selections: state.outboundSeats.map((s: SeatSelection) => ({ passenger_index: s.passengerIndex, seatId: s.seatId })) }));
     }
     if (state.tripType === 'roundTrip' && state.returnSession) {
       if (state.returnAncillary.length > 0) {
-        const selections = state.returnAncillary.flatMap((s) => Array.from({ length: s.quantity }, () => ({ passenger_id: state.passengerForms[0]?.passengerId ?? 'pax_1', option_id: s.optionId })));
+        const selections = state.returnAncillary.flatMap((s: AncillarySelection) => Array.from({ length: s.quantity }, () => ({ passenger_id: state.passengerForms[0]?.passengerId ?? 'pax_1', option_id: s.optionId })));
         promises.push(sdk.http.post(`/sessions/${state.returnSession.sessionId}/ancillary-selections`, { selections }));
       }
       if (state.returnSeats.length > 0) {
-        promises.push(sdk.http.post(`/sessions/${state.returnSession.sessionId}/seat-selections`, { selections: state.returnSeats.map((s) => ({ passenger_index: s.passengerIndex, seatId: s.seatId })) }));
+        promises.push(sdk.http.post(`/sessions/${state.returnSession.sessionId}/seat-selections`, { selections: state.returnSeats.map((s: SeatSelection) => ({ passenger_index: s.passengerIndex, seatId: s.seatId })) }));
       }
     }
-    if (promises.length > 0) {
-      const results = await Promise.all(promises);
-      if (results.some((r) => !r.isSuccess)) { setError(t.services.saveError); setLoading(false); return; }
-    }
+    if (promises.length > 0) { const results = await Promise.all(promises); if (results.some((r) => !r.isSuccess)) { setError(t.services.saveError); setLoading(false); return; } }
     setLoading(false); navigate('review');
   }
 
