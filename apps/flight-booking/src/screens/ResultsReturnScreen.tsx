@@ -7,19 +7,19 @@ import { HoldTimerBadge } from '../components/HoldTimerBadge';
 import { generateDateChips } from '../fixtures/flights';
 import { formatPrice } from '../utils';
 
-interface ResultsScreenProps {
+interface ResultsReturnScreenProps {
   navigate: (screen: ScreenId, extra?: Partial<NavigationState>) => void;
 }
 
-export function ResultsScreen({ navigate }: ResultsScreenProps) {
+export function ResultsReturnScreen({ navigate }: ResultsReturnScreenProps) {
   const t = useT();
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const [selectedDate, setSelectedDate] = useState(state.departureDate);
+  const [selectedDate, setSelectedDate] = useState(state.returnDate);
 
-  const session = state.outboundSession;
+  const session = state.returnSession;
   const offers = session?.offers ?? [];
-  const dateChips = useMemo(() => generateDateChips(state.departureDate), [state.departureDate]);
+  const dateChips = useMemo(() => generateDateChips(state.returnDate), [state.returnDate]);
 
   if (!session) {
     navigate('search');
@@ -28,26 +28,22 @@ export function ResultsScreen({ navigate }: ResultsScreenProps) {
 
   function handleFareSelect(offer: FlightOffer, fare: FareClass) {
     if (!fare.available) return;
-    dispatch({ type: 'SELECT_OUTBOUND_FARE', payload: { offer, fare } });
+    dispatch({ type: 'SELECT_RETURN_FARE', payload: { offer, fare } });
   }
 
   function handleContinue() {
-    if (!state.selectedOutboundFare) return;
-    if (state.tripType === 'roundTrip') {
-      navigate('results-return');
-    } else {
-      navigate('passengers');
-    }
+    if (!state.selectedReturnFare) return;
+    navigate('passengers');
   }
 
   const routeSummary = t.results.routeSummary
-    .replace('{origin}', state.origin?.airportCode ?? '')
-    .replace('{destination}', state.destination?.airportCode ?? '')
+    .replace('{origin}', state.destination?.airportCode ?? '')
+    .replace('{destination}', state.origin?.airportCode ?? '')
     .replace('{date}', selectedDate);
 
   return (
     <div className="p-4 flex flex-col gap-3">
-      <h1 className="text-2xl font-bold text-gray-900">{t.results.outboundHeading}</h1>
+      <h1 className="text-2xl font-bold text-gray-900">{t.results.returnHeading}</h1>
       <p className="text-sm text-gray-600" data-testid="route-summary">{routeSummary}</p>
       <HoldTimerBadge navigate={navigate} />
 
@@ -92,8 +88,8 @@ export function ResultsScreen({ navigate }: ResultsScreenProps) {
               <div className="flex gap-2 flex-wrap">
                 {offer.fareClasses.map((fare) => {
                   const isSelected =
-                    state.selectedOutboundOffer?.offerId === offer.offerId &&
-                    state.selectedOutboundFare?.fareClassName === fare.fareClassName;
+                    state.selectedReturnOffer?.offerId === offer.offerId &&
+                    state.selectedReturnFare?.fareClassName === fare.fareClassName;
                   return (
                     <button
                       key={fare.fareClassName}
@@ -122,12 +118,12 @@ export function ResultsScreen({ navigate }: ResultsScreenProps) {
 
       <button
         className={`w-full py-3 rounded-lg text-white font-semibold text-sm transition-colors ${
-          state.selectedOutboundFare && !state.holdExpired ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-300 cursor-not-allowed'
+          state.selectedReturnFare && !state.holdExpired ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-300 cursor-not-allowed'
         }`}
-        disabled={!state.selectedOutboundFare || state.holdExpired}
+        disabled={!state.selectedReturnFare || state.holdExpired}
         onClick={handleContinue}
-        aria-label={t.results.continueBtn}
-        data-testid="results-continue"
+        aria-label={t.results.continueToPassengers}
+        data-testid="results-return-continue"
       >
         {t.results.continueBtn}
       </button>
