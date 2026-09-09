@@ -1,119 +1,114 @@
 export interface Airport {
-  code: string;
-  name: string;
-  group: 'popular' | 'vietnam' | 'international';
+  airportCode: string;
+  airportName: string;
+  cityName: string;
+}
+
+export interface AirportGroup {
+  groupName: string;
+  airports: Airport[];
 }
 
 export interface CityPair {
-  origin_code: string;
-  destination_code: string;
+  origin: string;
+  destination: string;
 }
 
-export interface Flight {
-  offer_id: string;
-  flight_number: string;
-  departure_time: string;
-  arrival_time: string;
-  duration_minutes: number;
-  stops: number;
-  aircraft: string;
-  fares: Fare[];
-}
-
-export interface Fare {
-  fare_class: string;
-  price_amount: number;
+export interface FareClass {
+  fareClassName: string;
+  priceAmount: number;
   available: boolean;
 }
 
-export interface Session {
-  session_id: string;
-  expires_at: string;
-  offers: Flight[];
+export interface FlightOffer {
+  offerId: string;
+  flightNumber: string;
+  departureTime: string;
+  arrivalTime: string;
+  duration: string;
+  fareClasses: FareClass[];
 }
 
-export interface Traveller {
-  last_name: string;
-  first_middle_name: string;
+export interface SearchSession {
+  sessionId: string;
+  expiresAt: number;
+  offers: FlightOffer[];
+}
+
+export interface PassengerForm {
+  type: 'adult' | 'child' | 'infant';
+  lastName: string;
+  firstName: string;
   gender: 'Male' | 'Female';
-  date_of_birth: string;
+  dob: string;
   phone: string;
   email: string;
-  passenger_id?: string;
+  passengerId?: string;
 }
 
-export interface AncillaryItem {
-  option_id: string;
+export interface AncillaryOption {
+  optionId: string;
   name: string;
-  description: string;
-  unit_price: number;
-  group: 'meal' | 'baggage' | 'transfer';
+  category: 'meal' | 'baggage' | 'transfer';
+  priceAmount: number;
+  imageUrl: string;
 }
 
 export interface AncillarySelection {
-  option_id: string;
+  optionId: string;
+  name: string;
   quantity: number;
+  priceAmount: number;
 }
 
-export interface Seat {
-  seat_id: string;
+export interface SeatInfo {
+  seatId: string;
   row: number;
   column: string;
   available: boolean;
-  price_amount: number | null;
-  fare_tier: string | null;
+  priceAmount: number | null;
+  fareTier: string;
 }
 
 export interface SeatSelection {
-  passenger_index: number;
-  seat_id: string;
-  seat_label: string;
+  passengerIndex: number;
+  seatId: string;
+  seatLabel: string;
   price: number;
 }
 
-export interface PaymentPayload {
-  bookingKey: string;
-  amount: number;
-}
-
-export interface RecentSearch {
-  origin: string;
-  destination: string;
-  departure_date: string;
-  return_date: string;
-  adults: number;
-  children: number;
-  infants: number;
-  tripType: 'one-way' | 'round-trip';
-}
-
-export type ScreenId = 'search' | 'results' | 'passengers' | 'services' | 'payment-review' | 'checkout' | 'done';
-
-export type DoneStatus = 'success' | 'failure' | 'partial' | 'simulated';
-
-export interface BookingState {
-  tripType: 'one-way' | 'round-trip';
-  origin: Airport | null;
-  destination: Airport | null;
-  departureDate: string;
-  returnDate: string;
-  adults: number;
-  children: number;
-  infants: number;
-  outboundSession: Session | null;
-  returnSession: Session | null;
-  selectedOutboundOffer: Flight | null;
-  selectedOutboundFare: Fare | null;
-  selectedReturnOffer: Flight | null;
-  selectedReturnFare: Fare | null;
-  travellers: Traveller[];
-  outboundAncillarySelections: AncillarySelection[];
-  returnAncillarySelections: AncillarySelection[];
-  outboundSeatSelection: SeatSelection | null;
-  returnSeatSelection: SeatSelection | null;
-  doneStatus: DoneStatus;
+export interface BookingResult {
+  status: 'success' | 'failure' | 'partial';
   bookingCode: string;
-  transactionId: string;
-  paymentError: string;
-  totalAmount: number;
+  outboundBookingCode?: string;
+  transactionId: string | null;
+  amount: number;
+  failureReason?: string;
+  viaHost: boolean;
+  vatRequested: boolean;
 }
+
+export interface DateChip {
+  date: string;
+  label: string;
+  lowestPrice: number | null;
+}
+
+export type TripType = 'oneWay' | 'roundTrip';
+
+export type ScreenId =
+  | 'search'
+  | 'airport-picker'
+  | 'date-picker'
+  | 'passenger-count'
+  | 'results'
+  | 'results-return'
+  | 'passengers'
+  | 'services'
+  | 'meals-baggage'
+  | 'seats'
+  | 'review'
+  | 'checkout'
+  | 'done-success'
+  | 'done-failure'
+  | 'done-partial';

@@ -1,67 +1,67 @@
-import type { Session } from '../types';
+import type { FlightOffer, DateChip } from '../types';
 
-let shouldFail = false;
-
-export function setSearchFlightsOutcome(fail: boolean): void {
-  shouldFail = fail;
+export function generateDateChips(baseDate: string): DateChip[] {
+  const base = new Date(baseDate);
+  const chips: DateChip[] = [];
+  for (let i = -3; i <= 3; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() + i);
+    const dateStr = d.toISOString().slice(0, 10);
+    const label = `${d.getDate()}/${d.getMonth() + 1}`;
+    chips.push({
+      date: dateStr,
+      label,
+      lowestPrice: i === 0 ? 1190000 : (1190000 + i * 100000),
+    });
+  }
+  return chips;
 }
 
-export function searchFlightsFixture(
-  origin: string,
-  destination: string,
-  _date: string
-): Promise<Session> {
-  if (shouldFail) {
-    return Promise.reject(new Error('fixture: search flights failed'));
-  }
-  const now = new Date();
-  const expires = new Date(now.getTime() + 15 * 60 * 1000);
-  return Promise.resolve({
-    session_id: `sess_${origin}_${destination}_${Date.now()}`,
-    expires_at: expires.toISOString(),
-    offers: [
-      {
-        offer_id: `offer_1_${origin}${destination}`,
-        flight_number: 'VJ101',
-        departure_time: '06:00',
-        arrival_time: '08:10',
-        duration_minutes: 130,
-        stops: 0,
-        aircraft: 'A321',
-        fares: [
-          { fare_class: 'Eco', price_amount: 1200000, available: true },
-          { fare_class: 'Deluxe', price_amount: 2500000, available: true },
-          { fare_class: 'SkyBoss', price_amount: 4800000, available: false },
-        ],
-      },
-      {
-        offer_id: `offer_2_${origin}${destination}`,
-        flight_number: 'VJ205',
-        departure_time: '10:30',
-        arrival_time: '12:40',
-        duration_minutes: 130,
-        stops: 0,
-        aircraft: 'A320',
-        fares: [
-          { fare_class: 'Eco', price_amount: 1450000, available: true },
-          { fare_class: 'Deluxe', price_amount: 2800000, available: true },
-          { fare_class: 'SkyBoss', price_amount: 5200000, available: true },
-        ],
-      },
-      {
-        offer_id: `offer_3_${origin}${destination}`,
-        flight_number: 'VJ309',
-        departure_time: '16:15',
-        arrival_time: '18:25',
-        duration_minutes: 130,
-        stops: 0,
-        aircraft: 'A321',
-        fares: [
-          { fare_class: 'Eco', price_amount: 1350000, available: true },
-          { fare_class: 'Deluxe', price_amount: 2600000, available: false },
-          { fare_class: 'SkyBoss', price_amount: 4900000, available: true },
-        ],
-      },
-    ],
-  });
+export function generateFlightOffers(origin: string, destination: string): FlightOffer[] {
+  return [
+    {
+      offerId: `offer-${origin}-${destination}-1`,
+      flightNumber: 'VJ101',
+      departureTime: '06:00',
+      arrivalTime: '08:10',
+      duration: '2h 10m',
+      fareClasses: [
+        { fareClassName: 'Eco', priceAmount: 1190000, available: true },
+        { fareClassName: 'Deluxe', priceAmount: 1690000, available: true },
+        { fareClassName: 'SkyBoss', priceAmount: 3290000, available: true },
+      ],
+    },
+    {
+      offerId: `offer-${origin}-${destination}-2`,
+      flightNumber: 'VJ103',
+      departureTime: '10:30',
+      arrivalTime: '12:40',
+      duration: '2h 10m',
+      fareClasses: [
+        { fareClassName: 'Eco', priceAmount: 1390000, available: true },
+        { fareClassName: 'Deluxe', priceAmount: 1890000, available: true },
+        { fareClassName: 'SkyBoss', priceAmount: 3490000, available: false },
+      ],
+    },
+    {
+      offerId: `offer-${origin}-${destination}-3`,
+      flightNumber: 'VJ105',
+      departureTime: '16:00',
+      arrivalTime: '18:10',
+      duration: '2h 10m',
+      fareClasses: [
+        { fareClassName: 'Eco', priceAmount: 1290000, available: true },
+        { fareClassName: 'Deluxe', priceAmount: 1790000, available: true },
+        { fareClassName: 'SkyBoss', priceAmount: 3390000, available: true },
+      ],
+    },
+  ];
+}
+
+let fixtureSearchOutcome: 'success' | 'fail' = 'success';
+export function setSearchOutcome(outcome: 'success' | 'fail'): void {
+  fixtureSearchOutcome = outcome;
+}
+export function getSearchOutcome(): 'success' | 'fail' {
+  return fixtureSearchOutcome;
 }

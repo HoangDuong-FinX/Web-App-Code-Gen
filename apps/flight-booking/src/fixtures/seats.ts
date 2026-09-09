@@ -1,37 +1,43 @@
-import type { Seat } from '../types';
+import type { SeatInfo } from '../types';
 
-let shouldFail = false;
-let shouldEmpty = false;
+const columns = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-export function setLoadSeatsOutcome(outcome: 'success' | 'fail' | 'empty'): void {
-  shouldFail = outcome === 'fail';
-  shouldEmpty = outcome === 'empty';
-}
-
-export function loadSeatsFixture(): Promise<Seat[]> {
-  if (shouldFail) {
-    return Promise.reject(new Error('fixture: seats load failed'));
-  }
-  if (shouldEmpty) {
-    return Promise.resolve([]);
-  }
-  const rows: Seat[] = [];
-  const columns = ['A', 'B', 'C', 'D', 'E', 'F'];
-  for (let r = 1; r <= 30; r++) {
-    for (const c of columns) {
-      const isExit = r === 12 || r === 13;
-      const tier = isExit ? 'extra-legroom' : r <= 5 ? 'premium' : 'standard';
-      const price = tier === 'premium' ? 150000 : tier === 'extra-legroom' ? 100000 : 50000;
-      const available = !(r === 3 && (c === 'A' || c === 'B')) && !(r === 15 && c === 'D');
-      rows.push({
-        seat_id: `seat_${r}${c}`,
-        row: r,
-        column: c,
-        available,
-        price_amount: available ? price : null,
-        fare_tier: available ? tier : null,
+export function generateSeatMap(): SeatInfo[] {
+  const seats: SeatInfo[] = [];
+  for (let row = 1; row <= 15; row++) {
+    for (const col of columns) {
+      const isExit = row === 12 || row === 13;
+      const isUnavailable = (row === 3 && (col === 'C' || col === 'D')) ||
+        (row === 7 && col === 'A');
+      let tier = 'Standard';
+      let price: number | null = 80000;
+      if (row <= 3) {
+        tier = 'Hot Seat';
+        price = 250000;
+      } else if (isExit) {
+        tier = 'Exit Row';
+        price = 180000;
+      }
+      if (isUnavailable) {
+        price = null;
+      }
+      seats.push({
+        seatId: `${row}${col}`,
+        row,
+        column: col,
+        available: !isUnavailable,
+        priceAmount: price,
+        fareTier: tier,
       });
     }
   }
-  return Promise.resolve(rows);
+  return seats;
+}
+
+let fixtureSeatOutcome: 'success' | 'fail' = 'success';
+export function setSeatOutcome(outcome: 'success' | 'fail'): void {
+  fixtureSeatOutcome = outcome;
+}
+export function getSeatOutcome(): 'success' | 'fail' {
+  return fixtureSeatOutcome;
 }
