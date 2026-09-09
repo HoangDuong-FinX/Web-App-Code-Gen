@@ -1,200 +1,258 @@
-import React, { useState, useCallback } from 'react';
-import type { BookingState, Traveller, ScreenId } from '../types';
-import type { BookingAction } from '../App';
-import { t } from '../i18n/vi';
-import { useHoldTimer } from '../hooks/useHoldTimer';
-import { TravellerDetailSheet } from '../modals/TravellerDetailSheet';
+import React, { useEffect, useState } from 'react';
+import { useT } from '../i18n/index';
+import { useAppState, useAppDispatch } from '../store';
+import type { ScreenId, PassengerForm } from '../types';
+import type { NavigationState } from '../App';
+import { HoldTimerBadge } from '../components/HoldTimerBadge';
+import { sdk } from '../sdk';
 
 interface PassengersScreenProps {
-  state: BookingState;
-  dispatch: React.Dispatch<BookingAction>;
-  expiresAt: string | null;
-  onNavigate: (screen: ScreenId) => void;
+  navigate: (screen: ScreenId, extra?: Partial<NavigationState>) => void;
 }
 
-function createEmptyTravellers(adults: number, childCount: number, infantCount: number): Traveller[] {
-  const travellers: Traveller[] = [];
-  for (let i = 0; i < adults; i++) {
-    travellers.push({ last_name: '', first_middle_name: '', gender: 'Male', date_of_birth: '', phone: '', email: '' });
-  }
-  for (let i = 0; i < childCount; i++) {
-    travellers.push({ last_name: '', first_middle_name: '', gender: 'Male', date_of_birth: '', phone: '', email: '' });
-  }
-  for (let i = 0; i < infantCount; i++) {
-    travellers.push({ last_name: '', first_middle_name: '', gender: 'Male', date_of_birth: '', phone: '', email: '' });
-  }
-  return travellers;
-}
+export function PassengersScreen({ navigate }: PassengersScreenProps) {
+  const t = useT();
+  const state = useAppState();
+  const dispatch = useAppDispatch();
+  const [selfToggle, setSelfToggle] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-function getTravellerType(index: number, adults: number, childCount: number): string {
-  if (index < adults) return t('passengers.adult');
-  if (index < adults + childCount) return t('passengers.child');
-  return t('passengers.infant');
-}
-
-export function PassengersScreen({ state, dispatch, expiresAt, onNavigate }: PassengersScreenProps) {
-  const { formattedTime, isExpired } = useHoldTimer(expiresAt);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [submitError, setSubmitError] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [iAmPassenger, setIAmPassenger] = useState(false);
-
-  const travellers = state.travellers.length > 0
-    ? state.travellers
-    : createEmptyTravellers(state.adults, state.children, state.infants);
-
-  if (state.travellers.length === 0 && travellers.length > 0) {
-    dispatch({ type: 'SET_TRAVELLERS', payload: travellers });
+  if (!state.outboundSession) {
+    navigate('search');
+    return null;
   }
 
-  const handleIAmPassengerToggle = () => {
-    const next = !iAmPassenger;
-    setIAmPassenger(next);
-    if (next && travellers.length > 0) {
-      const updated = [...travellers];
-      updated[0] = { ...updated[0], last_name: 'Nguyen', first_middle_name: 'Van A' };
-      dispatch({ type: 'SET_TRAVELLERS', payload: updated });
-    }
-  };
-
-  const handleTravellerUpdate = useCallback(
-    (index: number, data: Traveller) => {
-      const updated = [...travellers];
-      updated[index] = data;
-      dispatch({ type: 'SET_TRAVELLERS', payload: updated });
-      setEditingIndex(null);
-    },
-    [travellers, dispatch]
-  );
-
-  const validateTravellers = (): number => {
-    for (let i = 0; i < travellers.length; i++) {
-      const tr = travellers[i];
-      if (!tr.last_name.trim() || !tr.first_middle_name.trim()) {
-        return i;
+  useEffect(() => {
+    if (state.passengerForms.length === 0) {
+      const forms: PassengerForm[] = [];
+      for (let i = 0; i < state.adults; i++) {
+        forms.push({ type: 'adult', lastName: '', firstName: '', gender: 'Male', dob: '', phone: '', email: '' });
       }
-      if (tr.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tr.email)) {
-        return i;
+      for (let i = 0; i < state.children; i++) {
+        forms.push({ type: 'child', lastName: '', firstName: '', gender: 'Male', dob: '', phone: '', email: '' });
+      }
+      for (let i = 0; i < state.infants; i++) {
+        forms.push({ type: 'infant', lastName: '', firstName: '', gender: 'Male', dob: '', phone: '', email: '' });
+      }
+      dispatch({ type: 'SET_PASSENGER_FORMS', payload: forms });
+    }
+  }, []);
+
+  function handleSelfToggle() {
+    const next = !selfToggle;
+    setSelfToggle(next);
+    if (next && state.passengerForms.length > 0) {
+      const form = { ...state.passengerForms[0], lastName: 'Nguyen', firstName: 'Van A' };
+      dispatch({ type: 'UPDATE_PASSENGER', payload: { index: 0, form } });
+    } else if (!next && state.passengerForms.length > 0) {
+      const form = { ...state.passengerForms[0], lastName: '', firstName: '' };
+      dispatch({ type: 'UPDATE_PASSENGER', payload: { index: 0, form } });
+    }
+  }
+
+  function updateField(index: number, field: keyof PassengerForm, value: string) {
+    const form = { ...state.passengerForms[index], [field]: value } as PassengerForm;
+    dispatch({ type: 'UPDATE_PASSENGER', payload: { index, form } });
+  }
+
+  function validate(): boolean {
+    for (const form of state.passengerForms) {
+      if (!form.lastName.trim() || !form.firstName.trim()) {
+        return false;
+      }
+      if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+        return false;
       }
     }
-    return -1;
-  };
+    return true;
+  }
 
-  const handleSubmit = async () => {
-    if (isExpired) return;
-    const invalidIdx = validateTravellers();
-    if (invalidIdx >= 0) {
-      setEditingIndex(invalidIdx);
+  async function handleSubmit() {
+    setValidationError(null);
+    setSubmitError(null);
+
+    if (!validate()) {
+      setValidationError(t.passengers.validationError);
       return;
     }
-    setSubmitting(true);
-    setSubmitError(false);
-    try {
-      const withIds = travellers.map((tr, i) => ({
-        ...tr,
-        passenger_id: `pax_${i + 1}`,
-        date_of_birth: /^\d{4}-\d{2}-\d{2}$/.test(tr.date_of_birth) ? tr.date_of_birth : '',
-      }));
-      dispatch({ type: 'SET_TRAVELLERS', payload: withIds });
-      onNavigate('services');
-    } catch {
-      setSubmitError(true);
-    } finally {
-      setSubmitting(false);
+
+    if (state.holdExpired) return;
+
+    setLoading(true);
+
+    const passengers = state.passengerForms.map((f) => ({
+      lastName: f.lastName,
+      firstName: f.firstName,
+      gender: f.gender,
+      dateOfBirth: f.dob && /^\d{4}-\d{2}-\d{2}$/.test(f.dob) ? f.dob : null,
+      phone: f.phone || null,
+      email: f.email || null,
+    }));
+
+    const res = await sdk.http.post<{ passengers: Array<{ passenger_id: string }> }>(
+      `/sessions/${state.outboundSession!.sessionId}/passengers`,
+      { passengers }
+    );
+
+    if (!res.isSuccess || !res.data) {
+      setSubmitError(t.passengers.error);
+      setLoading(false);
+      return;
     }
-  };
+
+    const updatedForms = state.passengerForms.map((f, i) => ({
+      ...f,
+      passengerId: res.data!.passengers[i]?.passenger_id ?? `pax_${i + 1}`,
+    }));
+
+    if (state.tripType === 'roundTrip' && state.returnSession) {
+      await sdk.http.post(
+        `/sessions/${state.returnSession.sessionId}/passengers`,
+        { passengers }
+      );
+    }
+
+    dispatch({ type: 'SET_PASSENGER_FORMS', payload: updatedForms });
+    setLoading(false);
+    navigate('services');
+  }
+
+  function getTypeLabel(type: string): string {
+    if (type === 'adult') return t.passengers.adult;
+    if (type === 'child') return t.passengers.child;
+    return t.passengers.infant;
+  }
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h1 className="text-2xl font-bold text-gray-900">{t('passengers.title')}</h1>
+    <div className="p-4 flex flex-col gap-4">
+      <h1 className="text-2xl font-bold text-gray-900">{t.passengers.heading}</h1>
+      <HoldTimerBadge navigate={navigate} />
 
-      <p className="text-sm text-gray-500" aria-label={t('common.holdTimerLabel')} data-testid="hold-timer-display">
-        {t('common.holdTimerLabel')}: {formattedTime}
-      </p>
-
-      {isExpired && (
-        <div className="rounded-lg bg-yellow-50 p-3 text-yellow-700" aria-label={t('common.holdExpired')} data-testid="hold-expired-alert">
-          <p>{t('common.holdExpired')}</p>
-          <button
-            type="button"
-            className="mt-2 text-sm font-medium text-yellow-700 underline"
-            onClick={() => onNavigate('search')}
-            aria-label={t('common.backToSearchLabel')}
-          >
-            {t('common.backToSearch')}
-          </button>
-        </div>
-      )}
-
-      <div className="flex items-center gap-2">
-        <label className="relative inline-flex cursor-pointer items-center">
-          <input
-            type="checkbox"
-            className="peer sr-only"
-            checked={iAmPassenger}
-            onChange={handleIAmPassengerToggle}
-            aria-label={t('passengers.iAmPassengerLabel')}
-            data-testid="i-am-passenger-toggle"
-          />
-          <div className="h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-red-500 peer-checked:after:translate-x-full" />
-        </label>
-        <span className="text-sm text-gray-700">{t('passengers.iAmPassenger')}</span>
-      </div>
-
-      {travellers.map((tr, idx) => (
+      <label className="flex items-center gap-3 cursor-pointer">
         <div
-          key={idx}
-          className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
+          className={`relative w-10 h-6 rounded-full transition-colors ${
+            selfToggle ? 'bg-red-600' : 'bg-gray-300'
+          }`}
+          onClick={handleSelfToggle}
+          data-testid="self-toggle"
+          aria-label={t.passengers.iAmPassenger}
+          aria-checked={selfToggle}
         >
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-bold text-gray-900" data-testid="traveller-label">
-              {`${t('passengers.title')} ${idx + 1} - ${getTravellerType(idx, state.adults, state.children)}`}
-            </span>
-            <span className="text-sm text-gray-500" data-testid="traveller-name-summary">
-              {tr.last_name && tr.first_middle_name
-                ? `${tr.last_name} ${tr.first_middle_name}`
-                : t('passengers.noName')}
-            </span>
+          <div
+            className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+              selfToggle ? 'translate-x-4' : 'translate-x-0.5'
+            }`}
+          />
+        </div>
+        <span className="text-sm text-gray-700">{t.passengers.iAmPassenger}</span>
+      </label>
+
+      {state.passengerForms.map((form, idx) => (
+        <div key={idx} className="border border-gray-200 rounded-lg p-4" data-testid="passenger-form">
+          <h2 className="text-lg font-semibold text-gray-900 mb-3" data-testid="passenger-header">
+            {t.passengers.passengerLabel.replace('{i}', String(idx + 1)).replace('{type}', getTypeLabel(form.type))}
+          </h2>
+
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">{t.passengers.lastName} *</label>
+              <input
+                type="text"
+                className="w-full border border-gray-300 rounded-lg p-2.5 text-sm"
+                value={form.lastName}
+                onChange={(e) => updateField(idx, 'lastName', e.target.value)}
+                aria-label={t.passengers.lastName}
+                data-testid="last-name-input"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">{t.passengers.firstMiddleName} *</label>
+              <input
+                type="text"
+                className="w-full border border-gray-300 rounded-lg p-2.5 text-sm"
+                value={form.firstName}
+                onChange={(e) => updateField(idx, 'firstName', e.target.value)}
+                aria-label={t.passengers.firstMiddleName}
+                data-testid="first-middle-name-input"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">{t.passengers.gender}</label>
+              <select
+                className="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white"
+                value={form.gender}
+                onChange={(e) => updateField(idx, 'gender', e.target.value)}
+                aria-label={t.passengers.gender}
+                data-testid="gender-selector"
+              >
+                <option value="Male">{t.passengers.male}</option>
+                <option value="Female">{t.passengers.female}</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">{t.passengers.dob}</label>
+              <input
+                type="date"
+                className="w-full border border-gray-300 rounded-lg p-2.5 text-sm"
+                value={form.dob}
+                onChange={(e) => updateField(idx, 'dob', e.target.value)}
+                aria-label={t.passengers.dob}
+                data-testid="dob-input"
+              />
+              <p className="text-xs text-gray-400 mt-0.5">{t.passengers.dobFormat}</p>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">{t.passengers.phone}</label>
+              <input
+                type="tel"
+                className="w-full border border-gray-300 rounded-lg p-2.5 text-sm"
+                value={form.phone}
+                onChange={(e) => updateField(idx, 'phone', e.target.value)}
+                aria-label={t.passengers.phone}
+                data-testid="phone-input"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">{t.passengers.email}</label>
+              <input
+                type="email"
+                className="w-full border border-gray-300 rounded-lg p-2.5 text-sm"
+                value={form.email}
+                onChange={(e) => updateField(idx, 'email', e.target.value)}
+                aria-label={t.passengers.email}
+                data-testid="email-input"
+              />
+            </div>
           </div>
-          <button
-            type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100"
-            onClick={() => setEditingIndex(idx)}
-            aria-label={t('passengers.editLabel')}
-            data-testid="traveller-edit-action"
-          >
-            ✏️
-          </button>
         </div>
       ))}
 
-      {submitError && (
-        <div className="rounded-lg bg-red-50 p-3 text-red-700" aria-label={t('passengers.submitErrorLabel')} data-testid="submit-error-alert">
-          <p>{t('passengers.submitError')}</p>
-        </div>
+      {validationError && (
+        <p className="text-red-600 text-xs" data-testid="validation-error-message" aria-live="assertive">
+          {validationError}
+        </p>
       )}
 
       <button
-        type="button"
-        className={`w-full rounded-lg py-3 text-center font-medium text-white transition-colors ${
-          !isExpired && !submitting ? 'bg-red-500 hover:bg-red-600' : 'cursor-not-allowed bg-gray-300'
+        className={`w-full py-3 rounded-lg text-white font-semibold text-sm transition-colors ${
+          !loading && !state.holdExpired ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-300 cursor-not-allowed'
         }`}
-        disabled={isExpired || submitting}
+        disabled={loading || state.holdExpired}
         onClick={handleSubmit}
-        aria-label={t('passengers.continueLabel')}
-        data-testid="continue-action"
+        aria-label={t.passengers.continueBtn}
+        data-testid="passengers-continue"
       >
-        {t('passengers.continue')}
+        {loading ? t.common.loading : t.passengers.continueBtn}
       </button>
 
-      {editingIndex !== null && (
-        <TravellerDetailSheet
-          index={editingIndex}
-          traveller={travellers[editingIndex]}
-          travellerType={getTravellerType(editingIndex, state.adults, state.children)}
-          onConfirm={(data) => handleTravellerUpdate(editingIndex, data)}
-          onClose={() => setEditingIndex(null)}
-        />
+      {submitError && (
+        <p className="text-red-600 text-xs" data-testid="passenger-error-message" aria-live="assertive">
+          {submitError}
+        </p>
       )}
     </div>
   );

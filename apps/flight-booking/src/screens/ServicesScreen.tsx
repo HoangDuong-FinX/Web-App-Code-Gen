@@ -1,198 +1,159 @@
-import React, { useState, useEffect } from 'react';
-import type { BookingState, AncillaryItem, ScreenId } from '../types';
-import type { BookingAction } from '../App';
-import { t } from '../i18n/vi';
-import { formatVND } from '../utils/formatCurrency';
-import { useHoldTimer } from '../hooks/useHoldTimer';
-import { loadAncillariesFixture } from '../fixtures/ancillaries';
-import { AncillaryDetailSheet } from '../modals/AncillaryDetailSheet';
-import { SeatMapSheet } from '../modals/SeatMapSheet';
+import React, { useState } from 'react';
+import { useT } from '../i18n/index';
+import { useAppState, useAppDispatch } from '../store';
+import type { ScreenId } from '../types';
+import type { NavigationState } from '../App';
+import { HoldTimerBadge } from '../components/HoldTimerBadge';
+import { sdk } from '../sdk';
 
 interface ServicesScreenProps {
-  state: BookingState;
-  dispatch: React.Dispatch<BookingAction>;
-  expiresAt: string | null;
-  onNavigate: (screen: ScreenId) => void;
+  navigate: (screen: ScreenId, extra?: Partial<NavigationState>) => void;
 }
 
-const SERVICE_TILES = [
-  { id: 'seat', labelKey: 'services.seat', icon: '\uD83D\uDCBA', active: true, group: null },
-  { id: 'meals', labelKey: 'services.meals', icon: '\uD83C\uDF5C', active: true, group: 'meal' as const },
-  { id: 'baggage', labelKey: 'services.baggage', icon: '\uD83E\uDDF3', active: true, group: 'baggage' as const },
-  { id: 'insurance', labelKey: 'services.insurance', icon: '\uD83D\uDEE1\uFE0F', active: false, group: null },
-  { id: 'dutyfree', labelKey: 'services.dutyFree', icon: '\uD83D\uDECD\uFE0F', active: false, group: null },
-  { id: 'souvenirs', labelKey: 'services.souvenirs', icon: '\uD83C\uDF81', active: false, group: null },
-  { id: 'hotel', labelKey: 'services.hotel', icon: '\uD83C\uDFE8', active: false, group: null },
-  { id: 'activities', labelKey: 'services.activities', icon: '\uD83E\uDDED', active: false, group: null },
-  { id: 'transfer', labelKey: 'services.transfer', icon: '\uD83D\uDE97', active: false, group: null },
-] as const;
+export function ServicesScreen({ navigate }: ServicesScreenProps) {
+  const t = useT();
+  const state = useAppState();
+  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export function ServicesScreen({ state, dispatch, expiresAt, onNavigate }: ServicesScreenProps) {
-  const { formattedTime, isExpired } = useHoldTimer(expiresAt);
-  const [ancillaries, setAncillaries] = useState<AncillaryItem[]>([]);
-  const [saveError, setSaveError] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [showAncillary, setShowAncillary] = useState<'meal' | 'baggage' | null>(null);
-  const [showSeatMap, setShowSeatMap] = useState(false);
+  if (!state.outboundSession) {
+    navigate('search');
+    return null;
+  }
 
-  useEffect(() => {
-    loadAncillariesFixture().then(setAncillaries).catch(() => { /* handled inline */ });
-  }, []);
+  const activeTiles = [
+    { key: 'seatSelection', label: t.services.seatSelection, testId: 'tile-seat-selection', onClick: () => navigate('seats') },
+    { key: 'meals', label: t.services.meals, testId: 'tile-meals', onClick: () => navigate('meals-baggage', { mealsBaggageMode: 'meals' }) },
+    { key: 'baggage', label: t.services.baggageTransfer, testId: 'tile-baggage', onClick: () => navigate('meals-baggage', { mealsBaggageMode: 'baggage' }) },
+  ];
 
-  const hasMeals = ancillaries.some((a) => a.group === 'meal');
-  const hasBaggage = ancillaries.some((a) => a.group === 'baggage');
+  const disabledTiles = [
+    { key: 'insurance', label: t.services.insurance, testId: 'tile-insurance' },
+    { key: 'dutyFree', label: t.services.dutyFree, testId: 'tile-duty-free' },
+    { key: 'souvenirs', label: t.services.souvenirs, testId: 'tile-souvenirs' },
+    { key: 'hotel', label: t.services.hotel, testId: 'tile-hotel' },
+    { key: 'activities', label: t.services.activities, testId: 'tile-activities' },
+    { key: 'transfer', label: t.services.transfer, testId: 'tile-transfer' },
+  ];
 
-  const ancillaryCost = [...state.outboundAncillarySelections, ...state.returnAncillarySelections].reduce((sum, sel) => {
-    const item = ancillaries.find((a) => a.option_id === sel.option_id);
-    return sum + (item ? item.unit_price * sel.quantity : 0);
-  }, 0);
+  async function handleContinue() {
+    if (state.holdExpired) return;
+    setLoading(true);
+    setError(null);
 
-  const seatsCost = (state.outboundSeatSelection?.price ?? 0) + (state.returnSeatSelection?.price ?? 0);
+    const promises: Promise<{ isSuccess: boolean }>[] = [];
 
-  const handleTileTap = (tileId: string) => {
-    if (isExpired) return;
-    if (tileId === 'seat') {
-      setShowSeatMap(true);
-    } else if (tileId === 'meals' && hasMeals) {
-      setShowAncillary('meal');
-    } else if (tileId === 'baggage' && hasBaggage) {
-      setShowAncillary('baggage');
+    if (state.outboundAncillary.length > 0) {
+      const selections = state.outboundAncillary.flatMap((s) =>
+        Array.from({ length: s.quantity }, () => ({
+          passenger_id: state.passengerForms[0]?.passengerId ?? 'pax_1',
+          option_id: s.optionId,
+        }))
+      );
+      promises.push(
+        sdk.http.post(`/sessions/${state.outboundSession!.sessionId}/ancillary-selections`, { selections })
+      );
     }
-  };
 
-  const handleContinue = async () => {
-    if (isExpired) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await Promise.resolve();
-      onNavigate('payment-review');
-    } catch {
-      setSaveError(true);
-    } finally {
-      setSaving(false);
+    if (state.outboundSeats.length > 0) {
+      const selections = state.outboundSeats.map((s) => ({
+        passenger_index: s.passengerIndex,
+        seatId: s.seatId,
+      }));
+      promises.push(
+        sdk.http.post(`/sessions/${state.outboundSession!.sessionId}/seat-selections`, { selections })
+      );
     }
-  };
+
+    if (state.tripType === 'roundTrip' && state.returnSession) {
+      if (state.returnAncillary.length > 0) {
+        const selections = state.returnAncillary.flatMap((s) =>
+          Array.from({ length: s.quantity }, () => ({
+            passenger_id: state.passengerForms[0]?.passengerId ?? 'pax_1',
+            option_id: s.optionId,
+          }))
+        );
+        promises.push(
+          sdk.http.post(`/sessions/${state.returnSession.sessionId}/ancillary-selections`, { selections })
+        );
+      }
+      if (state.returnSeats.length > 0) {
+        const selections = state.returnSeats.map((s) => ({
+          passenger_index: s.passengerIndex,
+          seatId: s.seatId,
+        }));
+        promises.push(
+          sdk.http.post(`/sessions/${state.returnSession.sessionId}/seat-selections`, { selections })
+        );
+      }
+    }
+
+    if (promises.length > 0) {
+      const results = await Promise.all(promises);
+      const anyFailed = results.some((r) => !r.isSuccess);
+      if (anyFailed) {
+        setError(t.services.saveError);
+        setLoading(false);
+        return;
+      }
+    }
+
+    setLoading(false);
+    navigate('review');
+  }
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h1 className="text-2xl font-bold text-gray-900">{t('services.title')}</h1>
-
-      <p className="text-sm text-gray-500" aria-label={t('common.holdTimerLabel')} data-testid="hold-timer-display">
-        {t('common.holdTimerLabel')}: {formattedTime}
-      </p>
-
-      {isExpired && (
-        <div className="rounded-lg bg-yellow-50 p-3 text-yellow-700" aria-label={t('common.holdExpired')} data-testid="hold-expired-alert">
-          <p>{t('common.holdExpired')}</p>
-          <button
-            type="button"
-            className="mt-2 text-sm font-medium text-yellow-700 underline"
-            onClick={() => onNavigate('search')}
-            aria-label={t('common.backToSearchLabel')}
-          >
-            {t('common.backToSearch')}
-          </button>
-        </div>
-      )}
+    <div className="p-4 flex flex-col gap-4">
+      <h1 className="text-2xl font-bold text-gray-900">{t.services.heading}</h1>
+      <HoldTimerBadge navigate={navigate} />
 
       <div className="grid grid-cols-3 gap-3">
-        {SERVICE_TILES.map((tile) => {
-          const isActive = tile.active && (
-            tile.id === 'seat' ||
-            (tile.id === 'meals' && hasMeals) ||
-            (tile.id === 'baggage' && hasBaggage)
-          );
-          return (
-            <button
-              key={tile.id}
-              type="button"
-              className={`flex flex-col items-center gap-1 rounded-lg border p-3 transition-colors ${
-                isActive
-                  ? 'border-gray-200 hover:border-red-300 hover:bg-red-50'
-                  : 'cursor-not-allowed border-gray-100 bg-gray-50 opacity-50'
-              }`}
-              disabled={!isActive || isExpired}
-              onClick={() => handleTileTap(tile.id)}
-              aria-label={t(tile.labelKey)}
-              data-testid={`service-tile-${tile.id}`}
-            >
-              <span className="text-2xl" aria-hidden="true">{tile.icon}</span>
-              <span className="text-xs text-gray-700">{t(tile.labelKey)}</span>
-              {!tile.active && (
-                <span className="rounded bg-gray-200 px-1.5 py-0.5 text-[10px] text-gray-500">
-                  {t('services.comingSoon')}
-                </span>
-              )}
-            </button>
-          );
-        })}
+        {activeTiles.map((tile) => (
+          <button
+            key={tile.key}
+            className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-red-400 transition-colors min-h-[80px]"
+            onClick={tile.onClick}
+            aria-label={tile.label}
+            data-testid={tile.testId}
+          >
+            <span className="text-2xl mb-1">&#9992;</span>
+            <span className="text-xs text-center font-medium text-gray-700">{tile.label}</span>
+          </button>
+        ))}
+        {disabledTiles.map((tile) => (
+          <button
+            key={tile.key}
+            className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg opacity-50 cursor-not-allowed min-h-[80px] relative"
+            disabled
+            aria-label={`${tile.label} - ${t.services.comingSoon}`}
+            data-testid={tile.testId}
+          >
+            <span className="text-2xl mb-1">&#9992;</span>
+            <span className="text-xs text-center font-medium text-gray-400">{tile.label}</span>
+            <span className="absolute top-1 right-1 bg-amber-100 text-amber-700 text-[8px] px-1 rounded">
+              {t.services.comingSoon}
+            </span>
+          </button>
+        ))}
       </div>
-
-      <div className="flex flex-col gap-1">
-        {ancillaryCost > 0 && (
-          <p className="text-sm text-gray-700" data-testid="selected-services-summary">
-            {t('services.selectedServices')}: {formatVND(ancillaryCost)}
-          </p>
-        )}
-        {seatsCost > 0 && (
-          <p className="text-sm text-gray-700" data-testid="selected-seat-summary">
-            {t('services.selectedSeats')}: {formatVND(seatsCost)}
-          </p>
-        )}
-      </div>
-
-      {saveError && (
-        <div className="rounded-lg bg-red-50 p-3 text-red-700" aria-label={t('services.saveErrorLabel')} data-testid="save-error-alert">
-          <p>{t('services.saveError')}</p>
-        </div>
-      )}
 
       <button
-        type="button"
-        className={`w-full rounded-lg py-3 text-center font-medium text-white transition-colors ${
-          !isExpired && !saving ? 'bg-red-500 hover:bg-red-600' : 'cursor-not-allowed bg-gray-300'
+        className={`w-full py-3 rounded-lg text-white font-semibold text-sm transition-colors ${
+          !loading && !state.holdExpired ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-300 cursor-not-allowed'
         }`}
-        disabled={isExpired || saving}
+        disabled={loading || state.holdExpired}
         onClick={handleContinue}
-        aria-label={t('services.continueLabel')}
-        data-testid="continue-action"
+        aria-label={t.services.continueBtn}
+        data-testid="services-continue"
       >
-        {t('services.continue')}
+        {loading ? t.common.loading : t.services.continueBtn}
       </button>
 
-      {showAncillary !== null && (
-        <AncillaryDetailSheet
-          group={showAncillary}
-          items={ancillaries.filter((a) => a.group === showAncillary)}
-          outboundSelections={state.outboundAncillarySelections}
-          returnSelections={state.returnAncillarySelections}
-          isRoundTrip={state.tripType === 'round-trip'}
-          onConfirm={(outbound, returnSel) => {
-            dispatch({ type: 'SET_OUTBOUND_ANCILLARIES', payload: outbound });
-            if (state.tripType === 'round-trip') {
-              dispatch({ type: 'SET_RETURN_ANCILLARIES', payload: returnSel });
-            }
-            setShowAncillary(null);
-          }}
-          onClose={() => setShowAncillary(null)}
-        />
-      )}
-
-      {showSeatMap && (
-        <SeatMapSheet
-          isRoundTrip={state.tripType === 'round-trip'}
-          outboundSeatSelection={state.outboundSeatSelection}
-          returnSeatSelection={state.returnSeatSelection}
-          onConfirm={(outbound, returnSel) => {
-            dispatch({ type: 'SET_OUTBOUND_SEAT', payload: outbound });
-            if (state.tripType === 'round-trip') {
-              dispatch({ type: 'SET_RETURN_SEAT', payload: returnSel });
-            }
-            setShowSeatMap(false);
-          }}
-          onClose={() => setShowSeatMap(false)}
-        />
+      {error && (
+        <p className="text-red-600 text-xs" data-testid="service-error-message" aria-live="assertive">
+          {error}
+        </p>
       )}
     </div>
   );
