@@ -1,4 +1,4 @@
-import type { TranslationKeys } from './vi';
+import type { TranslationKeys } from './types';
 
 export const en: TranslationKeys = {
   app: {

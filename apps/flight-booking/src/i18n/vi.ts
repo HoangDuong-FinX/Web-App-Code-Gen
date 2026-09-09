@@ -1,4 +1,6 @@
-export const vi = {
+import type { TranslationKeys } from './types';
+
+export const vi: TranslationKeys = {
   app: {
     title: 'Dat ve may bay VietJet',
   },
@@ -164,6 +166,4 @@ export const vi = {
     error: 'Da xay ra loi. Vui long thu lai.',
     loading: 'Dang tai...',
   },
-} as const;
-
-export type TranslationKeys = typeof vi;
+};

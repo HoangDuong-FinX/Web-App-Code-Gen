@@ -1,7 +1,9 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import { vi } from './vi';
 import { en } from './en';
-import type { TranslationKeys } from './vi';
+import type { TranslationKeys } from './types';
+
+export type { TranslationKeys } from './types';
 
 type Locale = 'vi' | 'en';
 
