@@ -1,6 +1,12 @@
 import type { CityPair } from '../types';
 
-export const fixtureCityPairs: CityPair[] = [
+let shouldFail = false;
+
+export function setLoadCityPairsOutcome(fail: boolean): void {
+  shouldFail = fail;
+}
+
+const cityPairsData: CityPair[] = [
   { origin: 'SGN', destination: 'HAN' },
   { origin: 'HAN', destination: 'SGN' },
   { origin: 'SGN', destination: 'DAD' },
@@ -17,4 +23,14 @@ export const fixtureCityPairs: CityPair[] = [
   { origin: 'ICN', destination: 'HAN' },
   { origin: 'SGN', destination: 'NRT' },
   { origin: 'NRT', destination: 'SGN' },
+  { origin: 'SGN', destination: 'SIN' },
+  { origin: 'SIN', destination: 'SGN' },
 ];
+
+export async function loadCityPairs(): Promise<CityPair[]> {
+  await new Promise((r) => setTimeout(r, 300));
+  if (shouldFail) {
+    throw new Error('FIXTURE: city pairs load failed');
+  }
+  return cityPairsData;
+}

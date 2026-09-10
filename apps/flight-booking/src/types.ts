@@ -1,12 +1,9 @@
-export interface Airport {
-  airportCode: string;
-  airportName: string;
-  cityName: string;
-}
+export type TripType = 'one-way' | 'round-trip';
 
-export interface AirportGroup {
-  groupName: string;
-  airports: Airport[];
+export interface Airport {
+  code: string;
+  name: string;
+  group: 'popular' | 'domestic' | 'international';
 }
 
 export interface CityPair {
@@ -14,44 +11,66 @@ export interface CityPair {
   destination: string;
 }
 
+export interface SearchCriteria {
+  tripType: TripType;
+  origin: Airport | null;
+  destination: Airport | null;
+  departureDate: string;
+  returnDate: string;
+  adults: number;
+  children: number;
+  infants: number;
+}
+
+export interface RecentSearch {
+  route: string;
+  date: string;
+  passengers: string;
+  criteria: SearchCriteria;
+}
+
 export interface FareClass {
   fareClassName: string;
+  offerId: string;
   priceAmount: number;
   available: boolean;
 }
 
-export interface FlightOffer {
-  offerId: string;
+export interface Flight {
   flightNumber: string;
   departureTime: string;
   arrivalTime: string;
   duration: string;
+  originCode: string;
+  destCode: string;
   fareClasses: FareClass[];
 }
 
 export interface SearchSession {
   sessionId: string;
-  expiresAt: number;
-  offers: FlightOffer[];
+  expiresAt: string;
+  offers: Flight[];
 }
 
-export interface PassengerForm {
-  type: 'adult' | 'child' | 'infant';
+export type PassengerType = 'adult' | 'child' | 'infant';
+
+export interface PassengerDetail {
   lastName: string;
   firstName: string;
-  gender: 'Male' | 'Female';
-  dob: string;
+  gender: 'Nam' | 'N\u1eef';
+  dateOfBirth: string;
   phone: string;
   email: string;
-  passengerId?: string;
+  type: PassengerType;
+  isValid: boolean;
+  passengerId: string;
 }
 
 export interface AncillaryOption {
   optionId: string;
   name: string;
-  category: 'meal' | 'baggage' | 'transfer';
+  category: 'meal' | 'baggage';
   priceAmount: number;
-  imageUrl: string;
 }
 
 export interface AncillarySelection {
@@ -61,54 +80,61 @@ export interface AncillarySelection {
   priceAmount: number;
 }
 
-export interface SeatInfo {
-  seatId: string;
+export interface Seat {
+  seatCode: string;
   row: number;
   column: string;
   available: boolean;
   priceAmount: number | null;
-  fareTier: string;
+  priceTier: string;
 }
 
 export interface SeatSelection {
-  passengerIndex: number;
-  seatId: string;
-  seatLabel: string;
-  price: number;
+  seatCode: string;
+  priceAmount: number;
 }
 
-export interface BookingResult {
-  status: 'success' | 'failure' | 'partial';
+export interface PaymentResult {
+  status: 'success' | 'failed' | 'partial' | 'cancelled';
   bookingCode: string;
-  outboundBookingCode?: string;
+  returnBookingCode: string;
   transactionId: string | null;
   amount: number;
-  failureReason?: string;
-  viaHost: boolean;
+  failureReason: string;
+  sdkError: string;
+  simulated: boolean;
   vatRequested: boolean;
 }
 
-export interface DateChip {
-  date: string;
-  label: string;
-  lowestPrice: number | null;
-}
-
-export type TripType = 'oneWay' | 'roundTrip';
-
 export type ScreenId =
   | 'search'
-  | 'airport-picker'
-  | 'date-picker'
-  | 'passenger-count'
   | 'results'
-  | 'results-return'
+  | 'results-expired'
   | 'passengers'
   | 'services'
-  | 'meals-baggage'
-  | 'seats'
-  | 'review'
+  | 'seat-map'
+  | 'payment'
   | 'checkout'
   | 'done-success'
-  | 'done-failure'
+  | 'done-failed'
   | 'done-partial';
+
+export interface BookingState {
+  currentScreen: ScreenId;
+  searchCriteria: SearchCriteria;
+  recentSearches: RecentSearch[];
+  outboundSession: SearchSession | null;
+  returnSession: SearchSession | null;
+  selectedOutboundOffer: FareClass | null;
+  selectedOutboundFlight: Flight | null;
+  selectedReturnOffer: FareClass | null;
+  selectedReturnFlight: Flight | null;
+  passengers: PassengerDetail[];
+  iAmPassenger: boolean;
+  outboundAncillaries: AncillarySelection[];
+  returnAncillaries: AncillarySelection[];
+  outboundSeat: SeatSelection | null;
+  returnSeat: SeatSelection | null;
+  paymentResult: PaymentResult | null;
+  vatRequested: boolean;
+}
